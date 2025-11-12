@@ -1,26 +1,154 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
+All colors MUST be HSL.
+*/
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 100%;
+    --foreground: 220 70% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 70% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 70% 15%;
+
+    --primary: 220 70% 20%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 15% 96%;
+    --secondary-foreground: 220 70% 20%;
+
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 20% 50%;
+
+    --accent: 45 80% 60%;
+    --accent-foreground: 220 70% 20%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 220 70% 20%;
+
+    --radius: 0.75rem;
+
+    /* Premium gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(220 70% 20%) 0%, hsl(220 60% 30%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(45 80% 60%) 0%, hsl(45 70% 55%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(220 70% 20%) 0%, hsl(220 60% 25%) 50%, hsl(220 50% 30%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(210 98% 48%) 0%, hsl(158 64% 52%) 100%);
+    --gradient-cta-hover: linear-gradient(135deg, hsl(210 98% 55%) 0%, hsl(158 64% 60%) 100%);
+
+    /* CTA colors */
+    --cta: 210 98% 48%;
+    --cta-foreground: 0 0% 100%;
+
+    /* Shadows */
+    --shadow-elegant: 0 10px 40px -10px hsl(220 70% 20% / 0.15);
+    --shadow-card: 0 4px 20px -4px hsl(220 70% 20% / 0.1);
+    --shadow-hover: 0 20px 50px -10px hsl(220 70% 20% / 0.2);
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 220 70% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 220 60% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 220 60% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 220 70% 20%;
+
+    --secondary: 220 50% 18%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 220 50% 18%;
+    --muted-foreground: 220 15% 70%;
+
+    --accent: 45 80% 60%;
+    --accent-foreground: 220 70% 20%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 50% 20%;
+    --input: 220 50% 20%;
+    --ring: 45 80% 60%;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  .btn-cta-gradient {
+    background-image: var(--gradient-cta);
+    position: relative;
+    overflow: hidden;
+    will-change: transform;
+  }
+
+  .btn-cta-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--gradient-cta-hover);
+    background-size: 200% 200%;
+    background-position: 0% 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease, background-position 0.5s ease;
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  .btn-cta-gradient:hover::before {
+    opacity: 1;
+    background-position: 100% 50%;
+  }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom animations */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+  }
+
+  /* Background grid pattern */
+  .bg-grid-pattern {
+    background-image: linear-gradient(to right, hsl(220 15% 88% / 0.1) 1px, transparent 1px),
+                      linear-gradient(to bottom, hsl(220 15% 88% / 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
 }

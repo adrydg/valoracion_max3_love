@@ -1,65 +1,113 @@
-import Image from "next/image";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { HeroWizard } from "@/components/HeroWizard";
+import { Benefits } from "@/components/Benefits";
+import { Process } from "@/components/Process";
+import { Testimonials } from "@/components/Testimonials";
+import { Stats } from "@/components/Stats";
+import { CTASection } from "@/components/CTASection";
+import { FAQ } from "@/components/FAQ";
+import { Zap } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+
+      {/* Hero Section with Wizard */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-background via-secondary/20 to-background">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+
+        <div className="relative max-w-7xl mx-auto px-4 py-12 md:py-20">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+            {/* Left Column - Commercial Info */}
+            <div className="space-y-6 md:space-y-8 animate-fade-in">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20">
+                <Zap className="w-4 h-4 text-accent" />
+                <span className="text-sm font-medium">Venta en 30 días garantizada</span>
+              </div>
+
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                ✨ Vende tu propiedad{" "}
+                <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
+                  rápido y seguro
+                </span>
+              </h1>
+
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+                La plataforma inmobiliaria más innovadora de España. Combinamos tecnología de vanguardia con
+                expertos certificados para venderte tu casa al mejor precio del mercado.
+              </p>
+
+              {/* Key Features */}
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="text-3xl flex-shrink-0">
+                    🛡️
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">100% Seguro</p>
+                    <p className="text-xs text-muted-foreground">Proceso legal garantizado</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="text-3xl flex-shrink-0">
+                    💰
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">Mejor precio</p>
+                    <p className="text-xs text-muted-foreground">Maximizamos tu ganancia</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="text-3xl flex-shrink-0">
+                    ⚡
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">Venta rápida</p>
+                    <p className="text-xs text-muted-foreground">En 18 días de media</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Wizard */}
+            <div className="animate-fade-in" style={{ animationDelay: "200ms" }}>
+              <HeroWizard />
+            </div>
+
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </section>
+
+      {/* Stats */}
+      <Stats />
+
+      {/* Benefits */}
+      <div id="beneficios">
+        <Benefits />
+      </div>
+
+      {/* Process */}
+      <div id="proceso">
+        <Process />
+      </div>
+
+      {/* Testimonials */}
+      <div id="testimonios">
+        <Testimonials />
+      </div>
+
+      {/* FAQ */}
+      <FAQ />
+
+      {/* CTA Section */}
+      <CTASection />
+
+      <Footer />
     </div>
   );
 }
