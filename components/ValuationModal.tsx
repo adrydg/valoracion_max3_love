@@ -875,68 +875,119 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
 
                       {/* Velocímetro visual */}
                       <div className="relative w-full max-w-md mx-auto mb-6">
-                        {/* SVG Gauge */}
-                        <svg viewBox="0 0 200 120" className="w-full">
-                          {/* Arco de fondo (completo) */}
+                        {/* SVG Gauge - Semicírculo perfecto */}
+                        <svg viewBox="0 0 200 110" className="w-full" style={{ overflow: 'visible' }}>
+                          {/* Arco de fondo (gris claro) */}
                           <path
-                            d="M 20 100 A 80 80 0 0 1 180 100"
+                            d="M 30 100 A 70 70 0 0 1 170 100"
                             fill="none"
                             stroke="#e5e7eb"
-                            strokeWidth="20"
-                            strokeLinecap="round"
-                          />
-                          {/* Arcos de colores */}
-                          {/* Rojo 0-25 */}
-                          <path
-                            d="M 20 100 A 80 80 0 0 1 60 40"
-                            fill="none"
-                            stroke="#ef4444"
-                            strokeWidth="20"
-                            strokeLinecap="round"
-                          />
-                          {/* Naranja 25-50 */}
-                          <path
-                            d="M 60 40 A 80 80 0 0 1 100 20"
-                            fill="none"
-                            stroke="#f97316"
-                            strokeWidth="20"
-                            strokeLinecap="round"
-                          />
-                          {/* Verde claro 50-75 */}
-                          <path
-                            d="M 100 20 A 80 80 0 0 1 140 40"
-                            fill="none"
-                            stroke="#84cc16"
-                            strokeWidth="20"
-                            strokeLinecap="round"
-                          />
-                          {/* Verde fuerte 75-100 */}
-                          <path
-                            d="M 140 40 A 80 80 0 0 1 180 100"
-                            fill="none"
-                            stroke="#22c55e"
-                            strokeWidth="20"
+                            strokeWidth="18"
                             strokeLinecap="round"
                           />
 
-                          {/* Aguja indicadora */}
-                          <line
-                            x1="100"
-                            y1="100"
-                            x2={100 + 70 * Math.cos((Math.PI * (valuation.score_global.puntuacion_total / 100 * 180 + 180)) / 180)}
-                            y2={100 - 70 * Math.sin((Math.PI * (valuation.score_global.puntuacion_total / 100 * 180 + 180)) / 180)}
-                            stroke="#1f2937"
-                            strokeWidth="3"
+                          {/* Rojo 0-25 (cuarto 1) */}
+                          <path
+                            d="M 30 100 A 70 70 0 0 1 65 45"
+                            fill="none"
+                            stroke="#ef4444"
+                            strokeWidth="18"
                             strokeLinecap="round"
                           />
-                          <circle cx="100" cy="100" r="8" fill="#1f2937" />
+
+                          {/* Naranja 25-50 (cuarto 2) */}
+                          <path
+                            d="M 65 45 A 70 70 0 0 1 100 30"
+                            fill="none"
+                            stroke="#f97316"
+                            strokeWidth="18"
+                            strokeLinecap="round"
+                          />
+
+                          {/* Verde claro 50-75 (cuarto 3) */}
+                          <path
+                            d="M 100 30 A 70 70 0 0 1 135 45"
+                            fill="none"
+                            stroke="#84cc16"
+                            strokeWidth="18"
+                            strokeLinecap="round"
+                          />
+
+                          {/* Verde fuerte 75-100 (cuarto 4) */}
+                          <path
+                            d="M 135 45 A 70 70 0 0 1 170 100"
+                            fill="none"
+                            stroke="#22c55e"
+                            strokeWidth="18"
+                            strokeLinecap="round"
+                          />
+
+                          {/* Marcas en el arco */}
+                          {[0, 25, 50, 75, 100].map((mark) => {
+                            const angle = (mark / 100) * Math.PI; // 0 a PI (180 grados)
+                            const x1 = 100 + 70 * Math.cos(Math.PI - angle);
+                            const y1 = 100 - 70 * Math.sin(Math.PI - angle);
+                            const x2 = 100 + 60 * Math.cos(Math.PI - angle);
+                            const y2 = 100 - 60 * Math.sin(Math.PI - angle);
+                            return (
+                              <line
+                                key={mark}
+                                x1={x1}
+                                y1={y1}
+                                x2={x2}
+                                y2={y2}
+                                stroke="#94a3b8"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                              />
+                            );
+                          })}
+
+                          {/* Aguja indicadora */}
+                          {(() => {
+                            const score = valuation.score_global.puntuacion_total;
+                            const angle = (score / 100) * Math.PI; // Convertir score a ángulo en radianes (0 a PI)
+                            const needleLength = 60;
+                            const x = 100 + needleLength * Math.cos(Math.PI - angle);
+                            const y = 100 - needleLength * Math.sin(Math.PI - angle);
+
+                            return (
+                              <>
+                                {/* Sombra de la aguja */}
+                                <line
+                                  x1="100"
+                                  y1="100"
+                                  x2={x + 2}
+                                  y2={y + 2}
+                                  stroke="rgba(0,0,0,0.2)"
+                                  strokeWidth="4"
+                                  strokeLinecap="round"
+                                />
+                                {/* Aguja principal */}
+                                <line
+                                  x1="100"
+                                  y1="100"
+                                  x2={x}
+                                  y2={y}
+                                  stroke="#1f2937"
+                                  strokeWidth="4"
+                                  strokeLinecap="round"
+                                />
+                              </>
+                            );
+                          })()}
+
+                          {/* Centro de la aguja */}
+                          <circle cx="100" cy="100" r="6" fill="#1f2937" />
+                          <circle cx="100" cy="100" r="3" fill="#94a3b8" />
 
                           {/* Puntuación central */}
                           <text
                             x="100"
-                            y="95"
+                            y="90"
                             textAnchor="middle"
-                            className="text-4xl font-bold"
+                            fontSize="32"
+                            fontWeight="bold"
                             fill={
                               valuation.score_global.puntuacion_total >= 75 ? "#22c55e" :
                               valuation.score_global.puntuacion_total >= 50 ? "#84cc16" :
@@ -946,18 +997,18 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                           >
                             {valuation.score_global.puntuacion_total}
                           </text>
-                          <text x="100" y="110" textAnchor="middle" className="text-xs" fill="#64748b">
+                          <text x="100" y="100" textAnchor="middle" fontSize="10" fill="#64748b">
                             / 100
                           </text>
                         </svg>
 
-                        {/* Etiquetas */}
-                        <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400 mt-2 px-2">
+                        {/* Etiquetas debajo del semicírculo */}
+                        <div className="flex justify-between text-xs font-medium text-slate-600 dark:text-slate-400 mt-1 px-4">
                           <span>0</span>
-                          <span>25</span>
-                          <span>50</span>
-                          <span>75</span>
-                          <span>100</span>
+                          <span className="text-red-500">25</span>
+                          <span className="text-orange-500">50</span>
+                          <span className="text-lime-500">75</span>
+                          <span className="text-green-500">100</span>
                         </div>
                       </div>
 
