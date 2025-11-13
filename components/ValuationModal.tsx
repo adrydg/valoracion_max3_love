@@ -95,6 +95,7 @@ interface PhotoData {
 const agentMessages = [
   "¡Hola! 👋 Soy tu agente virtual. Vamos a tasar tu propiedad de forma rápida y divertida. ¡Empecemos!",
   "¡Genial! 🏠 Ahora cuéntame todos los detalles de tu propiedad. Necesito conocerla bien para darte la mejor valoración.",
+  "💬 Perfecto. Ahora cuéntame sobre tus planes de venta. Esto me ayudará a darte una mejor orientación.",
   "¡Fotos! 📸 Es hora de presumir de tu casa. Sube las mejores fotos, pero si hay calcetines en el suelo, no pasa nada.",
   "📋 Casi terminamos. Necesito tus datos para mandarte el informe. Prometo no vendérselos a nadie... ¡es broma!",
   "🎉 ¡TACHÁAAN! Aquí está tu informe personalizado. ¿Listo para saber cuánto vale tu propiedad?",
@@ -103,8 +104,11 @@ const agentMessages = [
 export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
   const [step, setStep] = useState(1);
 
-  // Paso 1: Dirección (prerrellenado)
-  const [address, setAddress] = useState("Calle Gran Vía 28, 3º A, Madrid");
+  // Paso 1: Dirección separada en 4 campos (prerrellenado)
+  const [street, setStreet] = useState("Calle Gran Vía 28");
+  const [apartment, setApartment] = useState("3º A");
+  const [postalCode, setPostalCode] = useState("28013");
+  const [city, setCity] = useState("Madrid");
 
   // Paso 2: Detalles de la propiedad (prerrellenado)
   const [squareMeters, setSquareMeters] = useState("85");
@@ -113,16 +117,22 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
   const [bathrooms, setBathrooms] = useState("2");
   const [propertyType, setPropertyType] = useState("piso");
   const [buildingAge, setBuildingAge] = useState("10-30");
-  const [floor, setFloor] = useState("1-3");
+  const [floor, setFloor] = useState("2");
   const [hasElevator, setHasElevator] = useState("si");
   const [hasGarage, setHasGarage] = useState("no");
   const [hasTerrace, setHasTerrace] = useState("balcon");
+  const [hasStorageRoom, setHasStorageRoom] = useState("no");
   const [condition, setCondition] = useState("bueno");
 
-  // Paso 3: Fotos
+  // Paso 3: Intención de venta (nuevo)
+  const [interestedInSelling, setInterestedInSelling] = useState<string | null>(null);
+  const [sellingTimeframe, setSellingTimeframe] = useState<string | null>(null);
+  const [wantsSpecialistInfo, setWantsSpecialistInfo] = useState<string | null>(null);
+
+  // Paso 4: Fotos
   const [photos, setPhotos] = useState<PhotoData[]>([]);
 
-  // Paso 4: Datos de contacto (prerrellenado)
+  // Paso 5: Datos de contacto (prerrellenado)
   const [name, setName] = useState("María García");
   const [email, setEmail] = useState("maria.garcia@example.com");
   const [phone, setPhone] = useState("+34 612 345 678");
@@ -133,19 +143,23 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const totalSteps = 5;
+  const totalSteps = 6;
   const progress = (step / totalSteps) * 100;
 
   const handleNext = async () => {
-    // Si estamos en el paso 4, llamar a la API antes de pasar al paso 5
-    if (step === 4) {
+    // Si estamos en el paso 5, llamar a la API antes de pasar al paso 6
+    if (step === 5) {
       setIsLoading(true);
       setError(null);
 
       try {
         // Crear FormData para enviar las fotos y datos
         const formData = new FormData();
-        formData.append("address", address);
+
+        // Concatenar dirección completa
+        const fullAddress = `${street}, ${apartment}, ${postalCode} ${city}`;
+        formData.append("address", fullAddress);
+
         formData.append("squareMeters", squareMeters);
         formData.append("bedrooms", bedrooms);
         formData.append("bathrooms", bathrooms);
@@ -155,7 +169,14 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
         formData.append("hasElevator", hasElevator);
         formData.append("hasGarage", hasGarage);
         formData.append("hasTerrace", hasTerrace);
+        formData.append("hasStorageRoom", hasStorageRoom);
         formData.append("condition", condition);
+
+        // Datos de intención de venta
+        formData.append("interestedInSelling", interestedInSelling || "");
+        formData.append("sellingTimeframe", sellingTimeframe || "");
+        formData.append("wantsSpecialistInfo", wantsSpecialistInfo || "");
+
         formData.append("name", name);
         formData.append("email", email);
         formData.append("phone", phone);
@@ -274,23 +295,25 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return address.trim().length > 0;
+        return street.trim().length > 0 && apartment.trim().length > 0 && postalCode.trim().length > 0 && city.trim().length > 0;
       case 2:
         return (
           squareMeters.length > 0 &&
           bedrooms.length > 0 &&
           bathrooms.length > 0 &&
-          propertyType.length > 0 &&
           buildingAge.length > 0 &&
           floor.length > 0 &&
           hasElevator.length > 0 &&
           hasGarage.length > 0 &&
           hasTerrace.length > 0 &&
+          hasStorageRoom.length > 0 &&
           condition.length > 0
         );
       case 3:
-        return true; // Photos are optional
+        return interestedInSelling !== null; // Debe responder si está interesado en vender
       case 4:
+        return true; // Photos are optional
+      case 5:
         return name.trim().length > 0 && email.trim().length > 0 && phone.trim().length > 0;
       default:
         return true;
@@ -350,15 +373,48 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                   <h3 className="text-2xl font-bold">¿Dónde está tu propiedad?</h3>
                   <p className="text-muted-foreground">Cuéntanos la dirección completa</p>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="address">Dirección completa</Label>
-                  <Input
-                    id="address"
-                    placeholder="Calle, número, piso, ciudad..."
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    className="text-lg p-6"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="street">📍 Calle y número</Label>
+                    <Input
+                      id="street"
+                      placeholder="Ej: Calle Gran Vía 28"
+                      value={street}
+                      onChange={(e) => setStreet(e.target.value)}
+                      className="text-lg p-6"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="apartment">🚪 Piso</Label>
+                    <Input
+                      id="apartment"
+                      placeholder="Ej: 3º A"
+                      value={apartment}
+                      onChange={(e) => setApartment(e.target.value)}
+                      className="text-lg p-6"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="postalCode">📮 Código postal</Label>
+                    <Input
+                      id="postalCode"
+                      placeholder="Ej: 28013"
+                      value={postalCode}
+                      onChange={(e) => setPostalCode(e.target.value)}
+                      className="text-lg p-6"
+                      maxLength={5}
+                    />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="city">🏙️ Población</Label>
+                    <Input
+                      id="city"
+                      placeholder="Ej: Madrid"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      className="text-lg p-6"
+                    />
+                  </div>
                 </div>
               </div>
             )}
@@ -451,34 +507,6 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                   </div>
                 </div>
 
-                {/* Tipo de propiedad */}
-                <div className="space-y-3">
-                  <Label className="text-base font-semibold">🏠 Tipo de vivienda</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { value: "piso", label: "Piso", icon: "🏢" },
-                      { value: "casa", label: "Casa", icon: "🏡" },
-                      { value: "atico", label: "Ático", icon: "🏙️" },
-                      { value: "duplex", label: "Dúplex", icon: "🏘️" },
-                    ].map((type) => (
-                      <button
-                        key={type.value}
-                        onClick={() => setPropertyType(type.value)}
-                        className={cn(
-                          "p-4 rounded-xl border-2 transition-all text-left",
-                          propertyType === type.value
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                        )}
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl">{type.icon}</span>
-                          <span className="font-semibold">{type.label}</span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
                 {/* Antigüedad */}
                 <div className="space-y-3">
@@ -511,17 +539,17 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                   <Label className="text-base font-semibold">🔢 Planta</Label>
                   <div className="grid grid-cols-3 gap-3">
                     {[
-                      { value: "bajo", label: "Bajo" },
-                      { value: "1-3", label: "1º-3º" },
-                      { value: "4-6", label: "4º-6º" },
-                      { value: "7+", label: "7º+" },
-                      { value: "atico-planta", label: "Ático" },
+                      { value: "1", label: "1ª" },
+                      { value: "2", label: "2ª" },
+                      { value: "3", label: "3ª" },
+                      { value: "mas-4", label: "Más de 4" },
+                      { value: "atico", label: "Ático" },
                     ].map((fl) => (
                       <button
                         key={fl.value}
                         onClick={() => setFloor(fl.value)}
                         className={cn(
-                          "p-3 rounded-xl border-2 transition-all font-medium text-sm",
+                          "p-4 rounded-xl border-2 transition-all font-medium",
                           floor === fl.value
                             ? "border-primary bg-primary/5"
                             : "border-border hover:border-primary/50"
@@ -606,6 +634,30 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                   </div>
                 </div>
 
+                {/* Trastero */}
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold">📦 ¿Tiene trastero?</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { value: "si", label: "✅ Sí" },
+                      { value: "no", label: "❌ No" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setHasStorageRoom(opt.value)}
+                        className={cn(
+                          "p-4 rounded-xl border-2 transition-all font-medium",
+                          hasStorageRoom === opt.value
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50"
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Estado de conservación */}
                 <div className="space-y-3">
                   <Label className="text-base font-semibold">✨ Estado de conservación</Label>
@@ -637,6 +689,107 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
             )}
 
             {step === 3 && (
+              <div className="space-y-8 animate-fade-in">
+                <div className="text-center space-y-2 mb-8">
+                  <h3 className="text-2xl font-bold">Cuéntanos sobre tus planes</h3>
+                  <p className="text-muted-foreground">Esto nos ayudará a ofrecerte un mejor servicio</p>
+                </div>
+
+                {/* ¿Interesado en vender? */}
+                <div className="space-y-4">
+                  <Label className="text-base font-semibold">🏡 ¿Estás interesado en vender tu casa?</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[
+                      { value: "si", label: "✅ Sí", desc: "Estoy interesado" },
+                      { value: "no", label: "❌ No", desc: "Solo quiero saber el precio" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => {
+                          setInterestedInSelling(opt.value);
+                          if (opt.value === "no") {
+                            setSellingTimeframe(null);
+                          }
+                        }}
+                        className={cn(
+                          "p-6 rounded-xl border-2 transition-all text-left",
+                          interestedInSelling === opt.value
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50"
+                        )}
+                      >
+                        <div className="space-y-1">
+                          <div className="font-semibold text-lg">{opt.label}</div>
+                          <div className="text-sm text-muted-foreground">{opt.desc}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Si está interesado, preguntar cuándo */}
+                {interestedInSelling === "si" && (
+                  <div className="space-y-4 animate-fade-in">
+                    <Label className="text-base font-semibold">📅 ¿En qué plazo?</Label>
+                    <div className="grid grid-cols-3 gap-3">
+                      {[
+                        { value: "corto", label: "Corto plazo", desc: "En 1-3 meses" },
+                        { value: "medio", label: "Medio plazo", desc: "En 3-6 meses" },
+                        { value: "largo", label: "Largo plazo", desc: "Más de 6 meses" },
+                      ].map((opt) => (
+                        <button
+                          key={opt.value}
+                          onClick={() => setSellingTimeframe(opt.value)}
+                          className={cn(
+                            "p-4 rounded-xl border-2 transition-all text-center",
+                            sellingTimeframe === opt.value
+                              ? "border-primary bg-primary/5"
+                              : "border-border hover:border-primary/50"
+                          )}
+                        >
+                          <div className="space-y-1">
+                            <div className="font-semibold">{opt.label}</div>
+                            <div className="text-xs text-muted-foreground">{opt.desc}</div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Pregunta adicional sobre especialista */}
+                <div className="space-y-4">
+                  <Label className="text-base font-semibold">💡 ¿Te interesaría que un especialista te informara?</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Un experto de tu zona puede informarte del precio de venta real del último piso similar al tuyo vendido en tu zona
+                  </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[
+                      { value: "si", label: "✅ Sí, me interesa", desc: "Quiero información detallada" },
+                      { value: "no", label: "❌ No, gracias", desc: "Prefiero solo la valoración" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setWantsSpecialistInfo(opt.value)}
+                        className={cn(
+                          "p-6 rounded-xl border-2 transition-all text-left",
+                          wantsSpecialistInfo === opt.value
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50"
+                        )}
+                      >
+                        <div className="space-y-1">
+                          <div className="font-semibold text-lg">{opt.label}</div>
+                          <div className="text-sm text-muted-foreground">{opt.desc}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {step === 4 && (
               <div className="space-y-6 animate-fade-in">
                 <div className="text-center space-y-2 mb-8">
                   <h3 className="text-2xl font-bold">Muéstranos tu propiedad</h3>
@@ -725,7 +878,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
               </div>
             )}
 
-            {step === 4 && (
+            {step === 5 && (
               <div className="space-y-6 animate-fade-in">
                 {!isLoading && (
                   <>
@@ -882,7 +1035,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
               </div>
             )}
 
-            {step === 5 && valuation && (
+            {step === 6 && valuation && (
               <div className="space-y-8 animate-fade-in">
                 <div className="text-center space-y-2 mb-8">
                   <h3 className="text-3xl font-bold">¡Tu informe está listo!</h3>

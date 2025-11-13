@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { ValuationModal } from "./ValuationModal";
 
 type PropertyType = "piso" | "casa" | "local" | "otros" | null;
-type Urgency = "alta" | "media" | "baja" | null;
+type Bedrooms = "1" | "2" | "3" | "4" | "5+" | null;
 
 const propertyTypes = [
   { id: "piso", label: "Piso", icon: Building2 },
@@ -16,15 +16,17 @@ const propertyTypes = [
   { id: "otros", label: "Otros", icon: HelpCircle },
 ];
 
-const urgencyLevels = [
-  { id: "alta", label: "Alta", color: "text-destructive" },
-  { id: "media", label: "Media", color: "text-accent" },
-  { id: "baja", label: "Baja", color: "text-muted-foreground" },
+const bedroomOptions = [
+  { id: "1", label: "1" },
+  { id: "2", label: "2" },
+  { id: "3", label: "3" },
+  { id: "4", label: "4" },
+  { id: "5+", label: "5+" },
 ];
 
 export const HeroWizard = () => {
   const [propertyType, setPropertyType] = useState<PropertyType>("piso");
-  const [urgency, setUrgency] = useState<Urgency>(null);
+  const [bedrooms, setBedrooms] = useState<Bedrooms>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleSubmit = () => {
@@ -65,23 +67,23 @@ export const HeroWizard = () => {
           </div>
         </div>
 
-        {/* Urgency Selection */}
+        {/* Bedrooms Selection */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Urgencia de venta</label>
-          <div className="grid grid-cols-3 gap-2">
-            {urgencyLevels.map((level) => (
+          <label className="text-sm font-medium">Número de habitaciones</label>
+          <div className="grid grid-cols-5 gap-2">
+            {bedroomOptions.map((option) => (
               <button
-                key={level.id}
-                onClick={() => setUrgency(level.id as Urgency)}
+                key={option.id}
+                onClick={() => setBedrooms(option.id as Bedrooms)}
                 className={cn(
                   "py-2.5 px-3 rounded-lg border-2 transition-all duration-300 text-sm font-medium",
                   "hover:border-primary/50 hover:shadow-card",
-                  urgency === level.id
+                  bedrooms === option.id
                     ? "border-primary bg-primary/5"
                     : "border-border bg-background"
                 )}
               >
-                {level.label}
+                {option.label}
               </button>
             ))}
           </div>

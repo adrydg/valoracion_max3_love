@@ -166,7 +166,13 @@ export async function POST(request: NextRequest) {
     const hasElevator = formData.get("hasElevator") as string;
     const hasGarage = formData.get("hasGarage") as string;
     const hasTerrace = formData.get("hasTerrace") as string;
+    const hasStorageRoom = formData.get("hasStorageRoom") as string;
     const condition = formData.get("condition") as string;
+
+    // Datos de intención de venta
+    const interestedInSelling = formData.get("interestedInSelling") as string;
+    const sellingTimeframe = formData.get("sellingTimeframe") as string;
+    const wantsSpecialistInfo = formData.get("wantsSpecialistInfo") as string;
 
     // Datos de contacto
     const name = formData.get("name") as string;
