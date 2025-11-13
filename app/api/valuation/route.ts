@@ -100,8 +100,10 @@ ${hasPhotos
 
 **DATOS COMPLETOS DE LA PROPIEDAD:**
 
-📍 **Ubicación:**
-- Dirección: ${address}
+📍 **Ubicación (MUY IMPORTANTE):**
+- Dirección completa: ${address}
+- IMPORTANTE: Identifica la ciudad, barrio o zona de esta dirección para valorar correctamente según el mercado inmobiliario de esa área específica en España
+- Usa la dirección para determinar: precios de mercado de la zona, demanda del barrio, servicios cercanos, transporte público
 
 📐 **Características físicas:**
 - Superficie: ${squareMeters} m²
@@ -200,7 +202,7 @@ ${hasPhotos
     "estado_general": "descripción breve del estado GLOBAL basado en lo visto en las fotos",
     "puntos_fuertes": ["punto 1 específico visto en las fotos", "punto 2", "punto 3"],
     "puntos_debiles": ["punto 1 específico visto en las fotos", "punto 2"],
-    "ubicacion_valoracion": "análisis de la ubicación si es posible inferirla"
+    "ubicacion_valoracion": "análisis ESPECÍFICO de la ubicación basándote en la dirección proporcionada (${address}). Menciona la ciudad/barrio, características de la zona, demanda inmobiliaria local, y cómo esto afecta al precio"
   },
   "recomendaciones": ["recomendación 1", "recomendación 2", "recomendación 3"],
   "tiempo_venta_estimado": "X-Y días"

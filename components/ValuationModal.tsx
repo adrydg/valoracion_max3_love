@@ -108,6 +108,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
 
   // Paso 2: Detalles de la propiedad (prerrellenado)
   const [squareMeters, setSquareMeters] = useState("85");
+  const [showCustomSquareMeters, setShowCustomSquareMeters] = useState(false);
   const [bedrooms, setBedrooms] = useState("3");
   const [bathrooms, setBathrooms] = useState("2");
   const [propertyType, setPropertyType] = useState("piso");
@@ -371,14 +372,41 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
 
                 {/* Metros cuadrados */}
                 <div className="space-y-3">
-                  <Label className="text-base font-semibold">📐 Metros cuadrados</Label>
-                  <Input
-                    type="number"
-                    placeholder="Ej: 85"
-                    value={squareMeters}
-                    onChange={(e) => setSquareMeters(e.target.value)}
-                    className="text-lg p-6"
-                  />
+                  <Label className="text-base font-semibold">📐 Metros cuadrados (aprox.)</Label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {["50", "70", "85", "95", "110", "Otro"].map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => {
+                          if (size === "Otro") {
+                            setShowCustomSquareMeters(true);
+                            setSquareMeters("");
+                          } else {
+                            setShowCustomSquareMeters(false);
+                            setSquareMeters(size);
+                          }
+                        }}
+                        className={cn(
+                          "p-4 rounded-xl border-2 transition-all font-semibold",
+                          (size === "Otro" ? showCustomSquareMeters : squareMeters === size)
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border hover:border-primary/50"
+                        )}
+                      >
+                        {size === "Otro" ? size : `${size}m²`}
+                      </button>
+                    ))}
+                  </div>
+                  {showCustomSquareMeters && (
+                    <Input
+                      type="number"
+                      placeholder="Introduce los m² exactos"
+                      value={squareMeters}
+                      onChange={(e) => setSquareMeters(e.target.value)}
+                      className="text-lg p-6 mt-3"
+                      autoFocus
+                    />
+                  )}
                 </div>
 
                 {/* Habitaciones */}
