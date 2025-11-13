@@ -103,7 +103,7 @@ All colors MUST be HSL.
     background-image: var(--gradient-cta);
     position: relative;
     overflow: hidden;
-    will-change: transform;
+    isolation: isolate;
   }
 
   .btn-cta-gradient::before {
@@ -117,6 +117,7 @@ All colors MUST be HSL.
     transition: opacity 0.3s ease, background-position 0.5s ease;
     border-radius: inherit;
     z-index: -1;
+    pointer-events: none;
   }
 
   .btn-cta-gradient:hover::before {

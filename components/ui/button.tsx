@@ -19,7 +19,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         premium: "bg-gradient-primary text-primary-foreground hover:shadow-hover hover:scale-[1.02] font-semibold",
         accent: "bg-accent text-accent-foreground hover:bg-accent/90 shadow-card hover:shadow-elegant font-semibold",
-        cta: "group btn-cta-gradient text-cta-foreground hover:shadow-hover hover:scale-105 font-semibold shadow-lg transition-all duration-300 disabled:pointer-events-auto disabled:opacity-90 [&_svg]:transition-transform [&_svg]:duration-300 hover:[&_svg]:translate-x-2 active:[&_svg]:translate-x-3 active:scale-95",
+        cta: "group relative btn-cta-gradient text-cta-foreground hover:shadow-hover hover:scale-[1.02] font-semibold shadow-lg transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 [&_svg]:transition-transform [&_svg]:duration-300 hover:[&_svg]:translate-x-1 active:scale-[0.98] cursor-pointer",
       },
       size: {
         default: "h-10 px-4 py-2",
