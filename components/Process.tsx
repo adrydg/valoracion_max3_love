@@ -24,9 +24,9 @@ const steps = [
 
 export const Process = () => {
   return (
-    <section className="py-20 px-4">
+    <section className="py-12 md:py-16 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16 space-y-4 animate-fade-in">
+        <div className="text-center mb-10 md:mb-12 space-y-4 animate-fade-in">
           <h2 className="text-3xl md:text-4xl font-bold">Nuestro proceso de venta</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Tres simples pasos que transforman la venta de tu propiedad en una experiencia fluida

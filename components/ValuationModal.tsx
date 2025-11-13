@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -89,7 +89,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
         {/* Header with Progress */}
         <div className="p-6 border-b space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">Valoración de tu propiedad</h2>
+            <DialogTitle className="text-2xl font-bold">Valoración de tu propiedad</DialogTitle>
           </div>
           <Progress value={progress} className="h-2" />
           

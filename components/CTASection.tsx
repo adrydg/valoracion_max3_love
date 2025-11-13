@@ -3,7 +3,7 @@ import { ArrowRight, Phone } from "lucide-react";
 
 export const CTASection = () => {
   return (
-    <section className="py-20 px-4">
+    <section className="py-12 md:py-16 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="relative overflow-hidden bg-gradient-hero rounded-2xl p-8 md:p-12 text-center space-y-6 shadow-elegant animate-fade-in">
           {/* Animated background effect */}

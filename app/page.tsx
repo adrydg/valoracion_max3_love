@@ -19,10 +19,10 @@ export default function Home() {
         {/* Background decoration */}
         <div className="absolute inset-0 bg-grid-pattern opacity-5" />
 
-        <div className="relative max-w-7xl mx-auto px-4 py-12 md:py-20">
+        <div className="relative max-w-7xl mx-auto px-4 py-8 md:py-12">
           <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Left Column - Commercial Info */}
-            <div className="space-y-6 md:space-y-8 animate-fade-in">
+            <div className="space-y-4 md:space-y-6 animate-fade-in">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20">
                 <Zap className="w-4 h-4 text-accent" />
                 <span className="text-sm font-medium">Venta en 30 días garantizada</span>

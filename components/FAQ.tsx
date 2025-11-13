@@ -36,7 +36,7 @@ export const FAQ = () => {
   return (
     <section className="py-12 md:py-16 bg-background">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-12 space-y-4">
+        <div className="text-center mb-8 md:mb-10 space-y-4">
           <h2 className="text-3xl md:text-4xl font-bold">
             Preguntas frecuentes
           </h2>

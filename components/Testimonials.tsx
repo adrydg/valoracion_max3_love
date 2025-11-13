@@ -27,9 +27,9 @@ const testimonials = [
 
 export const Testimonials = () => {
   return (
-    <section className="pt-12 pb-20 px-4 bg-secondary/30">
+    <section className="py-12 md:py-16 px-4 bg-secondary/30">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16 space-y-4 animate-fade-in">
+        <div className="text-center mb-10 md:mb-12 space-y-4 animate-fade-in">
           <h2 className="text-3xl md:text-4xl font-bold">Lo que dicen nuestros clientes</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Miles de propietarios han confiado en nosotros para vender sus propiedades

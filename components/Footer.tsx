@@ -3,7 +3,7 @@ import { Home, Mail, Phone, MapPin } from "lucide-react";
 export const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground">
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 py-8 md:py-10">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
@@ -93,7 +93,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-primary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/70">
+        <div className="mt-8 md:mt-10 pt-6 md:pt-8 border-t border-primary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/70">
           <p>&copy; 2024 PropTech. Todos los derechos reservados.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-accent transition-colors">
