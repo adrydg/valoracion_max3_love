@@ -117,28 +117,44 @@ Necesito que analices las fotos de esta propiedad y proporciones una tasación r
 - Exterior: ${terraceMap[hasTerrace] || hasTerrace}
 - Estado de conservación: ${conditionMap[condition] || condition}
 
-**INSTRUCCIONES:**
-1. Analiza cuidadosamente TODAS las fotos proporcionadas
-2. Evalúa el estado de la propiedad (conservación, acabados, iluminación)
-3. Identifica características positivas y negativas
-4. Considera la ubicación en España (si puedes inferir la ciudad/zona)
-5. Proporciona un rango de valoración realista en euros
+**INSTRUCCIONES CRÍTICAS:**
+1. Analiza cuidadosamente CADA UNA de las fotos proporcionadas de forma INDIVIDUAL
+2. Para CADA foto, describe ESPECÍFICAMENTE lo que ves en ella
+3. Para CADA foto, indica claramente:
+   - ¿Qué estancia o zona de la vivienda se muestra?
+   - ¿Qué elementos concretos puedes apreciar? (suelos, paredes, muebles, ventanas, etc.)
+   - ¿Qué estado tienen esos elementos? (nuevo, desgastado, limpio, sucio, etc.)
+   - ¿Qué NO has podido apreciar o verificar en esa foto?
+4. Evalúa el estado global de la propiedad basándote en lo que SÍ has visto
+5. Considera la ubicación en España (si puedes inferir la ciudad/zona)
+6. Proporciona un rango de valoración realista en euros
 
 **FORMATO DE RESPUESTA (JSON):**
 {
+  "analisis_fotos": [
+    {
+      "foto_numero": 1,
+      "estancia": "nombre de la estancia (ej: salón, cocina, dormitorio principal, baño, etc.)",
+      "descripcion_detallada": "Descripción específica de lo que ves en esta foto: elementos, colores, materiales, distribución",
+      "elementos_apreciados": ["elemento 1 visto", "elemento 2 visto", "elemento 3 visto"],
+      "estado_elementos": "Evaluación del estado de los elementos vistos en esta foto",
+      "elementos_no_apreciados": ["aspecto 1 que no se puede ver", "aspecto 2 que no se puede ver"],
+      "valoracion_particular": "Impresión sobre esta parte específica de la vivienda"
+    }
+  ],
   "valoracion_minima": número (en euros),
   "valoracion_maxima": número (en euros),
   "valoracion_media": número (en euros),
   "confianza": "alta" | "media" | "baja",
   "analisis": {
-    "estado_general": "descripción breve del estado",
-    "puntos_fuertes": ["punto 1", "punto 2", "punto 3"],
-    "puntos_debiles": ["punto 1", "punto 2"],
+    "estado_general": "descripción breve del estado GLOBAL basado en lo visto en las fotos",
+    "puntos_fuertes": ["punto 1 específico visto en las fotos", "punto 2", "punto 3"],
+    "puntos_debiles": ["punto 1 específico visto en las fotos", "punto 2"],
     "ubicacion_valoracion": "análisis de la ubicación si es posible inferirla"
   },
   "recomendaciones": ["recomendación 1", "recomendación 2", "recomendación 3"],
   "tiempo_venta_estimado": "X-Y días",
-  "mejoras_sugeridas": ["mejora 1", "mejora 2"]
+  "mejoras_sugeridas": ["mejora 1 basada en lo visto", "mejora 2"]
 }
 
 Responde ÚNICAMENTE con el JSON, sin texto adicional antes o después.`,
