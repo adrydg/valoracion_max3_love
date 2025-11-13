@@ -85,20 +85,18 @@ export async function POST(request: NextRequest) {
       photoIndex++;
     }
 
-    if (photos.length === 0) {
-      return NextResponse.json(
-        { error: "Se requiere al menos una foto" },
-        { status: 400 }
-      );
-    }
+    const hasPhotos = photos.length > 0;
 
-    // Construir el mensaje para Claude con visión
+    // Construir el mensaje para Claude
     const content: Anthropic.MessageCreateParams["content"] = [
       {
         type: "text",
         text: `Eres un tasador inmobiliario experto en España con más de 15 años de experiencia y acceso a datos actualizados del mercado inmobiliario español.
 
-Necesito que analices las fotos de esta propiedad y proporciones una tasación realista basada en los datos proporcionados y el análisis visual.
+${hasPhotos
+  ? 'Necesito que analices las fotos de esta propiedad y proporciones una tasación realista basada en los datos proporcionados y el análisis visual.'
+  : '⚠️ IMPORTANTE: No se han proporcionado fotos de la propiedad. Proporciona una tasación basada ÚNICAMENTE en los datos técnicos proporcionados. La valoración tendrá menor precisión sin inspección visual.'
+}
 
 **DATOS COMPLETOS DE LA PROPIEDAD:**
 
@@ -122,7 +120,8 @@ Necesito que analices las fotos de esta propiedad y proporciones una tasación r
 - Estado de conservación: ${conditionMap[condition] || condition}
 
 **INSTRUCCIONES CRÍTICAS:**
-1. Analiza cuidadosamente CADA UNA de las fotos proporcionadas de forma INDIVIDUAL
+${hasPhotos
+  ? `1. Analiza cuidadosamente CADA UNA de las fotos proporcionadas de forma INDIVIDUAL
 2. Para CADA foto, describe ESPECÍFICAMENTE lo que ves en ella
 3. Para CADA foto, indica claramente:
    - ¿Qué estancia o zona de la vivienda se muestra?
@@ -131,7 +130,15 @@ Necesito que analices las fotos de esta propiedad y proporciones una tasación r
    - ¿Qué NO has podido apreciar o verificar en esa foto?
 4. Evalúa el estado global de la propiedad basándote en lo que SÍ has visto
 5. Considera la ubicación en España (si puedes inferir la ciudad/zona)
-6. Proporciona un rango de valoración realista en euros
+6. Proporciona un rango de valoración realista en euros`
+  : `1. Proporciona una valoración basada en los datos técnicos y la ubicación
+2. NO intentes analizar fotos (no hay ninguna disponible)
+3. En "analisis_fotos" devuelve un array VACÍO: []
+4. En "mejoras_con_roi" devuelve un array VACÍO: [] (no se pueden recomendar mejoras sin inspección visual)
+5. Establece "confianza" como "baja" debido a la falta de inspección visual
+6. En "score_global", usa valores estimados basándote únicamente en los datos técnicos proporcionados
+7. Proporciona un rango de valoración MÁS AMPLIO debido a la incertidumbre`
+}
 
 **FORMATO DE RESPUESTA (JSON):**
 {
@@ -203,22 +210,24 @@ Responde ÚNICAMENTE con el JSON, sin texto adicional antes o después.`,
       },
     ];
 
-    // Agregar las imágenes al contenido
-    for (const photo of photos) {
-      // Extraer el base64 y el media_type
-      const match = photo.match(/data:([^;]+);base64,(.+)/);
-      if (match) {
-        const mediaType = match[1] as "image/jpeg" | "image/png" | "image/gif" | "image/webp";
-        const base64Data = match[2];
+    // Agregar las imágenes al contenido (solo si hay fotos)
+    if (hasPhotos) {
+      for (const photo of photos) {
+        // Extraer el base64 y el media_type
+        const match = photo.match(/data:([^;]+);base64,(.+)/);
+        if (match) {
+          const mediaType = match[1] as "image/jpeg" | "image/png" | "image/gif" | "image/webp";
+          const base64Data = match[2];
 
-        content.push({
-          type: "image",
-          source: {
-            type: "base64",
-            media_type: mediaType,
-            data: base64Data,
-          },
-        });
+          content.push({
+            type: "image",
+            source: {
+              type: "base64",
+              media_type: mediaType,
+              data: base64Data,
+            },
+          });
+        }
       }
     }
 

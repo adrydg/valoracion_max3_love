@@ -288,7 +288,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
           condition.length > 0
         );
       case 3:
-        return photos.length > 0;
+        return true; // Photos are optional
       case 4:
         return name.trim().length > 0 && email.trim().length > 0 && phone.trim().length > 0;
       default:
@@ -650,7 +650,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                   </Label>
                 </div>
 
-                {photos.length > 0 && (
+                {photos.length > 0 ? (
                   <div className="space-y-3">
                     <h4 className="font-semibold">Fotos subidas ({photos.length})</h4>
                     <div className="grid grid-cols-3 gap-4">
@@ -671,54 +671,81 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                       ))}
                     </div>
                   </div>
+                ) : (
+                  <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/20 border-2 border-amber-200 dark:border-amber-800">
+                    <div className="flex items-start gap-3">
+                      <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-amber-900 dark:text-amber-100 mb-1">
+                          📸 Fotos opcionales (recomendadas)
+                        </h4>
+                        <p className="text-sm text-amber-800 dark:text-amber-200">
+                          Puedes continuar sin fotos, pero ten en cuenta:
+                        </p>
+                        <ul className="mt-2 space-y-1 text-xs text-amber-700 dark:text-amber-300">
+                          <li>• La valoración será <strong>menos precisa</strong></li>
+                          <li>• No podremos analizar el estado visual del inmueble</li>
+                          <li>• No se podrán proporcionar <strong>mejoras recomendadas</strong></li>
+                          <li>• El score global tendrá menor confiabilidad</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
             )}
 
             {step === 4 && (
               <div className="space-y-6 animate-fade-in">
-                <div className="text-center space-y-2 mb-8">
-                  <h3 className="text-2xl font-bold">Datos de contacto</h3>
-                  <p className="text-muted-foreground">Para enviarte tu valoración personalizada</p>
-                </div>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nombre completo</Label>
-                    <Input
-                      id="name"
-                      placeholder="Tu nombre"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="text-lg p-6"
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="tu@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="text-lg p-6"
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Teléfono</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+34 600 000 000"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="text-lg p-6"
-                      disabled={isLoading}
-                    />
-                  </div>
+                {!isLoading && (
+                  <>
+                    <div className="text-center space-y-2 mb-8">
+                      <h3 className="text-2xl font-bold">Datos de contacto</h3>
+                      <p className="text-muted-foreground">Para enviarte tu valoración personalizada</p>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Nombre completo</Label>
+                        <Input
+                          id="name"
+                          placeholder="Tu nombre"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="text-lg p-6"
+                          disabled={isLoading}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="tu@email.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="text-lg p-6"
+                          disabled={isLoading}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Teléfono</Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          placeholder="+34 600 000 000"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="text-lg p-6"
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
 
-                  {isLoading && (
+                {isLoading && (
                     <div className="relative p-8 rounded-2xl bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-950/30 dark:via-purple-950/30 dark:to-pink-950/30 border-2 border-blue-200 dark:border-blue-800 overflow-hidden">
                       {/* Animated background gradient */}
                       <div className="absolute inset-0 opacity-30">
@@ -838,43 +865,53 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                 </div>
 
                 <div className="space-y-6">
-                  {/* Valoración principal */}
-                  <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20">
-                    <div className="text-center space-y-2">
-                      <p className="text-sm text-muted-foreground">Valoración estimada</p>
-                      <p className="text-4xl md:text-5xl font-bold text-primary">
-                        {valuation.valoracion_minima.toLocaleString()}€ -{" "}
-                        {valuation.valoracion_maxima.toLocaleString()}€
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Valor medio: {valuation.valoracion_media.toLocaleString()}€
-                      </p>
-                      <div className="mt-3">
-                        <span
-                          className={cn(
-                            "inline-block px-3 py-1 rounded-full text-xs font-medium",
-                            valuation.confianza === "alta"
-                              ? "bg-green-500/10 text-green-700 border border-green-500/20"
-                              : valuation.confianza === "media"
-                              ? "bg-yellow-500/10 text-yellow-700 border border-yellow-500/20"
-                              : "bg-orange-500/10 text-orange-700 border border-orange-500/20"
-                          )}
-                        >
-                          Confianza: {valuation.confianza}
-                        </span>
+                  {/* Valoración principal - Comparación */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Valoración actual */}
+                    <div className="p-6 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border-2 border-slate-200 dark:border-slate-700">
+                      <div className="text-center space-y-2">
+                        <p className="text-sm text-muted-foreground font-medium">Valoración Actual</p>
+                        <p className="text-3xl md:text-4xl font-bold text-primary">
+                          {valuation.valoracion_media.toLocaleString()}€
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Estado actual del inmueble
+                        </p>
                       </div>
                     </div>
+
+                    {/* Valoración con mejoras */}
+                    {valuation.mejoras_con_roi && valuation.mejoras_con_roi.length > 0 && (
+                      <div className="p-6 rounded-xl bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950 dark:to-emerald-900 border-2 border-green-300 dark:border-green-700">
+                        <div className="text-center space-y-2">
+                          <p className="text-sm text-green-700 dark:text-green-300 font-medium">Con Mejoras Recomendadas</p>
+                          <p className="text-3xl md:text-4xl font-bold text-green-700 dark:text-green-300">
+                            {(valuation.valoracion_media +
+                              valuation.mejoras_con_roi.reduce((sum, mejora) => sum + mejora.incremento_valor, 0)
+                            ).toLocaleString()}€
+                          </p>
+                          <p className="text-xs text-green-600 dark:text-green-400">
+                            +{valuation.mejoras_con_roi.reduce((sum, mejora) => sum + mejora.incremento_valor, 0).toLocaleString()}€ de potencial
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Score Global - Velocímetro */}
+                  {/* Score Global - Comparación de Velocímetros */}
                   {valuation.score_global && (
                     <div className="p-8 rounded-xl bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-gray-900 border-2 border-slate-200 dark:border-slate-700 shadow-xl">
                       <h4 className="font-bold text-xl mb-6 text-center text-slate-900 dark:text-slate-100">
-                        🎯 Score Global del Inmueble
+                        🎯 Comparación de Score
                       </h4>
 
-                      {/* Velocímetro visual */}
-                      <div className="relative w-full max-w-md mx-auto mb-6">
+                      {/* Dos velocímetros lado a lado */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                        {/* Velocímetro Actual */}
+                        <div className="relative w-full">
+                          <h5 className="font-semibold text-center text-slate-700 dark:text-slate-300 mb-4">
+                            Estado Actual
+                          </h5>
                         {/* SVG Gauge - Semicírculo perfecto */}
                         <svg viewBox="0 0 200 110" className="w-full" style={{ overflow: 'visible' }}>
                           {/* Arco de fondo (gris claro) */}
@@ -886,36 +923,36 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                             strokeLinecap="round"
                           />
 
-                          {/* Rojo 0-25 (cuarto 1) */}
+                          {/* Rojo 0-25 */}
                           <path
-                            d="M 30 100 A 70 70 0 0 1 65 45"
+                            d="M 30 100 A 70 70 0 0 1 50.5 50.5"
                             fill="none"
                             stroke="#ef4444"
                             strokeWidth="18"
                             strokeLinecap="round"
                           />
 
-                          {/* Naranja 25-50 (cuarto 2) */}
+                          {/* Naranja 25-50 */}
                           <path
-                            d="M 65 45 A 70 70 0 0 1 100 30"
+                            d="M 50.5 50.5 A 70 70 0 0 1 100 30"
                             fill="none"
                             stroke="#f97316"
                             strokeWidth="18"
                             strokeLinecap="round"
                           />
 
-                          {/* Verde claro 50-75 (cuarto 3) */}
+                          {/* Verde claro 50-75 */}
                           <path
-                            d="M 100 30 A 70 70 0 0 1 135 45"
+                            d="M 100 30 A 70 70 0 0 1 149.5 50.5"
                             fill="none"
                             stroke="#84cc16"
                             strokeWidth="18"
                             strokeLinecap="round"
                           />
 
-                          {/* Verde fuerte 75-100 (cuarto 4) */}
+                          {/* Verde fuerte 75-100 */}
                           <path
-                            d="M 135 45 A 70 70 0 0 1 170 100"
+                            d="M 149.5 50.5 A 70 70 0 0 1 170 100"
                             fill="none"
                             stroke="#22c55e"
                             strokeWidth="18"
@@ -1002,39 +1039,221 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                           </text>
                         </svg>
 
-                        {/* Etiquetas debajo del semicírculo */}
-                        <div className="flex justify-between text-xs font-medium text-slate-600 dark:text-slate-400 mt-1 px-4">
-                          <span>0</span>
-                          <span className="text-red-500">25</span>
-                          <span className="text-orange-500">50</span>
-                          <span className="text-lime-500">75</span>
-                          <span className="text-green-500">100</span>
+                          {/* Etiquetas debajo del semicírculo */}
+                          <div className="flex justify-between text-xs font-medium text-slate-600 dark:text-slate-400 mt-1 px-4">
+                            <span>0</span>
+                            <span className="text-red-500">25</span>
+                            <span className="text-orange-500">50</span>
+                            <span className="text-lime-500">75</span>
+                            <span className="text-green-500">100</span>
+                          </div>
+
+                          {/* Categoría */}
+                          <div className="text-center mt-4">
+                            <div
+                              className={cn(
+                                "inline-block px-4 py-2 rounded-full text-sm font-bold",
+                                valuation.score_global.puntuacion_total >= 75
+                                  ? "bg-green-100 text-green-800 border-2 border-green-600"
+                                  : valuation.score_global.puntuacion_total >= 50
+                                  ? "bg-lime-100 text-lime-800 border-2 border-lime-600"
+                                  : valuation.score_global.puntuacion_total >= 25
+                                  ? "bg-orange-100 text-orange-800 border-2 border-orange-600"
+                                  : "bg-red-100 text-red-800 border-2 border-red-600"
+                              )}
+                            >
+                              {valuation.score_global.categoria}
+                            </div>
+                          </div>
                         </div>
+
+                        {/* Velocímetro Con Mejoras */}
+                        {valuation.mejoras_con_roi && valuation.mejoras_con_roi.length > 0 && (() => {
+                          // Calcular score mejorado (estimación: +15-25 puntos con mejoras)
+                          const inversionTotal = valuation.mejoras_con_roi.reduce((sum, m) => sum + m.inversion_estimada, 0);
+                          const incrementoValor = valuation.mejoras_con_roi.reduce((sum, m) => sum + m.incremento_valor, 0);
+                          const roiPromedio = (incrementoValor / inversionTotal) * 100;
+                          const scoreBoost = Math.min(25, Math.floor(roiPromedio / 20)); // Máximo +25 puntos
+                          const improvedScore = Math.min(100, valuation.score_global.puntuacion_total + scoreBoost);
+
+                          return (
+                            <div className="relative w-full">
+                              <h5 className="font-semibold text-center text-green-700 dark:text-green-300 mb-4">
+                                Con Mejoras
+                              </h5>
+                              {/* SVG Gauge - Semicírculo perfecto */}
+                              <svg viewBox="0 0 200 110" className="w-full" style={{ overflow: 'visible' }}>
+                                {/* Arco de fondo (gris claro) */}
+                                <path
+                                  d="M 30 100 A 70 70 0 0 1 170 100"
+                                  fill="none"
+                                  stroke="#e5e7eb"
+                                  strokeWidth="18"
+                                  strokeLinecap="round"
+                                />
+
+                                {/* Rojo 0-25 */}
+                                <path
+                                  d="M 30 100 A 70 70 0 0 1 50.5 50.5"
+                                  fill="none"
+                                  stroke="#ef4444"
+                                  strokeWidth="18"
+                                  strokeLinecap="round"
+                                />
+
+                                {/* Naranja 25-50 */}
+                                <path
+                                  d="M 50.5 50.5 A 70 70 0 0 1 100 30"
+                                  fill="none"
+                                  stroke="#f97316"
+                                  strokeWidth="18"
+                                  strokeLinecap="round"
+                                />
+
+                                {/* Verde claro 50-75 */}
+                                <path
+                                  d="M 100 30 A 70 70 0 0 1 149.5 50.5"
+                                  fill="none"
+                                  stroke="#84cc16"
+                                  strokeWidth="18"
+                                  strokeLinecap="round"
+                                />
+
+                                {/* Verde fuerte 75-100 */}
+                                <path
+                                  d="M 149.5 50.5 A 70 70 0 0 1 170 100"
+                                  fill="none"
+                                  stroke="#22c55e"
+                                  strokeWidth="18"
+                                  strokeLinecap="round"
+                                />
+
+                                {/* Marcas en el arco */}
+                                {[0, 25, 50, 75, 100].map((mark) => {
+                                  const angle = (mark / 100) * Math.PI;
+                                  const x1 = 100 + 70 * Math.cos(Math.PI - angle);
+                                  const y1 = 100 - 70 * Math.sin(Math.PI - angle);
+                                  const x2 = 100 + 60 * Math.cos(Math.PI - angle);
+                                  const y2 = 100 - 60 * Math.sin(Math.PI - angle);
+                                  return (
+                                    <line
+                                      key={mark}
+                                      x1={x1}
+                                      y1={y1}
+                                      x2={x2}
+                                      y2={y2}
+                                      stroke="#94a3b8"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                    />
+                                  );
+                                })}
+
+                                {/* Aguja indicadora */}
+                                {(() => {
+                                  const angle = (improvedScore / 100) * Math.PI;
+                                  const needleLength = 60;
+                                  const x = 100 + needleLength * Math.cos(Math.PI - angle);
+                                  const y = 100 - needleLength * Math.sin(Math.PI - angle);
+
+                                  return (
+                                    <>
+                                      <line
+                                        x1="100"
+                                        y1="100"
+                                        x2={x + 2}
+                                        y2={y + 2}
+                                        stroke="rgba(0,0,0,0.2)"
+                                        strokeWidth="4"
+                                        strokeLinecap="round"
+                                      />
+                                      <line
+                                        x1="100"
+                                        y1="100"
+                                        x2={x}
+                                        y2={y}
+                                        stroke="#15803d"
+                                        strokeWidth="4"
+                                        strokeLinecap="round"
+                                      />
+                                    </>
+                                  );
+                                })()}
+
+                                {/* Centro de la aguja */}
+                                <circle cx="100" cy="100" r="6" fill="#15803d" />
+                                <circle cx="100" cy="100" r="3" fill="#86efac" />
+
+                                {/* Puntuación central */}
+                                <text
+                                  x="100"
+                                  y="90"
+                                  textAnchor="middle"
+                                  fontSize="32"
+                                  fontWeight="bold"
+                                  fill={
+                                    improvedScore >= 75 ? "#22c55e" :
+                                    improvedScore >= 50 ? "#84cc16" :
+                                    improvedScore >= 25 ? "#f97316" :
+                                    "#ef4444"
+                                  }
+                                >
+                                  {improvedScore}
+                                </text>
+                                <text x="100" y="100" textAnchor="middle" fontSize="10" fill="#64748b">
+                                  / 100
+                                </text>
+                              </svg>
+
+                              {/* Etiquetas */}
+                              <div className="flex justify-between text-xs font-medium text-slate-600 dark:text-slate-400 mt-1 px-4">
+                                <span>0</span>
+                                <span className="text-red-500">25</span>
+                                <span className="text-orange-500">50</span>
+                                <span className="text-lime-500">75</span>
+                                <span className="text-green-500">100</span>
+                              </div>
+
+                              {/* Mejora */}
+                              <div className="text-center mt-4">
+                                <div className="inline-block px-4 py-2 rounded-full text-sm font-bold bg-green-100 text-green-800 border-2 border-green-600">
+                                  +{scoreBoost} puntos
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
 
-                      {/* Categoría */}
-                      <div className="text-center mb-6">
-                        <div
-                          className={cn(
-                            "inline-block px-6 py-3 rounded-full text-lg font-bold",
-                            valuation.score_global.puntuacion_total >= 75
-                              ? "bg-green-100 text-green-800 border-2 border-green-600"
-                              : valuation.score_global.puntuacion_total >= 50
-                              ? "bg-lime-100 text-lime-800 border-2 border-lime-600"
-                              : valuation.score_global.puntuacion_total >= 25
-                              ? "bg-orange-100 text-orange-800 border-2 border-orange-600"
-                              : "bg-red-100 text-red-800 border-2 border-red-600"
-                          )}
-                        >
-                          {valuation.score_global.categoria}
+                      {/* Resumen de inversión */}
+                      {valuation.mejoras_con_roi && valuation.mejoras_con_roi.length > 0 && (
+                        <div className="mt-6 p-6 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-950/30 dark:to-green-950/30 rounded-xl border-2 border-blue-200 dark:border-blue-800">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                            <div>
+                              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Inversión Total</p>
+                              <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                                {valuation.mejoras_con_roi.reduce((sum, m) => sum + m.inversion_estimada, 0).toLocaleString()}€
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Incremento de Valor</p>
+                              <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                                +{valuation.mejoras_con_roi.reduce((sum, m) => sum + m.incremento_valor, 0).toLocaleString()}€
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">ROI Estimado</p>
+                              <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                                {Math.round((valuation.mejoras_con_roi.reduce((sum, m) => sum + m.incremento_valor, 0) /
+                                valuation.mejoras_con_roi.reduce((sum, m) => sum + m.inversion_estimada, 0)) * 100)}%
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
-                          {valuation.score_global.explicacion}
-                        </p>
-                      </div>
+                      )}
 
-                      {/* Desglose de puntuaciones */}
-                      <div className="grid grid-cols-2 gap-3">
+                      {/* Desglose simplificado de puntuaciones */}
+                      <div className="mt-8 grid grid-cols-2 gap-3">
                         <div className="p-3 bg-white dark:bg-slate-800 rounded-lg border">
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-xs text-slate-600 dark:text-slate-400">Estado físico</span>
