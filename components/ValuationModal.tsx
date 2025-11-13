@@ -148,14 +148,65 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
     if (step > 1) setStep(step - 1);
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = async (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d')!;
+
+          // Redimensionar si es muy grande (max 1920px de ancho)
+          let width = img.width;
+          let height = img.height;
+          const maxWidth = 1920;
+
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Comprimir a JPEG con calidad 0.8
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name, {
+                  type: 'image/jpeg',
+                  lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+              } else {
+                resolve(file);
+              }
+            },
+            'image/jpeg',
+            0.8
+          );
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      const newPhotos = Array.from(files).map(file => ({
-        file,
-        preview: URL.createObjectURL(file),
-      }));
-      setPhotos([...photos, ...newPhotos]);
+      const compressedPhotos = await Promise.all(
+        Array.from(files).map(async (file) => {
+          const compressedFile = await compressImage(file);
+          return {
+            file: compressedFile,
+            preview: URL.createObjectURL(compressedFile),
+          };
+        })
+      );
+      setPhotos([...photos, ...compressedPhotos]);
     }
   };
 
