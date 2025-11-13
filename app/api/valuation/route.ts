@@ -166,7 +166,7 @@ Responde ÚNICAMENTE con el JSON, sin texto adicional antes o después.`,
 
     // Llamar a la API de Anthropic con visión
     const message = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20240620",
+      model: "claude-3-5-sonnet-latest",
       max_tokens: 2048,
       messages: [
         {
