@@ -139,12 +139,51 @@ Necesito que analices las fotos de esta propiedad y proporciones una tasación r
       "elementos_apreciados": ["elemento 1 visto", "elemento 2 visto", "elemento 3 visto"],
       "estado_elementos": "Evaluación del estado de los elementos vistos en esta foto",
       "elementos_no_apreciados": ["aspecto 1 que no se puede ver", "aspecto 2 que no se puede ver"],
-      "valoracion_particular": "Impresión sobre esta parte específica de la vivienda"
+      "valoracion_particular": "Impresión sobre esta parte específica de la vivienda",
+      "puntuaciones": {
+        "limpieza": número 1-10 (estado de limpieza visible),
+        "luminosidad": número 1-10 (luz natural/artificial),
+        "estado_conservacion": número 1-10 (paredes, suelos, techos),
+        "calidad_acabados": número 1-10 (materiales, terminaciones),
+        "distribucion": número 1-10 (aprovechamiento espacio),
+        "modernidad": número 1-10 (actualización, estilo contemporáneo),
+        "atractivo_visual": número 1-10 (presentación para venta)
+      }
     }
   ],
+  "score_global": {
+    "puntuacion_total": número 0-100 (puntuación final del inmueble),
+    "desglose": {
+      "estado_fisico": número 0-100 (30% del total),
+      "presentacion": número 0-100 (25% del total),
+      "caracteristicas": número 0-100 (25% del total),
+      "ubicacion": número 0-100 (20% del total)
+    },
+    "categoria": "Excelente" | "Muy Bueno" | "Bueno" | "Necesita mejoras" | "Requiere reforma",
+    "explicacion": "Breve explicación de por qué tiene este score"
+  },
+  "mejoras_con_roi": [
+    {
+      "categoria": "Esencial" | "Recomendada" | "Opcional",
+      "mejora": "Descripción de la mejora (ej: Pintura completa del piso)",
+      "razon": "Por qué esta mejora es importante basado en las fotos",
+      "inversion_estimada": número en euros,
+      "incremento_valor": número en euros (cuánto más podrás vender),
+      "roi_porcentaje": número (retorno de inversión en %),
+      "impacto_velocidad_venta": "Alto" | "Medio" | "Bajo",
+      "tiempo_implementacion": "1-3 días" | "1 semana" | "2-4 semanas" | "1-2 meses"
+    }
+  ],
+  "resumen_roi": {
+    "inversion_total_recomendada": número en euros,
+    "incremento_valor_total": número en euros,
+    "roi_total_porcentaje": número,
+    "reduccion_tiempo_venta_estimada": "X días/semanas"
+  },
   "valoracion_minima": número (en euros),
   "valoracion_maxima": número (en euros),
   "valoracion_media": número (en euros),
+  "valoracion_con_mejoras": número (en euros, nuevo precio estimado tras mejoras),
   "confianza": "alta" | "media" | "baja",
   "analisis": {
     "estado_general": "descripción breve del estado GLOBAL basado en lo visto en las fotos",
@@ -153,8 +192,7 @@ Necesito que analices las fotos de esta propiedad y proporciones una tasación r
     "ubicacion_valoracion": "análisis de la ubicación si es posible inferirla"
   },
   "recomendaciones": ["recomendación 1", "recomendación 2", "recomendación 3"],
-  "tiempo_venta_estimado": "X-Y días",
-  "mejoras_sugeridas": ["mejora 1 basada en lo visto", "mejora 2"]
+  "tiempo_venta_estimado": "X-Y días"
 }
 
 Responde ÚNICAMENTE con el JSON, sin texto adicional antes o después.`,

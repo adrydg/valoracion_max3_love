@@ -15,6 +15,16 @@ interface ValuationModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
+interface PhotoScores {
+  limpieza: number;
+  luminosidad: number;
+  estado_conservacion: number;
+  calidad_acabados: number;
+  distribucion: number;
+  modernidad: number;
+  atractivo_visual: number;
+}
+
 interface PhotoAnalysis {
   foto_numero: number;
   estancia: string;
@@ -23,13 +33,48 @@ interface PhotoAnalysis {
   estado_elementos: string;
   elementos_no_apreciados: string[];
   valoracion_particular: string;
+  puntuaciones: PhotoScores;
+}
+
+interface ScoreGlobal {
+  puntuacion_total: number;
+  desglose: {
+    estado_fisico: number;
+    presentacion: number;
+    caracteristicas: number;
+    ubicacion: number;
+  };
+  categoria: "Excelente" | "Muy Bueno" | "Bueno" | "Necesita mejoras" | "Requiere reforma";
+  explicacion: string;
+}
+
+interface MejoraROI {
+  categoria: "Esencial" | "Recomendada" | "Opcional";
+  mejora: string;
+  razon: string;
+  inversion_estimada: number;
+  incremento_valor: number;
+  roi_porcentaje: number;
+  impacto_velocidad_venta: "Alto" | "Medio" | "Bajo";
+  tiempo_implementacion: string;
+}
+
+interface ResumenROI {
+  inversion_total_recomendada: number;
+  incremento_valor_total: number;
+  roi_total_porcentaje: number;
+  reduccion_tiempo_venta_estimada: string;
 }
 
 interface ValuationResponse {
   analisis_fotos?: PhotoAnalysis[];
+  score_global?: ScoreGlobal;
+  mejoras_con_roi?: MejoraROI[];
+  resumen_roi?: ResumenROI;
   valoracion_minima: number;
   valoracion_maxima: number;
   valoracion_media: number;
+  valoracion_con_mejoras?: number;
   confianza: "alta" | "media" | "baja";
   analisis: {
     estado_general: string;
@@ -39,7 +84,7 @@ interface ValuationResponse {
   };
   recomendaciones: string[];
   tiempo_venta_estimado: string;
-  mejoras_sugeridas: string[];
+  mejoras_sugeridas?: string[];
 }
 
 interface PhotoData {
@@ -729,6 +774,191 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                     </div>
                   </div>
 
+                  {/* Score Global - Velocímetro */}
+                  {valuation.score_global && (
+                    <div className="p-8 rounded-xl bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900 dark:to-gray-900 border-2 border-slate-200 dark:border-slate-700 shadow-xl">
+                      <h4 className="font-bold text-xl mb-6 text-center text-slate-900 dark:text-slate-100">
+                        🎯 Score Global del Inmueble
+                      </h4>
+
+                      {/* Velocímetro visual */}
+                      <div className="relative w-full max-w-md mx-auto mb-6">
+                        {/* SVG Gauge */}
+                        <svg viewBox="0 0 200 120" className="w-full">
+                          {/* Arco de fondo (completo) */}
+                          <path
+                            d="M 20 100 A 80 80 0 0 1 180 100"
+                            fill="none"
+                            stroke="#e5e7eb"
+                            strokeWidth="20"
+                            strokeLinecap="round"
+                          />
+                          {/* Arcos de colores */}
+                          {/* Rojo 0-25 */}
+                          <path
+                            d="M 20 100 A 80 80 0 0 1 60 40"
+                            fill="none"
+                            stroke="#ef4444"
+                            strokeWidth="20"
+                            strokeLinecap="round"
+                          />
+                          {/* Naranja 25-50 */}
+                          <path
+                            d="M 60 40 A 80 80 0 0 1 100 20"
+                            fill="none"
+                            stroke="#f97316"
+                            strokeWidth="20"
+                            strokeLinecap="round"
+                          />
+                          {/* Verde claro 50-75 */}
+                          <path
+                            d="M 100 20 A 80 80 0 0 1 140 40"
+                            fill="none"
+                            stroke="#84cc16"
+                            strokeWidth="20"
+                            strokeLinecap="round"
+                          />
+                          {/* Verde fuerte 75-100 */}
+                          <path
+                            d="M 140 40 A 80 80 0 0 1 180 100"
+                            fill="none"
+                            stroke="#22c55e"
+                            strokeWidth="20"
+                            strokeLinecap="round"
+                          />
+
+                          {/* Aguja indicadora */}
+                          <line
+                            x1="100"
+                            y1="100"
+                            x2={100 + 70 * Math.cos((Math.PI * (valuation.score_global.puntuacion_total / 100 * 180 + 180)) / 180)}
+                            y2={100 - 70 * Math.sin((Math.PI * (valuation.score_global.puntuacion_total / 100 * 180 + 180)) / 180)}
+                            stroke="#1f2937"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                          />
+                          <circle cx="100" cy="100" r="8" fill="#1f2937" />
+
+                          {/* Puntuación central */}
+                          <text
+                            x="100"
+                            y="95"
+                            textAnchor="middle"
+                            className="text-4xl font-bold"
+                            fill={
+                              valuation.score_global.puntuacion_total >= 75 ? "#22c55e" :
+                              valuation.score_global.puntuacion_total >= 50 ? "#84cc16" :
+                              valuation.score_global.puntuacion_total >= 25 ? "#f97316" :
+                              "#ef4444"
+                            }
+                          >
+                            {valuation.score_global.puntuacion_total}
+                          </text>
+                          <text x="100" y="110" textAnchor="middle" className="text-xs" fill="#64748b">
+                            / 100
+                          </text>
+                        </svg>
+
+                        {/* Etiquetas */}
+                        <div className="flex justify-between text-xs text-slate-600 dark:text-slate-400 mt-2 px-2">
+                          <span>0</span>
+                          <span>25</span>
+                          <span>50</span>
+                          <span>75</span>
+                          <span>100</span>
+                        </div>
+                      </div>
+
+                      {/* Categoría */}
+                      <div className="text-center mb-6">
+                        <div
+                          className={cn(
+                            "inline-block px-6 py-3 rounded-full text-lg font-bold",
+                            valuation.score_global.puntuacion_total >= 75
+                              ? "bg-green-100 text-green-800 border-2 border-green-600"
+                              : valuation.score_global.puntuacion_total >= 50
+                              ? "bg-lime-100 text-lime-800 border-2 border-lime-600"
+                              : valuation.score_global.puntuacion_total >= 25
+                              ? "bg-orange-100 text-orange-800 border-2 border-orange-600"
+                              : "bg-red-100 text-red-800 border-2 border-red-600"
+                          )}
+                        >
+                          {valuation.score_global.categoria}
+                        </div>
+                        <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
+                          {valuation.score_global.explicacion}
+                        </p>
+                      </div>
+
+                      {/* Desglose de puntuaciones */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="p-3 bg-white dark:bg-slate-800 rounded-lg border">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs text-slate-600 dark:text-slate-400">Estado físico</span>
+                            <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                              {valuation.score_global.desglose.estado_fisico}/100
+                            </span>
+                          </div>
+                          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                            <div
+                              className="bg-blue-600 h-2 rounded-full transition-all"
+                              style={{ width: `${valuation.score_global.desglose.estado_fisico}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs text-slate-500">30% del total</span>
+                        </div>
+
+                        <div className="p-3 bg-white dark:bg-slate-800 rounded-lg border">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs text-slate-600 dark:text-slate-400">Presentación</span>
+                            <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                              {valuation.score_global.desglose.presentacion}/100
+                            </span>
+                          </div>
+                          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                            <div
+                              className="bg-purple-600 h-2 rounded-full transition-all"
+                              style={{ width: `${valuation.score_global.desglose.presentacion}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs text-slate-500">25% del total</span>
+                        </div>
+
+                        <div className="p-3 bg-white dark:bg-slate-800 rounded-lg border">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs text-slate-600 dark:text-slate-400">Características</span>
+                            <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                              {valuation.score_global.desglose.caracteristicas}/100
+                            </span>
+                          </div>
+                          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                            <div
+                              className="bg-amber-600 h-2 rounded-full transition-all"
+                              style={{ width: `${valuation.score_global.desglose.caracteristicas}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs text-slate-500">25% del total</span>
+                        </div>
+
+                        <div className="p-3 bg-white dark:bg-slate-800 rounded-lg border">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs text-slate-600 dark:text-slate-400">Ubicación</span>
+                            <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                              {valuation.score_global.desglose.ubicacion}/100
+                            </span>
+                          </div>
+                          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                            <div
+                              className="bg-green-600 h-2 rounded-full transition-all"
+                              style={{ width: `${valuation.score_global.desglose.ubicacion}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs text-slate-500">20% del total</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Análisis detallado de fotos */}
                   {valuation.analisis_fotos && valuation.analisis_fotos.length > 0 && (
                     <div className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200 dark:border-blue-800">
@@ -826,6 +1056,39 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                                   "{fotoAnalisis.valoracion_particular}"
                                 </p>
                               </div>
+
+                              {/* Tabla de puntuaciones */}
+                              {fotoAnalisis.puntuaciones && (
+                                <div className="pt-3 border-t border-blue-100 dark:border-blue-900">
+                                  <p className="text-xs font-semibold text-blue-800 dark:text-blue-200 mb-2">
+                                    📊 Puntuaciones detalladas (escala 1-10):
+                                  </p>
+                                  <div className="grid grid-cols-2 gap-2 text-xs">
+                                    {Object.entries(fotoAnalisis.puntuaciones).map(([key, value]) => {
+                                      const labels: Record<string, string> = {
+                                        limpieza: "Limpieza",
+                                        luminosidad: "Luminosidad",
+                                        estado_conservacion: "Conservación",
+                                        calidad_acabados: "Acabados",
+                                        distribucion: "Distribución",
+                                        modernidad: "Modernidad",
+                                        atractivo_visual: "Atractivo"
+                                      };
+                                      const score = value as number;
+                                      const color = score >= 8 ? "text-green-700 dark:text-green-400" :
+                                                   score >= 6 ? "text-blue-700 dark:text-blue-400" :
+                                                   score >= 4 ? "text-orange-700 dark:text-orange-400" :
+                                                   "text-red-700 dark:text-red-400";
+                                      return (
+                                        <div key={key} className="flex items-center justify-between p-2 rounded bg-gray-50 dark:bg-gray-800">
+                                          <span className="text-gray-600 dark:text-gray-400">{labels[key]}</span>
+                                          <span className={cn("font-bold", color)}>{score}/10</span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </div>
                         ))}
@@ -888,6 +1151,173 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                       {valuation.tiempo_venta_estimado}
                     </p>
                   </div>
+
+                  {/* Análisis de ROI - Mejoras con retorno de inversión */}
+                  {valuation.mejoras_con_roi && valuation.mejoras_con_roi.length > 0 && (
+                    <div className="p-8 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 border-2 border-emerald-200 dark:border-emerald-800">
+                      <h4 className="font-bold text-2xl mb-2 text-emerald-900 dark:text-emerald-100">
+                        💰 Plan de Mejoras con Retorno de Inversión
+                      </h4>
+                      <p className="text-sm text-emerald-700 dark:text-emerald-300 mb-6">
+                        Basado en el análisis de las fotos, estas mejoras pueden aumentar el valor de tu propiedad significativamente.
+                      </p>
+
+                      {/* Resumen ROI */}
+                      {valuation.resumen_roi && (
+                        <div className="grid md:grid-cols-4 gap-4 mb-6 p-5 bg-white dark:bg-gray-900 rounded-lg border-2 border-emerald-300 dark:border-emerald-700">
+                          <div className="text-center">
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Inversión Total</p>
+                            <p className="text-2xl font-bold text-red-600">
+                              {valuation.resumen_roi.inversion_total_recomendada.toLocaleString()}€
+                            </p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Incremento de Valor</p>
+                            <p className="text-2xl font-bold text-green-600">
+                              +{valuation.resumen_roi.incremento_valor_total.toLocaleString()}€
+                            </p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">ROI Total</p>
+                            <p className="text-2xl font-bold text-blue-600">
+                              {valuation.resumen_roi.roi_total_porcentaje}%
+                            </p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Reducción Tiempo Venta</p>
+                            <p className="text-lg font-bold text-purple-600">
+                              {valuation.resumen_roi.reduccion_tiempo_venta_estimada}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Precio con mejoras */}
+                      {valuation.valoracion_con_mejoras && (
+                        <div className="mb-6 p-4 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-lg border border-green-300 dark:border-green-700">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm text-green-800 dark:text-green-300">Valoración actual</p>
+                              <p className="text-xl font-bold text-green-900 dark:text-green-100">
+                                {valuation.valoracion_media.toLocaleString()}€
+                              </p>
+                            </div>
+                            <div className="text-3xl">→</div>
+                            <div className="text-right">
+                              <p className="text-sm text-green-800 dark:text-green-300">Con mejoras aplicadas</p>
+                              <p className="text-2xl font-bold text-green-600">
+                                {valuation.valoracion_con_mejoras.toLocaleString()}€
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Tabla de mejoras */}
+                      <div className="space-y-4">
+                        {valuation.mejoras_con_roi.map((mejora, index) => (
+                          <div
+                            key={index}
+                            className={cn(
+                              "p-5 rounded-lg border-2 bg-white dark:bg-gray-900",
+                              mejora.categoria === "Esencial"
+                                ? "border-red-300 dark:border-red-700"
+                                : mejora.categoria === "Recomendada"
+                                ? "border-amber-300 dark:border-amber-700"
+                                : "border-blue-300 dark:border-blue-700"
+                            )}
+                          >
+                            {/* Header de la mejora */}
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <span
+                                    className={cn(
+                                      "text-xs font-bold px-3 py-1 rounded-full",
+                                      mejora.categoria === "Esencial"
+                                        ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200"
+                                        : mejora.categoria === "Recomendada"
+                                        ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200"
+                                        : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200"
+                                    )}
+                                  >
+                                    {mejora.categoria}
+                                  </span>
+                                  <span
+                                    className={cn(
+                                      "text-xs font-semibold px-2 py-1 rounded",
+                                      mejora.impacto_velocidad_venta === "Alto"
+                                        ? "bg-green-100 text-green-800"
+                                        : mejora.impacto_velocidad_venta === "Medio"
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : "bg-gray-100 text-gray-800"
+                                    )}
+                                  >
+                                    Impacto: {mejora.impacto_velocidad_venta}
+                                  </span>
+                                </div>
+                                <h5 className="font-bold text-lg text-gray-900 dark:text-gray-100 mb-2">
+                                  {mejora.mejora}
+                                </h5>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                  {mejora.razon}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Métricas de la mejora */}
+                            <div className="grid grid-cols-4 gap-3">
+                              <div className="text-center p-3 bg-red-50 dark:bg-red-900/20 rounded">
+                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Inversión</p>
+                                <p className="text-lg font-bold text-red-600">
+                                  {mejora.inversion_estimada.toLocaleString()}€
+                                </p>
+                              </div>
+                              <div className="text-center p-3 bg-green-50 dark:bg-green-900/20 rounded">
+                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Incremento</p>
+                                <p className="text-lg font-bold text-green-600">
+                                  +{mejora.incremento_valor.toLocaleString()}€
+                                </p>
+                              </div>
+                              <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded">
+                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">ROI</p>
+                                <p className="text-lg font-bold text-blue-600">
+                                  {mejora.roi_porcentaje}%
+                                </p>
+                              </div>
+                              <div className="text-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded">
+                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Tiempo</p>
+                                <p className="text-xs font-semibold text-purple-600">
+                                  {mejora.tiempo_implementacion}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Cálculo visual del beneficio */}
+                            <div className="mt-3 p-3 bg-gradient-to-r from-gray-50 to-green-50 dark:from-gray-800 dark:to-green-900/30 rounded border border-gray-200 dark:border-gray-700">
+                              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Beneficio neto:</p>
+                              <p className="text-xl font-bold text-green-700 dark:text-green-400">
+                                +{(mejora.incremento_valor - mejora.inversion_estimada).toLocaleString()}€
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Por cada euro invertido, ganas{" "}
+                                <span className="font-bold text-green-600">
+                                  {(mejora.incremento_valor / mejora.inversion_estimada).toFixed(2)}€
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Nota final */}
+                      <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <p className="text-sm text-blue-800 dark:text-blue-200">
+                          <strong>💡 Consejo profesional:</strong> Implementar las mejoras "Esenciales" y "Recomendadas" puede reducir significativamente el tiempo en el mercado y aumentar las ofertas recibidas.
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Recomendaciones */}
                   <div className="p-6 rounded-xl bg-card border">
