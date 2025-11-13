@@ -719,11 +719,103 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                   </div>
 
                   {isLoading && (
-                    <div className="flex items-center justify-center gap-3 p-6 rounded-xl bg-accent/10 border border-accent/20">
-                      <Loader2 className="w-5 h-5 animate-spin text-accent" />
-                      <p className="text-sm font-medium">
-                        Analizando tu propiedad con inteligencia artificial...
-                      </p>
+                    <div className="relative p-8 rounded-2xl bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-950/30 dark:via-purple-950/30 dark:to-pink-950/30 border-2 border-blue-200 dark:border-blue-800 overflow-hidden">
+                      {/* Animated background gradient */}
+                      <div className="absolute inset-0 opacity-30">
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 animate-pulse"></div>
+                      </div>
+
+                      <div className="relative z-10 space-y-6">
+                        {/* Header */}
+                        <div className="text-center space-y-2">
+                          <div className="inline-block relative">
+                            {/* Scanning circle animation */}
+                            <div className="w-20 h-20 mx-auto mb-4 relative">
+                              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 animate-spin"></div>
+                              <div className="absolute inset-1 rounded-full bg-white dark:bg-gray-900 flex items-center justify-center">
+                                <svg className="w-10 h-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                              </div>
+                              {/* Pulse rings */}
+                              <div className="absolute inset-0 rounded-full bg-blue-500 opacity-20 animate-ping"></div>
+                              <div className="absolute inset-0 rounded-full bg-purple-500 opacity-20 animate-ping" style={{ animationDelay: '0.5s' }}></div>
+                            </div>
+                          </div>
+                          <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            Analizando tu propiedad
+                          </h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Nuestro sistema de IA está procesando las fotos y datos...
+                          </p>
+                        </div>
+
+                        {/* Analysis steps */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-3 p-3 rounded-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur">
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+                              <svg className="w-4 h-4 text-white animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Analizando fotos</p>
+                              <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
+                                <div className="h-full bg-gradient-to-r from-blue-500 to-blue-600 animate-progress"></div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 p-3 rounded-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur" style={{ animationDelay: '0.3s' }}>
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center">
+                              <svg className="w-4 h-4 text-white animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Calculando valoración</p>
+                              <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
+                                <div className="h-full bg-gradient-to-r from-purple-500 to-purple-600 animate-progress" style={{ animationDelay: '0.2s' }}></div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 p-3 rounded-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur" style={{ animationDelay: '0.6s' }}>
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center">
+                              <svg className="w-4 h-4 text-white animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Generando recomendaciones</p>
+                              <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
+                                <div className="h-full bg-gradient-to-r from-pink-500 to-pink-600 animate-progress" style={{ animationDelay: '0.4s' }}></div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 p-3 rounded-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur" style={{ animationDelay: '0.9s' }}>
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                              <svg className="w-4 h-4 text-white animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Calculando ROI de mejoras</p>
+                              <div className="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
+                                <div className="h-full bg-gradient-to-r from-green-500 to-green-600 animate-progress" style={{ animationDelay: '0.6s' }}></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Footer message */}
+                        <div className="text-center pt-2">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 animate-pulse">
+                            ⚡ Esto puede tomar entre 5-15 segundos...
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   )}
 
@@ -1330,7 +1422,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                   </div>
 
                   {/* Mejoras sugeridas */}
-                  {valuation.mejoras_sugeridas.length > 0 && (
+                  {valuation.mejoras_sugeridas && valuation.mejoras_sugeridas.length > 0 && (
                     <div className="p-6 rounded-xl bg-primary/5 border border-primary/20">
                       <h4 className="font-semibold mb-3">🔧 Mejoras sugeridas</h4>
                       <ul className="space-y-2 text-sm text-muted-foreground">
