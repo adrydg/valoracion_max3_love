@@ -165,8 +165,9 @@ Responde ÚNICAMENTE con el JSON, sin texto adicional antes o después.`,
     }
 
     // Llamar a la API de Anthropic con visión
+    // Usando claude-3-haiku-20240307 (modelo disponible en la cuenta)
     const message = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-latest",
+      model: "claude-3-haiku-20240307",
       max_tokens: 2048,
       messages: [
         {
