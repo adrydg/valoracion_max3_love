@@ -295,22 +295,24 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return street.trim().length > 0 && apartment.trim().length > 0 && postalCode.trim().length > 0 && city.trim().length > 0;
+        return (
+          street.trim().length > 0 &&
+          apartment.trim().length > 0 &&
+          postalCode.trim().length > 0 &&
+          city.trim().length > 0 &&
+          hasElevator.length > 0 &&
+          hasGarage.length > 0 &&
+          hasStorageRoom.length > 0
+        );
       case 2:
         return (
           squareMeters.length > 0 &&
-          bedrooms.length > 0 &&
           bathrooms.length > 0 &&
           buildingAge.length > 0 &&
-          floor.length > 0 &&
-          hasElevator.length > 0 &&
-          hasGarage.length > 0 &&
-          hasTerrace.length > 0 &&
-          hasStorageRoom.length > 0 &&
-          condition.length > 0
+          floor.length > 0
         );
       case 3:
-        return interestedInSelling !== null; // Debe responder si está interesado en vender
+        return condition.length > 0 && interestedInSelling !== null;
       case 4:
         return true; // Photos are optional
       case 5:
@@ -373,8 +375,8 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                   <h3 className="text-2xl font-bold">¿Dónde está tu propiedad?</h3>
                   <p className="text-muted-foreground">Cuéntanos la dirección completa</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2 md:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2 md:col-span-3">
                     <Label htmlFor="street">📍 Calle y número</Label>
                     <Input
                       id="street"
@@ -405,7 +407,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                       maxLength={5}
                     />
                   </div>
-                  <div className="space-y-2 md:col-span-2">
+                  <div className="space-y-2">
                     <Label htmlFor="city">🏙️ Población</Label>
                     <Input
                       id="city"
@@ -414,6 +416,81 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                       onChange={(e) => setCity(e.target.value)}
                       className="text-lg p-6"
                     />
+                  </div>
+                </div>
+
+                {/* Características adicionales */}
+                <div className="space-y-4 mt-6">
+                  {/* Ascensor */}
+                  <div className="space-y-3">
+                    <Label className="text-base font-semibold">🛗 ¿Tiene ascensor?</Label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { value: "si", label: "✅ Sí" },
+                        { value: "no", label: "❌ No" },
+                      ].map((opt) => (
+                        <button
+                          key={opt.value}
+                          onClick={() => setHasElevator(opt.value)}
+                          className={cn(
+                            "p-4 rounded-xl border-2 transition-all font-medium",
+                            hasElevator === opt.value
+                              ? "border-primary bg-primary/5"
+                              : "border-border hover:border-primary/50"
+                          )}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Garaje */}
+                  <div className="space-y-3">
+                    <Label className="text-base font-semibold">🚗 ¿Incluye garaje?</Label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { value: "si", label: "✅ Sí" },
+                        { value: "no", label: "❌ No" },
+                      ].map((opt) => (
+                        <button
+                          key={opt.value}
+                          onClick={() => setHasGarage(opt.value)}
+                          className={cn(
+                            "p-4 rounded-xl border-2 transition-all font-medium",
+                            hasGarage === opt.value
+                              ? "border-primary bg-primary/5"
+                              : "border-border hover:border-primary/50"
+                          )}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Trastero */}
+                  <div className="space-y-3">
+                    <Label className="text-base font-semibold">📦 ¿Tiene trastero?</Label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { value: "si", label: "✅ Sí" },
+                        { value: "no", label: "❌ No" },
+                      ].map((opt) => (
+                        <button
+                          key={opt.value}
+                          onClick={() => setHasStorageRoom(opt.value)}
+                          className={cn(
+                            "p-4 rounded-xl border-2 transition-all font-medium",
+                            hasStorageRoom === opt.value
+                              ? "border-primary bg-primary/5"
+                              : "border-border hover:border-primary/50"
+                          )}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -429,7 +506,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                 {/* Metros cuadrados */}
                 <div className="space-y-3">
                   <Label className="text-base font-semibold">📐 Metros cuadrados (aprox.)</Label>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="flex flex-wrap gap-2 justify-center">
                     {["50", "70", "85", "95", "110", "Otro"].map((size) => (
                       <button
                         key={size}
@@ -443,7 +520,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                           }
                         }}
                         className={cn(
-                          "p-4 rounded-xl border-2 transition-all font-semibold",
+                          "py-2 px-4 rounded-full border-2 transition-all font-semibold",
                           (size === "Otro" ? showCustomSquareMeters : squareMeters === size)
                             ? "border-primary bg-primary text-primary-foreground"
                             : "border-border hover:border-primary/50"
@@ -465,38 +542,17 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                   )}
                 </div>
 
-                {/* Habitaciones */}
-                <div className="space-y-3">
-                  <Label className="text-base font-semibold">🛏️ Habitaciones</Label>
-                  <div className="grid grid-cols-6 gap-2">
-                    {["1", "2", "3", "4", "5", "5+"].map((num) => (
-                      <button
-                        key={num}
-                        onClick={() => setBedrooms(num === "5+" ? "6" : num)}
-                        className={cn(
-                          "p-4 rounded-xl border-2 transition-all font-semibold",
-                          bedrooms === (num === "5+" ? "6" : num)
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-border hover:border-primary/50"
-                        )}
-                      >
-                        {num}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Baños */}
                 <div className="space-y-3">
                   <Label className="text-base font-semibold">🚿 Baños</Label>
-                  <div className="grid grid-cols-4 gap-3">
-                    {["1", "2", "3", "3+"].map((num) => (
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {["1", "2", "3", "3 o más"].map((num) => (
                       <button
                         key={num}
-                        onClick={() => setBathrooms(num === "3+" ? "4" : num)}
+                        onClick={() => setBathrooms(num === "3 o más" ? "4" : num)}
                         className={cn(
-                          "p-4 rounded-xl border-2 transition-all font-semibold",
-                          bathrooms === (num === "3+" ? "4" : num)
+                          "py-2 px-4 rounded-full border-2 transition-all font-semibold",
+                          bathrooms === (num === "3 o más" ? "4" : num)
                             ? "border-primary bg-primary text-primary-foreground"
                             : "border-border hover:border-primary/50"
                         )}
@@ -506,12 +562,11 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                     ))}
                   </div>
                 </div>
-
 
                 {/* Antigüedad */}
                 <div className="space-y-3">
                   <Label className="text-base font-semibold">📅 Antigüedad del edificio</Label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-wrap gap-2 justify-center">
                     {[
                       { value: "nuevo", label: "Obra nueva" },
                       { value: "<10", label: "< 10 años" },
@@ -522,9 +577,9 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                         key={age.value}
                         onClick={() => setBuildingAge(age.value)}
                         className={cn(
-                          "p-4 rounded-xl border-2 transition-all font-medium",
+                          "py-2 px-4 rounded-full border-2 transition-all font-medium",
                           buildingAge === age.value
-                            ? "border-primary bg-primary/5"
+                            ? "border-primary bg-primary text-primary-foreground"
                             : "border-border hover:border-primary/50"
                         )}
                       >
@@ -537,7 +592,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                 {/* Planta */}
                 <div className="space-y-3">
                   <Label className="text-base font-semibold">🔢 Planta</Label>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="flex flex-wrap gap-2 justify-center">
                     {[
                       { value: "1", label: "1ª" },
                       { value: "2", label: "2ª" },
@@ -549,9 +604,9 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                         key={fl.value}
                         onClick={() => setFloor(fl.value)}
                         className={cn(
-                          "p-4 rounded-xl border-2 transition-all font-medium",
+                          "py-2 px-4 rounded-full border-2 transition-all font-medium",
                           floor === fl.value
-                            ? "border-primary bg-primary/5"
+                            ? "border-primary bg-primary text-primary-foreground"
                             : "border-border hover:border-primary/50"
                         )}
                       >
@@ -561,101 +616,14 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                   </div>
                 </div>
 
-                {/* Ascensor */}
-                <div className="space-y-3">
-                  <Label className="text-base font-semibold">🛗 ¿Tiene ascensor?</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { value: "si", label: "✅ Sí", icon: "🛗" },
-                      { value: "no", label: "❌ No", icon: "🚫" },
-                    ].map((opt) => (
-                      <button
-                        key={opt.value}
-                        onClick={() => setHasElevator(opt.value)}
-                        className={cn(
-                          "p-4 rounded-xl border-2 transition-all font-medium",
-                          hasElevator === opt.value
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                        )}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+              </div>
+            )}
 
-                {/* Garaje */}
-                <div className="space-y-3">
-                  <Label className="text-base font-semibold">🚗 ¿Incluye garaje?</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { value: "si", label: "✅ Sí" },
-                      { value: "no", label: "❌ No" },
-                    ].map((opt) => (
-                      <button
-                        key={opt.value}
-                        onClick={() => setHasGarage(opt.value)}
-                        className={cn(
-                          "p-4 rounded-xl border-2 transition-all font-medium",
-                          hasGarage === opt.value
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                        )}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Terraza/Balcón */}
-                <div className="space-y-3">
-                  <Label className="text-base font-semibold">🌿 Exterior</Label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { value: "no", label: "No tiene" },
-                      { value: "balcon", label: "Balcón" },
-                      { value: "terraza", label: "Terraza" },
-                    ].map((opt) => (
-                      <button
-                        key={opt.value}
-                        onClick={() => setHasTerrace(opt.value)}
-                        className={cn(
-                          "p-4 rounded-xl border-2 transition-all font-medium",
-                          hasTerrace === opt.value
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                        )}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Trastero */}
-                <div className="space-y-3">
-                  <Label className="text-base font-semibold">📦 ¿Tiene trastero?</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { value: "si", label: "✅ Sí" },
-                      { value: "no", label: "❌ No" },
-                    ].map((opt) => (
-                      <button
-                        key={opt.value}
-                        onClick={() => setHasStorageRoom(opt.value)}
-                        className={cn(
-                          "p-4 rounded-xl border-2 transition-all font-medium",
-                          hasStorageRoom === opt.value
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                        )}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
+            {step === 3 && (
+              <div className="space-y-8 animate-fade-in">
+                <div className="text-center space-y-2 mb-8">
+                  <h3 className="text-2xl font-bold">Cuéntanos sobre tus planes</h3>
+                  <p className="text-muted-foreground">Esto nos ayudará a ofrecerte un mejor servicio</p>
                 </div>
 
                 {/* Estado de conservación */}
@@ -684,15 +652,6 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                       </button>
                     ))}
                   </div>
-                </div>
-              </div>
-            )}
-
-            {step === 3 && (
-              <div className="space-y-8 animate-fade-in">
-                <div className="text-center space-y-2 mb-8">
-                  <h3 className="text-2xl font-bold">Cuéntanos sobre tus planes</h3>
-                  <p className="text-muted-foreground">Esto nos ayudará a ofrecerte un mejor servicio</p>
                 </div>
 
                 {/* ¿Interesado en vender? */}
@@ -731,7 +690,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                 {interestedInSelling === "si" && (
                   <div className="space-y-4 animate-fade-in">
                     <Label className="text-base font-semibold">📅 ¿En qué plazo?</Label>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="flex flex-wrap gap-3 justify-center">
                       {[
                         { value: "corto", label: "Corto plazo", desc: "En 1-3 meses" },
                         { value: "medio", label: "Medio plazo", desc: "En 3-6 meses" },
@@ -741,15 +700,15 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                           key={opt.value}
                           onClick={() => setSellingTimeframe(opt.value)}
                           className={cn(
-                            "p-4 rounded-xl border-2 transition-all text-center",
+                            "py-3 px-5 rounded-full border-2 transition-all text-center",
                             sellingTimeframe === opt.value
-                              ? "border-primary bg-primary/5"
+                              ? "border-primary bg-primary text-primary-foreground"
                               : "border-border hover:border-primary/50"
                           )}
                         >
                           <div className="space-y-1">
                             <div className="font-semibold">{opt.label}</div>
-                            <div className="text-xs text-muted-foreground">{opt.desc}</div>
+                            <div className="text-xs opacity-80">{opt.desc}</div>
                           </div>
                         </button>
                       ))}
@@ -759,9 +718,9 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
 
                 {/* Pregunta adicional sobre especialista */}
                 <div className="space-y-4">
-                  <Label className="text-base font-semibold">💡 ¿Te interesaría que un especialista te informara?</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Un experto de tu zona puede informarte del precio de venta real del último piso similar al tuyo vendido en tu zona
+                  <Label className="text-base font-semibold">💡 ¿Te interesa que un experto de tu zona te informe cuál ha sido el precio real del último piso vendido como el tuyo en tu zona?</Label>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    El precio real de venta.
                   </p>
                   <div className="grid grid-cols-2 gap-4">
                     {[
@@ -882,9 +841,18 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
               <div className="space-y-6 animate-fade-in">
                 {!isLoading && (
                   <>
-                    <div className="text-center space-y-2 mb-8">
-                      <h3 className="text-2xl font-bold">Datos de contacto</h3>
-                      <p className="text-muted-foreground">Para enviarte tu valoración personalizada</p>
+                    <div className="text-center space-y-3 mb-8">
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="text-3xl">⭐</span>
+                        <h3 className="text-2xl font-bold">¡Último paso!</h3>
+                        <span className="text-3xl">⭐</span>
+                      </div>
+                      <p className="text-lg font-medium text-foreground">
+                        TE enviaremos un informe detallado del precio real al que puedes vender tu vivienda
+                      </p>
+                      <p className="text-base text-muted-foreground">
+                        Incluye recomendaciones para que lo puedas vender a un precio más alto
+                      </p>
                     </div>
                     <div className="space-y-4">
                       <div className="space-y-2">
@@ -954,7 +922,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
                             Analizando tu propiedad
                           </h3>
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Nuestro sistema de IA está procesando las fotos y datos...
+                            Nuestros algoritmos están trabajando para ti...
                           </p>
                         </div>
 
