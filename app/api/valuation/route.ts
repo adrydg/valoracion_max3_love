@@ -1,10 +1,14 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
 
 // Inicializar cliente de Anthropic
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
+
+// Inicializar cliente de Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Mapeos de valores a texto legible
 const propertyTypeMap: Record<string, string> = {
@@ -248,8 +252,8 @@ Responde ÚNICAMENTE con el JSON, sin texto adicional antes o después.`,
       );
     }
 
-    // Guardar el lead (datos del cliente) - aquí podrías guardarlo en Supabase
-    console.log("Lead generado:", {
+    // Guardar el lead (datos del cliente)
+    const leadData = {
       name,
       email,
       phone,
@@ -268,7 +272,230 @@ Responde ÚNICAMENTE con el JSON, sin texto adicional antes o después.`,
       },
       valuation,
       timestamp: new Date().toISOString(),
-    });
+    };
+
+    console.log("Lead generado:", leadData);
+
+    // Enviar emails
+    try {
+      // Email al administrador con los datos del lead
+      await resend.emails.send({
+        from: process.env.FROM_EMAIL || "onboarding@tudominio.com",
+        to: process.env.ADMIN_EMAIL || "a.durandez@gmail.com",
+        subject: `🏠 Nuevo Lead - Valoración de ${address}`,
+        html: `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 30px; border-radius: 10px 10px 0 0; text-align: center; }
+                .content { background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; }
+                .section { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; border-left: 4px solid #3b82f6; }
+                .label { font-weight: bold; color: #1e40af; }
+                .value { color: #4b5563; }
+                .score { font-size: 48px; font-weight: bold; text-align: center; margin: 20px 0; }
+                .score.high { color: #22c55e; }
+                .score.medium { color: #84cc16; }
+                .score.low { color: #f97316; }
+                .score.critical { color: #ef4444; }
+                .footer { text-align: center; margin-top: 30px; padding: 20px; color: #6b7280; font-size: 14px; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1 style="margin: 0;">🎯 Nuevo Lead Generado</h1>
+                  <p style="margin: 10px 0 0 0; opacity: 0.9;">Valoración de inmueble completada</p>
+                </div>
+                <div class="content">
+                  <!-- Datos del Cliente -->
+                  <div class="section">
+                    <h2 style="margin-top: 0; color: #1e40af;">👤 Datos del Cliente</h2>
+                    <p><span class="label">Nombre:</span> <span class="value">${name}</span></p>
+                    <p><span class="label">Email:</span> <span class="value">${email}</span></p>
+                    <p><span class="label">Teléfono:</span> <span class="value">${phone}</span></p>
+                    <p><span class="label">Fecha:</span> <span class="value">${new Date().toLocaleString('es-ES')}</span></p>
+                  </div>
+
+                  <!-- Datos de la Propiedad -->
+                  <div class="section">
+                    <h2 style="margin-top: 0; color: #1e40af;">🏠 Datos de la Propiedad</h2>
+                    <p><span class="label">Dirección:</span> <span class="value">${address}</span></p>
+                    <p><span class="label">Tipo:</span> <span class="value">${propertyTypeMap[propertyType] || propertyType}</span></p>
+                    <p><span class="label">Superficie:</span> <span class="value">${squareMeters} m²</span></p>
+                    <p><span class="label">Habitaciones:</span> <span class="value">${bedrooms}</span></p>
+                    <p><span class="label">Baños:</span> <span class="value">${bathrooms}</span></p>
+                    <p><span class="label">Antigüedad:</span> <span class="value">${buildingAgeMap[buildingAge] || buildingAge}</span></p>
+                    <p><span class="label">Planta:</span> <span class="value">${floorMap[floor] || floor}</span></p>
+                    <p><span class="label">Ascensor:</span> <span class="value">${hasElevator === "si" ? "Sí" : "No"}</span></p>
+                    <p><span class="label">Garaje:</span> <span class="value">${hasGarage === "si" ? "Sí" : "No"}</span></p>
+                    <p><span class="label">Exterior:</span> <span class="value">${terraceMap[hasTerrace] || hasTerrace}</span></p>
+                    <p><span class="label">Estado:</span> <span class="value">${conditionMap[condition] || condition}</span></p>
+                  </div>
+
+                  <!-- Valoración -->
+                  <div class="section">
+                    <h2 style="margin-top: 0; color: #1e40af;">💰 Valoración Estimada</h2>
+                    <p style="text-align: center; font-size: 24px; font-weight: bold; color: #3b82f6; margin: 20px 0;">
+                      ${valuation.valoracion_minima?.toLocaleString() || 'N/A'}€ - ${valuation.valoracion_maxima?.toLocaleString() || 'N/A'}€
+                    </p>
+                    <p style="text-align: center;"><span class="label">Valor medio:</span> <span style="font-size: 20px; font-weight: bold; color: #1e40af;">${valuation.valoracion_media?.toLocaleString() || 'N/A'}€</span></p>
+                    ${valuation.score_global ? `
+                      <div class="score ${valuation.score_global.puntuacion_total >= 75 ? 'high' : valuation.score_global.puntuacion_total >= 50 ? 'medium' : valuation.score_global.puntuacion_total >= 25 ? 'low' : 'critical'}">
+                        ${valuation.score_global.puntuacion_total}/100
+                      </div>
+                      <p style="text-align: center; font-weight: bold; color: #4b5563;">${valuation.score_global.categoria}</p>
+                    ` : ''}
+                    ${valuation.tiempo_venta_estimado ? `<p><span class="label">Tiempo estimado de venta:</span> <span class="value">${valuation.tiempo_venta_estimado}</span></p>` : ''}
+                  </div>
+
+                  ${valuation.resumen_roi ? `
+                  <!-- ROI Recomendado -->
+                  <div class="section">
+                    <h2 style="margin-top: 0; color: #1e40af;">📈 Potencial de Mejora (ROI)</h2>
+                    <p><span class="label">Inversión recomendada:</span> <span class="value">${valuation.resumen_roi.inversion_total_recomendada?.toLocaleString() || 'N/A'}€</span></p>
+                    <p><span class="label">Incremento de valor:</span> <span style="color: #22c55e; font-weight: bold;">+${valuation.resumen_roi.incremento_valor_total?.toLocaleString() || 'N/A'}€</span></p>
+                    <p><span class="label">ROI:</span> <span style="color: #3b82f6; font-weight: bold;">${valuation.resumen_roi.roi_total_porcentaje || 'N/A'}%</span></p>
+                    ${valuation.valoracion_con_mejoras ? `<p><span class="label">Valor con mejoras:</span> <span style="font-size: 18px; font-weight: bold; color: #22c55e;">${valuation.valoracion_con_mejoras.toLocaleString()}€</span></p>` : ''}
+                  </div>
+                  ` : ''}
+                </div>
+                <div class="footer">
+                  <p>Este lead fue generado automáticamente desde tu landing de valoraciones.</p>
+                  <p style="margin: 0;">Contacta al cliente lo antes posible para cerrar la venta 🚀</p>
+                </div>
+              </div>
+            </body>
+          </html>
+        `,
+      });
+
+      // Email al cliente con su informe de valoración
+      await resend.emails.send({
+        from: process.env.FROM_EMAIL || "onboarding@tudominio.com",
+        to: email,
+        subject: `✨ Tu Valoración de ${address} está lista`,
+        html: `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; padding: 40px 30px; border-radius: 10px 10px 0 0; text-align: center; }
+                .content { background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; }
+                .section { background: white; padding: 25px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                .price-box { background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%); padding: 30px; border-radius: 10px; text-align: center; margin: 20px 0; border: 2px solid #3b82f6; }
+                .price { font-size: 36px; font-weight: bold; color: #1e40af; margin: 10px 0; }
+                .score-badge { display: inline-block; padding: 15px 30px; border-radius: 50px; font-size: 24px; font-weight: bold; margin: 20px 0; }
+                .score-badge.high { background: #dcfce7; color: #166534; border: 2px solid #22c55e; }
+                .score-badge.medium { background: #fef9c3; color: #854d0e; border: 2px solid #84cc16; }
+                .score-badge.low { background: #fed7aa; color: #9a3412; border: 2px solid #f97316; }
+                .score-badge.critical { background: #fee2e2; color: #991b1b; border: 2px solid #ef4444; }
+                .cta-button { display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+                .footer { text-align: center; margin-top: 30px; padding: 20px; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }
+                ul { list-style: none; padding: 0; }
+                li { padding: 8px 0; padding-left: 25px; position: relative; }
+                li:before { content: "✓"; position: absolute; left: 0; color: #22c55e; font-weight: bold; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1 style="margin: 0; font-size: 32px;">¡Hola ${name}! 👋</h1>
+                  <p style="margin: 15px 0 0 0; font-size: 18px; opacity: 0.95;">Tu valoración personalizada está lista</p>
+                </div>
+                <div class="content">
+                  <div class="section">
+                    <h2 style="margin-top: 0; color: #1e40af; text-align: center;">🏠 ${address}</h2>
+
+                    <div class="price-box">
+                      <p style="margin: 0; color: #6b7280; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Valoración Estimada</p>
+                      <div class="price">${valuation.valoracion_minima?.toLocaleString() || 'N/A'}€ - ${valuation.valoracion_maxima?.toLocaleString() || 'N/A'}€</div>
+                      <p style="margin: 5px 0 0 0; color: #4b5563; font-size: 16px;">
+                        Valor medio: <strong>${valuation.valoracion_media?.toLocaleString() || 'N/A'}€</strong>
+                      </p>
+                    </div>
+
+                    ${valuation.score_global ? `
+                      <div style="text-align: center; margin: 30px 0;">
+                        <p style="color: #6b7280; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Score de tu Propiedad</p>
+                        <div class="score-badge ${valuation.score_global.puntuacion_total >= 75 ? 'high' : valuation.score_global.puntuacion_total >= 50 ? 'medium' : valuation.score_global.puntuacion_total >= 25 ? 'low' : 'critical'}">
+                          ${valuation.score_global.puntuacion_total}/100 - ${valuation.score_global.categoria}
+                        </div>
+                        <p style="color: #4b5563; margin-top: 15px;">${valuation.score_global.explicacion || ''}</p>
+                      </div>
+                    ` : ''}
+                  </div>
+
+                  ${valuation.analisis ? `
+                  <div class="section">
+                    <h3 style="color: #1e40af; margin-top: 0;">📊 Análisis de tu Propiedad</h3>
+                    ${valuation.analisis.puntos_fuertes?.length > 0 ? `
+                    <h4 style="color: #22c55e; margin-bottom: 10px;">✅ Puntos Fuertes</h4>
+                    <ul>
+                      ${valuation.analisis.puntos_fuertes.map((punto: string) => `<li>${punto}</li>`).join('')}
+                    </ul>
+                    ` : ''}
+                    ${valuation.analisis.puntos_debiles?.length > 0 ? `
+                    <h4 style="color: #f97316; margin-bottom: 10px; margin-top: 20px;">⚠️ Áreas de Mejora</h4>
+                    <ul style="list-style: none; padding: 0;">
+                      ${valuation.analisis.puntos_debiles.map((punto: string) => `<li style="padding-left: 25px; position: relative;"><span style="position: absolute; left: 0;">•</span> ${punto}</li>`).join('')}
+                    </ul>
+                    ` : ''}
+                  </div>
+                  ` : ''}
+
+                  ${valuation.resumen_roi && valuation.mejoras_con_roi?.length > 0 ? `
+                  <div class="section">
+                    <h3 style="color: #1e40af; margin-top: 0;">💰 Potencial de Rentabilidad</h3>
+                    <p style="background: #dbeafe; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                      Invirtiendo <strong>${valuation.resumen_roi.inversion_total_recomendada?.toLocaleString() || 'N/A'}€</strong> en mejoras,
+                      podrías aumentar el valor de tu propiedad en <strong style="color: #22c55e;">+${valuation.resumen_roi.incremento_valor_total?.toLocaleString() || 'N/A'}€</strong>
+                      <br><br>
+                      <span style="font-size: 20px; color: #3b82f6;">ROI: ${valuation.resumen_roi.roi_total_porcentaje || 'N/A'}%</span>
+                    </p>
+                    ${valuation.valoracion_con_mejoras ? `
+                    <p style="text-align: center; margin-top: 20px;">
+                      <strong>Nuevo valor estimado:</strong> <span style="font-size: 24px; color: #22c55e; font-weight: bold;">${valuation.valoracion_con_mejoras.toLocaleString()}€</span>
+                    </p>
+                    ` : ''}
+                  </div>
+                  ` : ''}
+
+                  ${valuation.tiempo_venta_estimado ? `
+                  <div class="section" style="text-align: center;">
+                    <p style="color: #6b7280; font-size: 14px; margin: 0;">⚡ Tiempo estimado de venta</p>
+                    <p style="font-size: 28px; font-weight: bold; color: #3b82f6; margin: 10px 0 0 0;">${valuation.tiempo_venta_estimado}</p>
+                  </div>
+                  ` : ''}
+
+                  <div style="text-align: center; margin: 30px 0;">
+                    <a href="mailto:a.durandez@gmail.com" class="cta-button">📞 Contactar con un Asesor</a>
+                  </div>
+                </div>
+                <div class="footer">
+                  <p><strong>¿Quieres vender tu propiedad al mejor precio?</strong></p>
+                  <p style="margin: 10px 0;">Nuestro equipo está listo para ayudarte a maximizar el valor de tu inmueble.</p>
+                  <p style="margin: 20px 0 0 0; font-size: 12px; color: #9ca3af;">
+                    Este informe fue generado automáticamente mediante inteligencia artificial basándose en los datos y fotos proporcionadas.
+                  </p>
+                </div>
+              </div>
+            </body>
+          </html>
+        `,
+      });
+
+      console.log("✅ Emails enviados correctamente");
+    } catch (emailError) {
+      // No fallar la request si los emails fallan, solo loggear el error
+      console.error("⚠️ Error enviando emails:", emailError);
+    }
 
     // Devolver la valoración
     return NextResponse.json({
