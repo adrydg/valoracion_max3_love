@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
     const hasPhotos = photos.length > 0;
 
     // Construir el mensaje para Claude
-    const content: Anthropic.MessageCreateParams["content"] = [
+    const content = [
       {
         type: "text",
         text: `Eres un tasador inmobiliario experto en España con más de 15 años de experiencia y acceso a datos actualizados del mercado inmobiliario español.
