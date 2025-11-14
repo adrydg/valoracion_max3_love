@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
     // Construir el mensaje para Claude
     const content = [
       {
-        type: "text",
+        type: "text" as const,
         text: `Eres un tasador inmobiliario experto en España con más de 15 años de experiencia y acceso a datos actualizados del mercado inmobiliario español.
 
 ${hasPhotos
