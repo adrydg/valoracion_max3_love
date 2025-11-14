@@ -7,8 +7,8 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-// Inicializar cliente de Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Inicializar cliente de Resend (opcional, solo si está configurado)
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 // Mapeos de valores a texto legible
 const propertyTypeMap: Record<string, string> = {
@@ -438,8 +438,11 @@ Responde ÚNICAMENTE con el JSON, sin texto adicional antes o después.`,
 
     // Enviar emails
     try {
-      // Email al administrador con los datos del lead
-      await resend.emails.send({
+      if (!resend) {
+        console.log("⚠️ Resend no configurado - saltando envío de emails");
+      } else {
+        // Email al administrador con los datos del lead
+        await resend.emails.send({
         from: process.env.FROM_EMAIL || "onboarding@tudominio.com",
         to: process.env.ADMIN_EMAIL || "a.durandez@gmail.com",
         subject: `🏠 Nuevo Lead - Valoración de ${address}`,
@@ -649,9 +652,10 @@ Responde ÚNICAMENTE con el JSON, sin texto adicional antes o después.`,
             </body>
           </html>
         `,
-      });
+        });
 
-      console.log("✅ Emails enviados correctamente");
+        console.log("✅ Emails enviados correctamente");
+      }
     } catch (emailError) {
       // No fallar la request si los emails fallan, solo loggear el error
       console.error("⚠️ Error enviando emails:", emailError);
