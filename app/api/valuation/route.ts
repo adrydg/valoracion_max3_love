@@ -371,13 +371,13 @@ Responde ÚNICAMENTE con el JSON, sin texto adicional antes o después.`,
           const base64Data = match[2];
 
           content.push({
-            type: "image",
+            type: "image" as const,
             source: {
-              type: "base64",
+              type: "base64" as const,
               media_type: mediaType,
               data: base64Data,
             },
-          });
+          } as any);
         }
       }
     }
