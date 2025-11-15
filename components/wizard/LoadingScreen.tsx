@@ -16,6 +16,7 @@ export const LoadingScreen = () => {
   const {
     leadId,
     postalCode,
+    street,
     squareMeters,
     bedrooms,
     bathrooms,
@@ -23,6 +24,9 @@ export const LoadingScreen = () => {
     hasElevator,
     buildingAge,
     propertyType,
+    name,
+    email,
+    phone,
     setValuation,
     nextStep,
   } = useWizardStore();
@@ -53,48 +57,55 @@ export const LoadingScreen = () => {
       });
     }, 1000);
 
-    // MODO TESTING: Generar valoración fake sin llamar API
+    // FASE 1: Llamar API con búsqueda de mercado
     const fetchValuation = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 3000)); // Mínimo 3 segundos
-
-        // Datos de valoración fake
-        const basePrice = 3800 * (squareMeters || 85);
-        const fakeValuation = {
-          avg: Math.round(basePrice),
-          min: Math.round(basePrice * 0.8),
-          max: Math.round(basePrice * 1.2),
-          uncertainty: "±20%",
-          pricePerM2: 3800,
-          adjustments: [
-            { factor: "Planta 3ª-5ª (con ascensor)", value: "+3%", percentage: 3 },
-            { factor: "Edificio moderno (15-30 años)", value: "0%", percentage: 0 },
-            { factor: "Múltiples baños", value: "+5%", percentage: 5 },
-          ],
-          marketData: {
-            postalCode,
-            province: "Madrid",
-            municipality: "Madrid",
-            neighborhood: "Centro",
-            precio_medio_m2: 3800,
-            precio_min_m2: 3400,
-            precio_max_m2: 4200,
-            tendencia: "subiendo",
-            fuente: "idealista",
-            fecha_actualizacion: "2025-01-15",
+        const response = await fetch('/api/valuation/basic', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-          calculatedAt: new Date().toISOString(),
-        };
+          body: JSON.stringify({
+            leadId,
+            postalCode,
+            street,
+            squareMeters,
+            bedrooms,
+            bathrooms,
+            floor,
+            hasElevator,
+            buildingAge,
+            propertyType,
+            name,
+            email,
+            phone,
+          }),
+        });
 
-        console.log("💰 Valoración calculada (testing):", fakeValuation);
-        setValuation(fakeValuation);
+        if (!response.ok) {
+          throw new Error('Error en la valoración');
+        }
+
+        const data = await response.json();
+        console.log("💰 Valoración FASE 1 recibida:", data.valuation);
+        setValuation(data.valuation);
 
         // Esperar a que termine la animación
         setTimeout(() => {
           nextStep(); // Ir a oferta directa
         }, 500);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error en valoración:", error);
+        // Fallback a valoración genérica
+        const fallbackVal = {
+          avg: Math.round(3800 * (squareMeters || 85)),
+          min: Math.round(3800 * (squareMeters || 85) * 0.8),
+          max: Math.round(3800 * (squareMeters || 85) * 1.2),
+          uncertainty: "±20%",
+          pricePerM2: 3800,
+        };
+        setValuation(fallbackVal);
+        setTimeout(() => nextStep(), 500);
       }
     };
 

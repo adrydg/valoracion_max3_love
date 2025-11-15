@@ -1,5 +1,14 @@
 import { NextResponse } from "next/server";
-import postalCodesData from "@/data/postal-codes/28.json";
+import Anthropic from "@anthropic-ai/sdk";
+import { Resend } from "resend";
+
+// Inicializar cliente de Anthropic
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
+// Inicializar Resend para emails
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(request: Request) {
   try {
@@ -8,6 +17,7 @@ export async function POST(request: Request) {
     const {
       leadId,
       postalCode,
+      street,
       squareMeters,
       bedrooms,
       bathrooms,
@@ -15,6 +25,9 @@ export async function POST(request: Request) {
       hasElevator,
       buildingAge,
       propertyType,
+      name,
+      email,
+      phone,
     } = body;
 
     // Validaciones
@@ -25,22 +38,75 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. Buscar datos de mercado por código postal
-    let marketData = postalCodesData.find((cp: any) => cp.postalCode === postalCode);
+    console.log(`🔍 FASE 1: Buscando precio de mercado para ${street || 'Sin dirección'}, CP: ${postalCode}`);
 
-    // Si no existe, usar datos genéricos con +5% incertidumbre
-    if (!marketData) {
-      console.log(`CP ${postalCode} no encontrado, usando datos genéricos`);
+    // 1. Buscar datos de mercado usando Claude
+    let marketData: any = null;
+
+    try {
+      const marketPrompt = `Basándote en tu conocimiento actualizado del mercado inmobiliario español, investiga y proporciona datos de precios para:
+
+Ubicación: ${street || ''}, Código Postal: ${postalCode}
+Tipo de propiedad: ${propertyType || 'piso'}
+
+IMPORTANTE: Usa tu conocimiento actualizado para identificar:
+- La ciudad/municipio que corresponde a este código postal
+- El barrio o zona específica si es posible identificarlo de la dirección
+- Los precios actuales de mercado (2025) para esa zona específica
+
+Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
+{
+  "precio_min_m2": número (precio mínimo €/m² en esta zona),
+  "precio_medio_m2": número (precio medio €/m² en esta zona),
+  "precio_max_m2": número (precio máximo €/m² en esta zona),
+  "municipality": "nombre del municipio",
+  "neighborhood": "nombre del barrio si se puede identificar",
+  "province": "nombre de la provincia",
+  "demanda_zona": "alta" | "media" | "baja",
+  "tendencia": "subiendo" | "estable" | "bajando",
+  "descripcion_zona": "breve descripción de 1-2 líneas sobre características de la zona que afectan al precio"
+}`;
+
+      const marketResponse = await anthropic.messages.create({
+        model: "claude-3-haiku-20240307",
+        max_tokens: 500,
+        messages: [
+          {
+            role: "user",
+            content: marketPrompt,
+          },
+        ],
+      });
+
+      const marketText = marketResponse.content[0].type === "text"
+        ? marketResponse.content[0].text
+        : "";
+
+      // Parsear JSON
+      const marketJson = JSON.parse(marketText);
+      marketData = {
+        ...marketJson,
+        postalCode,
+        fuente: "análisis de mercado actualizado",
+        fecha_actualizacion: new Date().toISOString().split("T")[0],
+      };
+
+      console.log(`✅ Precio medio obtenido: ${marketData.precio_medio_m2}€/m² para ${marketData.municipality}`);
+    } catch (error) {
+      console.error("❌ Error consultando precios de mercado:", error);
+      // Fallback a datos genéricos
       marketData = {
         postalCode,
         province: "Madrid",
-        municipality: "Desconocido",
-        precio_medio_m2: 3800 * 1.05, // +5% incertidumbre
+        municipality: "Madrid",
+        neighborhood: "Centro",
+        precio_medio_m2: 3800,
         precio_min_m2: 3400,
         precio_max_m2: 4200,
-        fuente: "claude",
-        fecha_actualizacion: new Date().toISOString().split("T")[0],
+        demanda_zona: "media",
         tendencia: "estable",
+        fuente: "estimación genérica",
+        fecha_actualizacion: new Date().toISOString().split("T")[0],
       };
     }
 
@@ -208,7 +274,91 @@ export async function POST(request: Request) {
 
     console.log(`Valoración calculada para lead ${leadId}:`, valuation);
 
-    // TODO: Actualizar lead en base de datos con la valoración
+    // Enviar email al administrador con los datos del lead
+    try {
+      if (!resend) {
+        console.log("⚠️ Resend no configurado - saltando envío de email");
+      } else if (name && email) {
+        await resend.emails.send({
+          from: process.env.FROM_EMAIL || "onboarding@tudominio.com",
+          to: process.env.ADMIN_EMAIL || "a.durandez@gmail.com",
+          subject: `🏠 Nuevo Lead FASE 1 - ${name} - ${marketData.municipality || postalCode}`,
+          html: `
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="utf-8">
+                <style>
+                  body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                  .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                  .header { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 30px; border-radius: 10px 10px 0 0; }
+                  .content { background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; }
+                  .section { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; border-left: 4px solid #3b82f6; }
+                  .label { font-weight: bold; color: #1e40af; }
+                  .value { color: #4b5563; }
+                </style>
+              </head>
+              <body>
+                <div class="container">
+                  <div class="header">
+                    <h1 style="margin: 0;">📊 Lead FASE 1 - Valoración Básica</h1>
+                    <p style="margin: 10px 0 0 0;">Datos básicos + Búsqueda de mercado completada</p>
+                  </div>
+                  <div class="content">
+                    <div class="section">
+                      <h2 style="margin-top: 0; color: #1e40af;">👤 Datos del Cliente</h2>
+                      <p><span class="label">Nombre:</span> <span class="value">${name}</span></p>
+                      <p><span class="label">Email:</span> <span class="value">${email}</span></p>
+                      <p><span class="label">Teléfono:</span> <span class="value">${phone || 'No proporcionado'}</span></p>
+                      <p><span class="label">Fecha:</span> <span class="value">${new Date().toLocaleString('es-ES')}</span></p>
+                    </div>
+
+                    <div class="section">
+                      <h2 style="margin-top: 0; color: #1e40af;">🏠 Datos de la Propiedad</h2>
+                      <p><span class="label">Dirección:</span> <span class="value">${street || 'No proporcionada'}</span></p>
+                      <p><span class="label">Código Postal:</span> <span class="value">${postalCode}</span></p>
+                      <p><span class="label">Municipio:</span> <span class="value">${marketData.municipality || 'Desconocido'}</span></p>
+                      <p><span class="label">Barrio:</span> <span class="value">${marketData.neighborhood || 'No identificado'}</span></p>
+                      <p><span class="label">Tipo:</span> <span class="value">${propertyType || 'No especificado'}</span></p>
+                      <p><span class="label">Superficie:</span> <span class="value">${squareMeters} m²</span></p>
+                      <p><span class="label">Habitaciones:</span> <span class="value">${bedrooms}</span></p>
+                      <p><span class="label">Baños:</span> <span class="value">${bathrooms || 'No especificado'}</span></p>
+                    </div>
+
+                    <div class="section">
+                      <h2 style="margin-top: 0; color: #1e40af;">💰 Valoración Básica (±20%)</h2>
+                      <p style="text-align: center; font-size: 24px; font-weight: bold; color: #3b82f6;">
+                        ${valuation.min.toLocaleString()}€ - ${valuation.max.toLocaleString()}€
+                      </p>
+                      <p style="text-align: center; margin-top: 10px;">
+                        <span class="label">Valor medio:</span> <span style="font-size: 20px; font-weight: bold;">${valuation.avg.toLocaleString()}€</span>
+                      </p>
+                      <p><span class="label">Precio/m²:</span> <span class="value">${valuation.pricePerM2.toLocaleString()}€</span></p>
+                    </div>
+
+                    <div class="section">
+                      <h2 style="margin-top: 0; color: #1e40af;">📊 Datos de Mercado</h2>
+                      <p><span class="label">Precio medio zona:</span> <span class="value">${marketData.precio_medio_m2?.toLocaleString() || 'N/A'}€/m²</span></p>
+                      <p><span class="label">Rango zona:</span> <span class="value">${marketData.precio_min_m2?.toLocaleString() || 'N/A'}€ - ${marketData.precio_max_m2?.toLocaleString() || 'N/A'}€/m²</span></p>
+                      <p><span class="label">Demanda:</span> <span class="value">${marketData.demanda_zona || 'No disponible'}</span></p>
+                      <p><span class="label">Tendencia:</span> <span class="value">${marketData.tendencia || 'No disponible'}</span></p>
+                      ${marketData.descripcion_zona ? `<p><span class="label">Zona:</span> <span class="value">${marketData.descripcion_zona}</span></p>` : ''}
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-top: 20px;">
+                      <p style="margin: 0; font-size: 14px;"><strong>⏭️ Próximo paso:</strong> El cliente continuará con la FASE 2 (datos avanzados + fotos) para reducir el margen a ±8%</p>
+                    </div>
+                  </div>
+                </div>
+              </body>
+            </html>
+          `,
+        });
+        console.log("✅ Email enviado a", process.env.ADMIN_EMAIL);
+      }
+    } catch (emailError) {
+      console.error("⚠️ Error enviando email:", emailError);
+    }
 
     return NextResponse.json({
       success: true,

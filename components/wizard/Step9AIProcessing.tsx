@@ -7,7 +7,7 @@ import { Sparkles, Brain, Image as ImageIcon, BarChart3, CheckCircle2 } from "lu
 const processingSteps = [
   {
     icon: ImageIcon,
-    title: "Analizando fotos con IA",
+    title: "Analizando fotografías",
     description: "Reconocimiento de características visuales",
     duration: 2000,
   },
@@ -20,7 +20,7 @@ const processingSteps = [
   {
     icon: BarChart3,
     title: "Calculando valoración optimizada",
-    description: "Aplicando modelo de machine learning",
+    description: "Aplicando modelo avanzado de valoración",
     duration: 2000,
   },
   {
@@ -158,10 +158,10 @@ export const Step9AIProcessing = () => {
       {/* Título principal */}
       <div className="text-center space-y-2">
         <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-          IA Analizando tu propiedad
+          Analizando tu propiedad
         </h2>
         <p className="text-sm text-muted-foreground">
-          Procesando {photos.length} fotos y características avanzadas
+          Procesando {photos.length} foto{photos.length !== 1 ? 's' : ''} y características avanzadas
         </p>
       </div>
 
@@ -238,7 +238,7 @@ export const Step9AIProcessing = () => {
       {/* Mensaje motivacional */}
       <div className="text-center max-w-md">
         <p className="text-sm text-muted-foreground">
-          Nuestro modelo de IA está analizando cada detalle para ofrecerte la valoración más precisa posible
+          Estamos analizando cada detalle para ofrecerte la valoración más precisa posible
         </p>
       </div>
     </div>

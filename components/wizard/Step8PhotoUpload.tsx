@@ -79,10 +79,7 @@ export const Step8PhotoUpload = () => {
   };
 
   const handleContinue = () => {
-    if (photos.length === 0) {
-      setErrors("Sube al menos 1 foto para continuar");
-      return;
-    }
+    // Las fotos son OPCIONALES - se puede continuar sin fotos
     nextStep();
   };
 
@@ -94,10 +91,10 @@ export const Step8PhotoUpload = () => {
           <Camera className="w-6 h-6 text-primary" />
         </div>
         <h2 className="text-xl md:text-2xl font-bold">
-          Sube fotos de tu propiedad
+          Sube fotos de tu propiedad (opcional)
         </h2>
         <p className="text-sm text-muted-foreground">
-          Nuestro análisis con IA mejorará la precisión de tu valoración
+          Las fotos nos ayudarán a mejorar la precisión de tu valoración
         </p>
       </div>
 
@@ -236,15 +233,14 @@ export const Step8PhotoUpload = () => {
           onClick={handleContinue}
           className="flex-1 group"
           size="lg"
-          disabled={photos.length === 0}
         >
-          Continuar
+          {photos.length > 0 ? `Continuar con ${photos.length} foto${photos.length > 1 ? 's' : ''}` : 'Continuar sin fotos'}
           <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
         </Button>
       </div>
 
       <p className="text-xs text-center text-muted-foreground">
-        Paso 2 de 2 • Las fotos se analizarán con IA para mejorar tu valoración
+        Paso 2 de 2 • Las fotos se analizarán para mejorar tu valoración
       </p>
     </div>
   );
