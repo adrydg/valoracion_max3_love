@@ -31,10 +31,13 @@ export default function Home() {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
                 ✨ Descubre el{" "}
                 <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
-                  valor real
+                  valor
+                </span>{" "}
+                <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
+                  real
                 </span>{" "}
                 de tu inmueble{" "}
-                <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
+                <span className="underline decoration-primary decoration-2 underline-offset-4">
                   al instante
                 </span>
               </h1>

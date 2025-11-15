@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Home, Menu } from "lucide-react";
+import { TrendingUp, Menu } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -13,13 +13,19 @@ export const Header = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-card">
-              <Home className="w-6 h-6 text-primary-foreground" />
+          <div className="flex items-center gap-2.5">
+            <div className="relative w-9 h-9 rounded-lg bg-gradient-to-br from-primary via-primary to-accent flex items-center justify-center shadow-lg">
+              <TrendingUp className="w-5 h-5 text-white" strokeWidth={2.5} />
+              <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-accent rounded-full"></div>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              PropTech
-            </span>
+            <div className="flex flex-col leading-none">
+              <span className="text-lg md:text-xl font-black tracking-tight bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
+                ValorMax
+              </span>
+              <span className="text-[8px] md:text-[9px] font-semibold text-muted-foreground tracking-wider uppercase">
+                Valoración IA
+              </span>
+            </div>
           </div>
 
           {/* Desktop Navigation */}
