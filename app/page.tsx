@@ -31,7 +31,7 @@ export default function Home() {
                 </div>
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30">
                   <span className="text-lg">🎉</span>
-                  <span className="text-sm font-medium text-green-700">Primera valoración GRATIS · Siguientes 49€</span>
+                  <span className="text-sm font-medium text-green-700">Primera valoración GRATIS</span>
                 </div>
               </div>
 
