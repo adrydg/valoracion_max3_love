@@ -175,10 +175,8 @@ export const HeroWizard = () => {
         <div className="flex items-center justify-center gap-2 text-sm font-medium">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-            <span className="text-green-700 dark:text-green-400">Valoración inmediata online</span>
+            <span className="text-green-700 dark:text-green-400">Basado en datos reales de tu zona</span>
           </div>
-          <span className="text-muted-foreground">•</span>
-          <span className="text-muted-foreground font-semibold">En solo dos minutos</span>
         </div>
 
       <ValuationModal open={modalOpen} onOpenChange={setModalOpen} />
