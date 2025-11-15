@@ -15,7 +15,6 @@ const bathroomOptions = [
 
 const floorOptions = [
   { id: "bajo", label: "Bajo" },
-  { id: "entresuelo", label: "Entresuelo" },
   { id: "1-2", label: "1ª-2ª" },
   { id: "3-5", label: "3ª-5ª" },
   { id: "6+", label: "6ª+" },
@@ -23,11 +22,11 @@ const floorOptions = [
 ];
 
 const buildingAgeOptions = [
-  { id: "nueva", label: "Nueva (<5 años)" },
-  { id: "reciente", label: "Reciente (5-15 años)" },
-  { id: "moderna", label: "Moderna (15-30 años)" },
-  { id: "antigua", label: "Antigua (30-50 años)" },
-  { id: "muy-antigua", label: "Muy antigua (>50 años)" },
+  { id: "nueva", label: "<5 años" },
+  { id: "reciente", label: "5-15 años" },
+  { id: "moderna", label: "15-30 años" },
+  { id: "antigua", label: "30-50 años" },
+  { id: "muy-antigua", label: ">50 años" },
 ];
 
 export const Step2Caracteristicas = () => {
@@ -74,10 +73,10 @@ export const Step2Caracteristicas = () => {
   return (
     <div className="space-y-6 p-4">
       <div className="text-center space-y-2">
-        <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+        <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
           <Home className="w-6 h-6 text-primary" />
-        </div>
-        <h2 className="text-2xl font-bold">Características básicas</h2>
+          Características
+        </h2>
         <p className="text-muted-foreground">
           Ayúdanos a conocer mejor tu propiedad
         </p>
@@ -116,13 +115,13 @@ export const Step2Caracteristicas = () => {
           <Label>
             Planta del inmueble <span className="text-destructive">*</span>
           </Label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-5 gap-1.5">
             {floorOptions.map((option) => (
               <button
                 key={option.id}
                 onClick={() => setFloor(option.id as any)}
                 className={cn(
-                  "py-3 px-4 rounded-lg border-2 transition-all text-sm font-medium",
+                  "py-2 px-2 rounded-lg border-2 transition-all text-xs font-medium",
                   "hover:border-primary/50",
                   floor === option.id
                     ? "border-primary bg-primary text-primary-foreground"
@@ -179,13 +178,13 @@ export const Step2Caracteristicas = () => {
           <Label>
             Antigüedad del edificio <span className="text-destructive">*</span>
           </Label>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-5 gap-1.5">
             {buildingAgeOptions.map((option) => (
               <button
                 key={option.id}
                 onClick={() => setBuildingAge(option.id as any)}
                 className={cn(
-                  "py-3 px-4 rounded-lg border-2 transition-all text-sm font-medium text-left",
+                  "py-2 px-1 rounded-lg border-2 transition-all text-xs font-medium text-center",
                   "hover:border-primary/50",
                   buildingAge === option.id
                     ? "border-primary bg-primary text-primary-foreground"
