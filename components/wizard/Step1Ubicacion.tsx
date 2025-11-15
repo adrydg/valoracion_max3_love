@@ -13,11 +13,13 @@ export const Step1Ubicacion = () => {
     postalCode,
     street,
     squareMeters,
+    landSize,
     bedrooms,
     propertyType,
     setPostalCode,
     setStreet,
     setSquareMeters,
+    setLandSize,
     setBedrooms,
     setPropertyType,
     nextStep,
@@ -62,6 +64,14 @@ export const Step1Ubicacion = () => {
     { id: 75, label: "75" },
     { id: 90, label: "90" },
     { id: 110, label: "110" },
+  ];
+
+  const landSizeOptions = [
+    { id: 0, label: "No tiene" },
+    { id: 150, label: "150" },
+    { id: 400, label: "400" },
+    { id: 1000, label: "1000" },
+    { id: 1500, label: "1500" },
   ];
 
   return (
@@ -120,10 +130,10 @@ export const Step1Ubicacion = () => {
           </p>
         </div>
 
-        {/* Metros cuadrados */}
+        {/* Metros cuadrados vivienda */}
         <div className="space-y-3">
           <Label>
-            Metros cuadrados <span className="text-destructive">*</span>
+            Metros cuadrados {propertyType === "casa" ? "vivienda" : ""} <span className="text-destructive">*</span>
           </Label>
 
           {/* Bubbles selector */}
@@ -171,6 +181,56 @@ export const Step1Ubicacion = () => {
             <p className="text-sm text-destructive">{errors.squareMeters}</p>
           )}
         </div>
+
+        {/* Tamaño del terreno - solo para casas */}
+        {propertyType === "casa" && (
+          <div className="space-y-3">
+            <Label>
+              Tamaño del terreno
+            </Label>
+
+            {/* Bubbles selector */}
+            <div className="grid grid-cols-5 gap-2">
+              {landSizeOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => setLandSize(option.id)}
+                  className={cn(
+                    "py-2 px-2 rounded-full border-2 transition-all text-sm font-medium",
+                    "hover:border-primary/50",
+                    landSize === option.id
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-background"
+                  )}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Numeric selector con - y + */}
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => setLandSize(Math.max(0, (landSize || 0) - 10))}
+                className="w-10 h-10 rounded-full border-2 border-border hover:border-primary/50 flex items-center justify-center transition-all hover:bg-primary/5"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+
+              <div className="flex items-center gap-2 bg-muted px-4 py-2 rounded-lg min-w-[100px] justify-center">
+                <span className="text-2xl font-bold">{landSize || 0}</span>
+                <span className="text-sm text-muted-foreground">m²</span>
+              </div>
+
+              <button
+                onClick={() => setLandSize((landSize || 0) + 10)}
+                className="w-10 h-10 rounded-full border-2 border-border hover:border-primary/50 flex items-center justify-center transition-all hover:bg-primary/5"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <Button

@@ -76,23 +76,6 @@ export const Step7AdvancedFeatures = () => {
   }, []);
 
   const handleContinue = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (selectedOrientations.length === 0) newErrors.orientation = "Selecciona al menos una orientación";
-    if (selectedConditions.length === 0) newErrors.propertyCondition = "Selecciona al menos un estado";
-    if (hasTerrace === null) newErrors.hasTerrace = "Indica si tiene terraza";
-    if (hasTerrace && (!terraceSize || terraceSize < 1)) {
-      newErrors.terraceSize = "Indica el tamaño de la terraza";
-    }
-    if (hasGarage === null) newErrors.hasGarage = "Indica si tiene garaje";
-    if (hasStorage === null) newErrors.hasStorage = "Indica si tiene trastero";
-    if (!quality) newErrors.quality = "Selecciona la calidad";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
     // Guardar el primero seleccionado en el store (para compatibilidad)
     if (selectedOrientations.length > 0) {
       setOrientation(selectedOrientations[0] as any);
@@ -101,6 +84,7 @@ export const Step7AdvancedFeatures = () => {
       setPropertyCondition(selectedConditions[0] as any);
     }
 
+    // Todos los campos son opcionales, continuar directamente
     setErrors({});
     nextStep();
   };
@@ -151,7 +135,7 @@ export const Step7AdvancedFeatures = () => {
         {/* Orientación */}
         <div className="space-y-2">
           <Label className="text-xs">
-            Orientación principal (puedes seleccionar varias) <span className="text-destructive">*</span>
+            Orientación principal (puedes seleccionar varias)
           </Label>
           <div className="grid grid-cols-4 gap-1.5">
             {orientationOptions.map((option) => (
@@ -179,7 +163,7 @@ export const Step7AdvancedFeatures = () => {
         {/* Estado de la propiedad */}
         <div className="space-y-2">
           <Label className="text-xs">
-            Estado de la propiedad (puedes seleccionar varios) <span className="text-destructive">*</span>
+            Estado de la propiedad (puedes seleccionar varios)
           </Label>
           <div className="grid grid-cols-4 gap-1.5">
             {conditionOptions.map((option) => (
@@ -239,7 +223,7 @@ export const Step7AdvancedFeatures = () => {
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
             <Label className="text-xs">
-              ¿Plaza de garaje? <span className="text-destructive">*</span>
+              ¿Plaza de garaje?
             </Label>
             <div className="grid grid-cols-2 gap-1.5">
               <button
@@ -274,7 +258,7 @@ export const Step7AdvancedFeatures = () => {
 
           <div className="space-y-2">
             <Label className="text-xs">
-              ¿Trastero? <span className="text-destructive">*</span>
+              ¿Trastero?
             </Label>
             <div className="grid grid-cols-2 gap-1.5">
               <button
@@ -311,7 +295,7 @@ export const Step7AdvancedFeatures = () => {
         {/* Calidad de acabados */}
         <div className="space-y-2">
           <Label className="text-xs">
-            Calidad de acabados <span className="text-destructive">*</span>
+            Calidad de acabados
           </Label>
           <div className="grid grid-cols-4 gap-1.5">
             {qualityOptions.map((option) => (

@@ -125,6 +125,30 @@ export const Step10DetailedResult = ({ onClose }: DetailedResultProps) => {
         </div>
       </div>
 
+      {/* Market Comparison */}
+      {detailedValuation.marketComparison && (
+        <div className="bg-amber-50 dark:bg-amber-950/20 rounded-lg p-4 border border-amber-200 dark:border-amber-900">
+          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-amber-600" />
+            Comparativa de mercado
+          </h3>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <p className="text-muted-foreground">Propiedades similares</p>
+              <p className="font-semibold">{detailedValuation.marketComparison.similarProperties}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Precio medio zona</p>
+              <p className="font-semibold">{formatPrice(detailedValuation.marketComparison.avgPricePerM2)}/m²</p>
+            </div>
+            <div className="col-span-2">
+              <p className="text-muted-foreground">Posición</p>
+              <p className="font-semibold capitalize">{detailedValuation.marketComparison.pricePosition}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* AI Analysis from Photos */}
       {detailedValuation.aiAnalysis && (
         <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 rounded-xl p-5 space-y-3 border border-blue-200 dark:border-blue-900">
@@ -231,30 +255,6 @@ export const Step10DetailedResult = ({ onClose }: DetailedResultProps) => {
                 </span>
               </div>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* Market Comparison */}
-      {detailedValuation.marketComparison && (
-        <div className="bg-amber-50 dark:bg-amber-950/20 rounded-lg p-4 border border-amber-200 dark:border-amber-900">
-          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-amber-600" />
-            Comparativa de mercado
-          </h3>
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <p className="text-muted-foreground">Propiedades similares</p>
-              <p className="font-semibold">{detailedValuation.marketComparison.similarProperties}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Precio medio zona</p>
-              <p className="font-semibold">{formatPrice(detailedValuation.marketComparison.avgPricePerM2)}/m²</p>
-            </div>
-            <div className="col-span-2">
-              <p className="text-muted-foreground">Posición</p>
-              <p className="font-semibold capitalize">{detailedValuation.marketComparison.pricePosition}</p>
-            </div>
           </div>
         </div>
       )}

@@ -2,14 +2,33 @@
 
 import { useEffect, useState } from "react";
 import { useWizardStore } from "@/store/useWizardStore";
-import { Loader2 } from "lucide-react";
+import { Loader2, MapPin, TrendingUp, Calculator, FileText, CheckCircle2 } from "lucide-react";
 
-const loadingMessages = [
-  "Analizando el código postal...",
-  "Consultando precios de mercado...",
-  "Aplicando ajustes por características...",
-  "Calculando valoración precisa...",
-  "Generando tu informe...",
+const loadingSteps = [
+  {
+    icon: MapPin,
+    title: "Analizando el código postal",
+    description: "Identificando zona y precios de referencia",
+    duration: 1200,
+  },
+  {
+    icon: TrendingUp,
+    title: "Consultando precios de mercado",
+    description: "Comparando con propiedades similares",
+    duration: 1200,
+  },
+  {
+    icon: Calculator,
+    title: "Aplicando ajustes por características",
+    description: "Evaluando metros, baños, planta y ascensor",
+    duration: 1000,
+  },
+  {
+    icon: FileText,
+    title: "Generando tu informe",
+    description: "Preparando valoración preliminar",
+    duration: 600,
+  },
 ];
 
 export const LoadingScreen = () => {
@@ -31,7 +50,8 @@ export const LoadingScreen = () => {
     nextStep,
   } = useWizardStore();
 
-  const [currentMessage, setCurrentMessage] = useState(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -46,16 +66,20 @@ export const LoadingScreen = () => {
       });
     }, 40);
 
-    // Cambiar mensajes
-    const messageInterval = setInterval(() => {
-      setCurrentMessage((prev) => {
-        if (prev >= loadingMessages.length - 1) {
-          clearInterval(messageInterval);
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, 1000);
+    // Cambiar pasos
+    const processSteps = async () => {
+      for (let i = 0; i < loadingSteps.length; i++) {
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            setCurrentStepIndex(i);
+            setCompletedSteps((prev) => [...prev, i]);
+            resolve(true);
+          }, loadingSteps[i].duration);
+        });
+      }
+    };
+
+    processSteps();
 
     // FASE 1: Llamar API con búsqueda de mercado
     const fetchValuation = async () => {
@@ -113,54 +137,96 @@ export const LoadingScreen = () => {
 
     return () => {
       clearInterval(progressInterval);
-      clearInterval(messageInterval);
     };
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center p-8 space-y-6 min-h-[400px]">
+    <div className="flex flex-col items-center justify-center p-8 space-y-6 min-h-[500px]">
       {/* Spinner animado */}
       <div className="relative">
-        <div className="w-24 h-24 rounded-full border-4 border-primary/20"></div>
-        <div className="absolute top-0 left-0 w-24 h-24 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
-        <Loader2 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 text-primary animate-pulse" />
+        <div className="w-20 h-20 rounded-full border-4 border-primary/20"></div>
+        <div className="absolute top-0 left-0 w-20 h-20 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+        <Loader2 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 text-primary animate-pulse" />
       </div>
 
-      {/* Mensaje actual */}
-      <div className="text-center space-y-2">
-        <h3 className="text-xl font-semibold animate-pulse">
-          {loadingMessages[currentMessage]}
-        </h3>
+      {/* Título */}
+      <div className="text-center space-y-1">
+        <h2 className="text-xl md:text-2xl font-bold">
+          Calculando tu valoración
+        </h2>
         <p className="text-sm text-muted-foreground">
-          Esto solo tomará unos segundos
+          Analizando datos de mercado en tiempo real
         </p>
+      </div>
+
+      {/* Pasos de procesamiento */}
+      <div className="w-full max-w-md space-y-3">
+        {loadingSteps.map((step, index) => {
+          const Icon = step.icon;
+          const isActive = currentStepIndex === index;
+          const isCompleted = completedSteps.includes(index);
+
+          return (
+            <div
+              key={index}
+              className={`flex items-start gap-3 p-3 rounded-lg transition-all duration-500 ${
+                isActive
+                  ? "bg-primary/10 border-2 border-primary scale-105"
+                  : isCompleted
+                  ? "bg-green-50 dark:bg-green-950/20 border-2 border-green-500/50"
+                  : "bg-muted/30 border-2 border-transparent opacity-50"
+              }`}
+            >
+              {/* Icon */}
+              <div
+                className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                  isActive
+                    ? "bg-primary text-primary-foreground animate-pulse"
+                    : isCompleted
+                    ? "bg-green-500 text-white"
+                    : "bg-muted"
+                }`}
+              >
+                {isCompleted ? (
+                  <CheckCircle2 className="w-4 h-4" />
+                ) : (
+                  <Icon className={`w-4 h-4 ${isActive ? "" : ""}`} />
+                )}
+              </div>
+
+              {/* Text */}
+              <div className="flex-1 min-w-0">
+                <p className={`font-semibold text-sm ${isActive ? "text-primary" : ""}`}>
+                  {step.title}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {step.description}
+                </p>
+              </div>
+
+              {/* Loading indicator */}
+              {isActive && (
+                <div className="flex-shrink-0">
+                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Barra de progreso */}
       <div className="w-full max-w-md space-y-2">
         <div className="h-2 bg-secondary rounded-full overflow-hidden">
           <div
-            className="h-full bg-primary transition-all duration-300 ease-out"
-            style={{ width: `${progress}%` }}
+            className="h-full bg-gradient-to-r from-primary to-green-500 transition-all duration-300 ease-out"
+            style={{ width: `${Math.min(progress, 100)}%` }}
           />
         </div>
-        <p className="text-xs text-center text-muted-foreground">
-          {progress}%
-        </p>
-      </div>
-
-      {/* Indicadores de pasos */}
-      <div className="flex gap-2">
-        {loadingMessages.map((_, index) => (
-          <div
-            key={index}
-            className={`h-2 w-2 rounded-full transition-all duration-300 ${
-              index <= currentMessage
-                ? "bg-primary scale-125"
-                : "bg-secondary"
-            }`}
-          />
-        ))}
+        <div className="flex justify-between text-xs text-muted-foreground">
+          <span>Procesando...</span>
+          <span className="font-semibold">{Math.round(Math.min(progress, 100))}%</span>
+        </div>
       </div>
     </div>
   );

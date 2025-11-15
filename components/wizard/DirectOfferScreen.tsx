@@ -35,7 +35,7 @@ export const DirectOfferScreen = () => {
   };
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-6 p-4 pt-12">
       {/* Título con icono */}
       <div className="space-y-3">
         <h2 className="text-2xl font-bold flex items-center justify-center gap-2">

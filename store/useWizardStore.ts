@@ -22,6 +22,7 @@ interface WizardState {
   postalCode: string;
   street: string;
   squareMeters: number | null;
+  landSize: number | null; // Tamaño del terreno (solo para casas)
 
   // Paso 2: Características básicas
   bathrooms: number | null;
@@ -68,6 +69,7 @@ interface WizardState {
   setPostalCode: (code: string) => void;
   setStreet: (street: string) => void;
   setSquareMeters: (meters: number) => void;
+  setLandSize: (size: number | null) => void;
 
   setBathrooms: (bathrooms: number) => void;
   setFloor: (floor: FloorLevel) => void;
@@ -113,6 +115,7 @@ const initialState = {
   postalCode: "",
   street: "",
   squareMeters: null,
+  landSize: null,
 
   bathrooms: null,
   floor: null,
@@ -160,6 +163,7 @@ export const useWizardStore = create<WizardState>()(
   setPostalCode: (postalCode) => set({ postalCode }),
   setStreet: (street) => set({ street }),
   setSquareMeters: (squareMeters) => set({ squareMeters }),
+  setLandSize: (landSize) => set({ landSize }),
 
   setBathrooms: (bathrooms) => set({ bathrooms }),
   setFloor: (floor) => set({ floor }),
@@ -212,6 +216,7 @@ export const useWizardStore = create<WizardState>()(
         postalCode: state.postalCode,
         street: state.street,
         squareMeters: state.squareMeters,
+        landSize: state.landSize,
         bathrooms: state.bathrooms,
         floor: state.floor,
         hasElevator: state.hasElevator,
