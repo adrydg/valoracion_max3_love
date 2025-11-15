@@ -11,7 +11,7 @@ interface BasicResultProps {
 }
 
 export const BasicResult = ({ onClose }: BasicResultProps) => {
-  const { valuation, postalCode, squareMeters, bedrooms, bathrooms, floor, hasElevator, buildingAge } = useWizardStore();
+  const { valuation, postalCode, squareMeters, bedrooms, bathrooms, floor, hasElevator, buildingAge, nextStep } = useWizardStore();
 
   if (!valuation) {
     return (
@@ -48,77 +48,126 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
   };
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
-      {/* Header de éxito */}
-      <div className="text-center space-y-3">
-        <div className="mx-auto w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-          <CheckCircle2 className="w-10 h-10 text-green-600 dark:text-green-400" />
+    <div className="space-y-5 p-4 md:p-6">
+      {/* Header compacto */}
+      <div className="text-center space-y-2">
+        <div className="mx-auto w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+          <CheckCircle2 className="w-6 h-6 text-green-600 dark:text-green-400" />
         </div>
-        <h2 className="text-2xl md:text-3xl font-bold">
-          ¡Tu valoración está lista!
+        <h2 className="text-xl md:text-2xl font-bold">
+          Primera estimación lista
         </h2>
-        <p className="text-muted-foreground">
-          Te la hemos enviado por email
-        </p>
       </div>
 
-      {/* Valoración principal */}
-      <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-6 space-y-4 border-2 border-primary/20">
+      {/* Valoración principal con margen destacado */}
+      <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-5 space-y-3 border-2 border-primary/20">
         <div className="text-center space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">
-            Valor estimado de tu propiedad
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Valor estimado
           </p>
           <div className="space-y-1">
-            <p className="text-4xl md:text-5xl font-bold text-primary">
+            <p className="text-3xl md:text-4xl font-bold text-primary">
               {formatPrice(valuation.avg)}
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground font-medium">
               {formatPrice(valuation.min)} - {formatPrice(valuation.max)}
             </p>
           </div>
         </div>
 
-        {/* Índice de precisión */}
-        <div className="pt-4 border-t border-border/50">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">{precisionMessage.icon}</span>
-              <div>
+        {/* Índice de precisión - DESTACADO */}
+        <div className="pt-3 border-t border-border/50">
+          <div className="flex items-start gap-3 mb-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xl">{precisionMessage.icon}</span>
                 <p className="font-semibold text-sm">{precisionMessage.title}</p>
-                <p className="text-xs text-muted-foreground">{precisionMessage.description}</p>
               </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Con la información básica, el margen es amplio
+              </p>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold">{precisionData.percentage}</p>
-              <p className="text-xs text-muted-foreground">Margen</p>
+            <div className="text-right flex-shrink-0">
+              <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{precisionData.percentage}</p>
+              <p className="text-xs text-muted-foreground font-medium">Margen</p>
             </div>
           </div>
 
-          {/* Barra de progreso de precisión */}
+          {/* Barra de progreso */}
           <div className="space-y-2">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Completitud: {precisionData.completeness}%</span>
-              <span className="font-medium">{precisionData.score}/100</span>
-            </div>
-            <div className="h-2 bg-secondary rounded-full overflow-hidden">
+            <div className="h-2.5 bg-secondary rounded-full overflow-hidden">
               <div
-                className={`h-full transition-all duration-500 ${
-                  precisionData.level === "muy-alta"
-                    ? "bg-green-500"
-                    : precisionData.level === "alta"
-                    ? "bg-blue-500"
-                    : precisionData.level === "media"
-                    ? "bg-orange-500"
-                    : "bg-gray-500"
-                }`}
+                className="h-full transition-all duration-500 bg-orange-500"
                 style={{ width: `${precisionData.score}%` }}
               />
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Datos completados: {precisionData.completeness}%</span>
+              <span className="font-medium">{precisionData.score}/100</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Detalles de la propiedad */}
+      {/* CTA PRINCIPAL - Mejorar precisión - POSICIÓN DESTACADA */}
+      <div className="bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 rounded-xl p-6 space-y-4 shadow-lg border-2 border-blue-500">
+        <div className="text-center space-y-3">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-2">
+            <TrendingUp className="w-8 h-8 text-white" />
+          </div>
+          <h3 className="text-xl md:text-2xl font-bold text-white">
+            Reduce el margen a ±8%
+          </h3>
+          <p className="text-blue-100 text-sm md:text-base leading-relaxed">
+            Con la información básica solo podemos darte un intervalo amplio.<br />
+            <strong className="text-white">Responde 3 preguntas más</strong> y obtén una valoración mucho más precisa.
+          </p>
+        </div>
+
+        {/* Beneficios visuales */}
+        <div className="grid grid-cols-2 gap-3 py-3">
+          <div className="text-center p-3 bg-white/10 rounded-lg backdrop-blur-sm">
+            <p className="text-2xl md:text-3xl font-bold text-white mb-1">±20%</p>
+            <p className="text-xs text-blue-100">Margen actual</p>
+          </div>
+          <div className="text-center p-3 bg-white/20 rounded-lg backdrop-blur-sm border-2 border-white/30">
+            <p className="text-2xl md:text-3xl font-bold text-white mb-1">±8%</p>
+            <p className="text-xs text-blue-100 font-semibold">Con más datos</p>
+          </div>
+        </div>
+
+        {/* Lista de beneficios */}
+        <div className="space-y-2 text-sm text-blue-50">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <span>Solo 2 minutos más de tu tiempo</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <span>Valoración hasta 3 veces más precisa</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <span>Toma mejores decisiones sobre tu propiedad</span>
+          </div>
+        </div>
+
+        {/* CTA Button - MUY DESTACADO */}
+        <Button
+          onClick={nextStep}
+          className="w-full h-14 text-base md:text-lg font-bold bg-white text-blue-700 hover:bg-blue-50 shadow-xl border-2 border-white/50"
+          size="lg"
+        >
+          Mejorar mi valoración ahora
+          <TrendingUp className="ml-2 h-5 w-5" />
+        </Button>
+
+        <p className="text-xs text-center text-blue-100/80">
+          Sin compromiso • Gratis • Resultados inmediatos
+        </p>
+      </div>
+
+      {/* Detalles de la propiedad - SECUNDARIO */}
       <div className="bg-muted/50 rounded-lg p-4 space-y-3">
         <div className="flex items-center gap-2 text-sm font-medium">
           <Home className="w-4 h-4" />
@@ -171,58 +220,38 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
         </div>
       )}
 
-      {/* Mejora tu precisión */}
-      {precisionData.level !== "muy-alta" && (
-        <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 space-y-3">
-          <h3 className="font-semibold text-sm text-blue-900 dark:text-blue-100">
-            💡 ¿Quieres una valoración más precisa?
-          </h3>
-          <p className="text-sm text-blue-800 dark:text-blue-200">
-            Responde 3 preguntas más y reduce el margen a <strong>±8%</strong>
-          </p>
-          {precisionData.suggestions.length > 0 && (
-            <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-              {precisionData.suggestions.map((suggestion, index) => (
-                <li key={index}>• {suggestion}</li>
-              ))}
-            </ul>
-          )}
-          <Button variant="outline" className="w-full" size="sm">
-            Mejorar mi valoración (2 min)
-          </Button>
-        </div>
-      )}
-
-      {/* Acciones */}
-      <div className="space-y-3 pt-4">
-        <Button className="w-full" size="lg">
+      {/* Acciones secundarias - Menos destacadas */}
+      <div className="space-y-2 pt-2">
+        <Button variant="outline" className="w-full" size="sm">
           <Mail className="mr-2 h-4 w-4" />
           Enviar informe por email
         </Button>
-        <Button variant="outline" className="w-full" size="lg">
+        <Button variant="ghost" className="w-full" size="sm">
           <Download className="mr-2 h-4 w-4" />
           Descargar PDF
         </Button>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 pt-3 border-t border-border/50">
         <Button
           variant="ghost"
           onClick={onClose}
           className="flex-1"
+          size="sm"
         >
           Cerrar
         </Button>
         <Button
-          variant="default"
+          variant="outline"
           onClick={() => window.location.href = "/contacto"}
           className="flex-1"
+          size="sm"
         >
           Hablar con un experto
         </Button>
       </div>
 
-      <p className="text-xs text-center text-muted-foreground pt-2">
+      <p className="text-xs text-center text-muted-foreground">
         Esta valoración es orientativa. Para una tasación oficial, contacta con nuestros expertos.
       </p>
     </div>

@@ -4,6 +4,9 @@ type PropertyType = "piso" | "casa" | "local" | "otros";
 type FloorLevel = "bajo" | "entresuelo" | "1-2" | "3-5" | "6+" | "atico";
 type BuildingAge = "nueva" | "reciente" | "moderna" | "antigua" | "muy-antigua";
 type DirectOfferInterest = "not-interested" | "open-to-offers";
+type Orientation = "norte" | "sur" | "este" | "oeste" | "noreste" | "noroeste" | "sureste" | "suroeste";
+type PropertyCondition = "a-estrenar" | "muy-buen-estado" | "buen-estado" | "para-reformar" | "reformado";
+type Quality = "lujo" | "alta" | "media" | "basica";
 
 interface WizardState {
   // Navegación
@@ -19,7 +22,7 @@ interface WizardState {
   street: string;
   squareMeters: number | null;
 
-  // Paso 2: Características
+  // Paso 2: Características básicas
   bathrooms: number | null;
   floor: FloorLevel | null;
   hasElevator: boolean | null;
@@ -35,9 +38,23 @@ interface WizardState {
   // Oferta directa
   directOfferInterest: DirectOfferInterest | null;
 
-  // Resultado
+  // Paso 7: Características avanzadas
+  orientation: Orientation | null;
+  propertyCondition: PropertyCondition | null;
+  hasTerrace: boolean | null;
+  terraceSize: number | null;
+  hasGarage: boolean | null;
+  hasStorage: boolean | null;
+  quality: Quality | null;
+
+  // Paso 8: Fotos
+  photos: File[];
+  photoUrls: string[];
+
+  // Resultados
   leadId: string | null;
   valuation: any | null;
+  detailedValuation: any | null;
 
   // Actions
   setCurrentStep: (step: number) => void;
@@ -64,15 +81,30 @@ interface WizardState {
 
   setDirectOfferInterest: (interest: DirectOfferInterest) => void;
 
+  // Advanced actions
+  setOrientation: (orientation: Orientation) => void;
+  setPropertyCondition: (condition: PropertyCondition) => void;
+  setHasTerrace: (has: boolean) => void;
+  setTerraceSize: (size: number) => void;
+  setHasGarage: (has: boolean) => void;
+  setHasStorage: (has: boolean) => void;
+  setQuality: (quality: Quality) => void;
+
+  // Photo actions
+  addPhotos: (files: File[]) => void;
+  removePhoto: (index: number) => void;
+  clearPhotos: () => void;
+
   setLeadId: (id: string) => void;
   setValuation: (valuation: any) => void;
+  setDetailedValuation: (valuation: any) => void;
 
   reset: () => void;
 }
 
 const initialState = {
   currentStep: 1,
-  totalSteps: 6, // 1: ubicacion, 2: caracteristicas, 3: datos personales, 4: loading, 5: oferta directa, 6: resultado
+  totalSteps: 10, // Nuevo flujo: 1-6 básico + 7 avanzadas + 8 fotos + 9 loading IA + 10 resultado final
 
   propertyType: null,
   bedrooms: null,
@@ -94,8 +126,22 @@ const initialState = {
 
   directOfferInterest: null,
 
+  // Advanced fields
+  orientation: null,
+  propertyCondition: null,
+  hasTerrace: null,
+  terraceSize: null,
+  hasGarage: null,
+  hasStorage: null,
+  quality: null,
+
+  // Photos
+  photos: [],
+  photoUrls: [],
+
   leadId: null,
   valuation: null,
+  detailedValuation: null,
 };
 
 export const useWizardStore = create<WizardState>((set) => ({
@@ -125,8 +171,29 @@ export const useWizardStore = create<WizardState>((set) => ({
 
   setDirectOfferInterest: (directOfferInterest) => set({ directOfferInterest }),
 
+  // Advanced setters
+  setOrientation: (orientation) => set({ orientation }),
+  setPropertyCondition: (propertyCondition) => set({ propertyCondition }),
+  setHasTerrace: (hasTerrace) => set({ hasTerrace }),
+  setTerraceSize: (terraceSize) => set({ terraceSize }),
+  setHasGarage: (hasGarage) => set({ hasGarage }),
+  setHasStorage: (hasStorage) => set({ hasStorage }),
+  setQuality: (quality) => set({ quality }),
+
+  // Photo management
+  addPhotos: (newPhotos) => set((state) => ({
+    photos: [...state.photos, ...newPhotos],
+    photoUrls: [...state.photoUrls, ...newPhotos.map(f => URL.createObjectURL(f))]
+  })),
+  removePhoto: (index) => set((state) => ({
+    photos: state.photos.filter((_, i) => i !== index),
+    photoUrls: state.photoUrls.filter((_, i) => i !== index)
+  })),
+  clearPhotos: () => set({ photos: [], photoUrls: [] }),
+
   setLeadId: (leadId) => set({ leadId }),
   setValuation: (valuation) => set({ valuation }),
+  setDetailedValuation: (detailedValuation) => set({ detailedValuation }),
 
   reset: () => set(initialState),
 }));
