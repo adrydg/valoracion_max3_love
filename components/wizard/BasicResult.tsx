@@ -109,17 +109,101 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
         </div>
       )}
 
-      {/* Botón Finalizar */}
+      {/* Pregunta con radio buttons */}
+      <div className="pt-2">
+        <p className="text-sm font-medium mb-3">
+          ¿Quieres continuar para recibir una estimación más precisa?
+        </p>
+
+        <div className="space-y-2">
+          {/* Opción 1: Sí, continuar */}
+          <button
+            onClick={() => setWantsPrecision(true)}
+            className={cn(
+              "w-full p-3 rounded-lg border-2 transition-all text-left",
+              "hover:border-primary/50",
+              wantsPrecision === true
+                ? "border-primary bg-primary/5"
+                : "border-border bg-background"
+            )}
+          >
+            <div className="flex items-start gap-3">
+              <div className={cn(
+                "flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5",
+                wantsPrecision === true
+                  ? "border-primary bg-primary"
+                  : "border-muted-foreground/30"
+              )}>
+                {wantsPrecision === true && (
+                  <CheckCircle className="w-3 h-3 text-white" fill="currentColor" />
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-base">Sí, continuar con estimación más precisa</p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-sm text-green-700 font-bold bg-green-50 inline-block px-3 py-1 rounded-full border-2 border-green-200">
+                    ⚡ Solo 1 minuto • Reduce margen a ±8%
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Valoración mucho más precisa con fotos y detalles avanzados
+                  </p>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          {/* Opción 2: No, cerrar */}
+          <button
+            onClick={() => setWantsPrecision(false)}
+            className={cn(
+              "w-full p-3 rounded-lg border-2 transition-all text-left",
+              "hover:border-primary/50",
+              wantsPrecision === false
+                ? "border-primary bg-primary/5"
+                : "border-border bg-background"
+            )}
+          >
+            <div className="flex items-start gap-3">
+              <div className={cn(
+                "flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center mt-0.5",
+                wantsPrecision === false
+                  ? "border-primary bg-primary"
+                  : "border-muted-foreground/30"
+              )}>
+                {wantsPrecision === false && (
+                  <CheckCircle className="w-3 h-3 text-white" fill="currentColor" />
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-sm">No, esta estimación es suficiente</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Cerrar y guardar resultado
+                </p>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Botón Continuar/Cerrar - Desactivado hasta seleccionar */}
       <Button
-        onClick={onClose}
-        className="w-full h-auto py-4 text-lg font-bold shadow-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+        onClick={handleContinue}
+        disabled={wantsPrecision === null}
+        className={cn(
+          "w-full h-auto py-3 text-base font-bold shadow-lg transition-all",
+          wantsPrecision === true
+            ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+            : wantsPrecision === false
+            ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
+            : "bg-muted text-muted-foreground cursor-not-allowed"
+        )}
         size="lg"
       >
-        Finalizar
+        {wantsPrecision === true ? "Continuar" : wantsPrecision === false ? "Cerrar" : "Selecciona una opción"}
       </Button>
 
       <p className="text-xs text-center text-muted-foreground">
-        Hemos enviado el informe completo a tu email
+        Con la información básica es nuestra estimación, pero si continuamos podremos afinar más.
       </p>
     </div>
   );

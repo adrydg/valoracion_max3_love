@@ -259,40 +259,19 @@ export const Step10DetailedResult = ({ onClose }: DetailedResultProps) => {
         </div>
       )}
 
-      {/* Action Buttons */}
-      <div className="space-y-3 pt-4">
-        <div className="grid grid-cols-2 gap-3">
-          <Button className="w-full" size="lg">
-            <Mail className="mr-2 h-4 w-4" />
-            Enviar informe
-          </Button>
-          <Button variant="outline" className="w-full" size="lg">
-            <Download className="mr-2 h-4 w-4" />
-            Descargar PDF
-          </Button>
-        </div>
-
+      {/* Botón Finalizar */}
+      <div className="pt-4">
         <Button
-          variant="default"
-          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-          size="lg"
-          onClick={() => window.location.href = "/contacto"}
-        >
-          Hablar con un experto
-        </Button>
-
-        <Button
-          variant="ghost"
           onClick={onClose}
-          className="w-full"
-          size="sm"
+          className="w-full h-auto py-4 text-lg font-bold shadow-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+          size="lg"
         >
-          Cerrar
+          Finalizar
         </Button>
       </div>
 
       <p className="text-xs text-center text-muted-foreground pt-2">
-        Esta valoración utiliza IA y machine learning para máxima precisión. Para una tasación oficial certificada, contacta con nuestros expertos.
+        Hemos enviado el informe completo a tu email
       </p>
     </div>
   );
