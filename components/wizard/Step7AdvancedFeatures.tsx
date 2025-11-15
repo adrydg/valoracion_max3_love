@@ -149,25 +149,25 @@ export const Step7AdvancedFeatures = () => {
 
       <div className="space-y-6">
         {/* Orientación */}
-        <div className="space-y-3">
-          <Label>
+        <div className="space-y-2">
+          <Label className="text-xs">
             Orientación principal (puedes seleccionar varias) <span className="text-destructive">*</span>
           </Label>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-1.5">
             {orientationOptions.map((option) => (
               <button
                 key={option.id}
                 onClick={() => toggleOrientation(option.id)}
                 className={cn(
-                  "py-2 px-1 rounded-lg border-2 transition-all text-xs font-medium",
-                  "hover:border-primary/50 flex flex-col items-center gap-0.5",
+                  "py-1.5 px-1 rounded-md border-2 transition-all text-xs font-medium",
+                  "hover:border-primary/50 flex flex-col items-center gap-0",
                   selectedOrientations.includes(option.id)
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-background"
                 )}
               >
-                <span className="text-sm">{option.icon}</span>
-                <span className="text-[10px]">{option.label}</span>
+                <span className="text-xs">{option.icon}</span>
+                <span className="text-[9px]">{option.label}</span>
               </button>
             ))}
           </div>
@@ -177,30 +177,24 @@ export const Step7AdvancedFeatures = () => {
         </div>
 
         {/* Estado de la propiedad */}
-        <div className="space-y-3">
-          <Label>
+        <div className="space-y-2">
+          <Label className="text-xs">
             Estado de la propiedad (puedes seleccionar varios) <span className="text-destructive">*</span>
           </Label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-4 gap-1.5">
             {conditionOptions.map((option) => (
               <button
                 key={option.id}
                 onClick={() => toggleCondition(option.id)}
                 className={cn(
-                  "py-3 px-3 rounded-lg border-2 transition-all text-left",
+                  "py-2 px-1 rounded-md border-2 transition-all text-center",
                   "hover:border-primary/50",
                   selectedConditions.includes(option.id)
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-background"
                 )}
               >
-                <div className="font-medium text-sm">{option.label}</div>
-                <div className={cn(
-                  "text-xs mt-0.5",
-                  selectedConditions.includes(option.id) ? "text-primary-foreground/80" : "text-muted-foreground"
-                )}>
-                  {option.description}
-                </div>
+                <div className="font-medium text-[10px] leading-tight">{option.label}</div>
               </button>
             ))}
           </div>
@@ -210,11 +204,11 @@ export const Step7AdvancedFeatures = () => {
         </div>
 
         {/* Terraza/Balcón/Patio */}
-        <div className="space-y-3">
-          <Label>
-            ¿Tiene terraza, balcón o patio? (puedes seleccionar varios) <span className="text-destructive">*</span>
+        <div className="space-y-2">
+          <Label className="text-xs">
+            ¿Tiene terraza, balcón o patio? (multirespuesta)
           </Label>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-1.5">
             {[
               { id: "terraza", label: "Terraza" },
               { id: "balcon", label: "Balcón" },
@@ -225,7 +219,7 @@ export const Step7AdvancedFeatures = () => {
                 key={option.id}
                 onClick={() => toggleTerraceType(option.id)}
                 className={cn(
-                  "py-2 px-2 rounded-lg border-2 transition-all text-xs font-medium",
+                  "py-2 px-1 rounded-md border-2 transition-all text-[10px] font-medium",
                   "hover:border-primary/50",
                   selectedTerraceTypes.includes(option.id)
                     ? "border-primary bg-primary text-primary-foreground"
@@ -242,16 +236,16 @@ export const Step7AdvancedFeatures = () => {
         </div>
 
         {/* Garaje y Trastero */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <Label>
-              ¿Tiene plaza de garaje? <span className="text-destructive">*</span>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <Label className="text-xs">
+              ¿Plaza de garaje? <span className="text-destructive">*</span>
             </Label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-1.5">
               <button
                 onClick={() => setHasGarage(true)}
                 className={cn(
-                  "py-3 px-4 rounded-lg border-2 transition-all text-sm font-medium",
+                  "py-2 px-2 rounded-md border-2 transition-all text-[10px] font-medium",
                   "hover:border-primary/50",
                   hasGarage === true
                     ? "border-primary bg-primary text-primary-foreground"
@@ -263,7 +257,7 @@ export const Step7AdvancedFeatures = () => {
               <button
                 onClick={() => setHasGarage(false)}
                 className={cn(
-                  "py-3 px-4 rounded-lg border-2 transition-all text-sm font-medium",
+                  "py-2 px-2 rounded-md border-2 transition-all text-[10px] font-medium",
                   "hover:border-primary/50",
                   hasGarage === false
                     ? "border-primary bg-primary text-primary-foreground"
@@ -278,15 +272,15 @@ export const Step7AdvancedFeatures = () => {
             )}
           </div>
 
-          <div className="space-y-3">
-            <Label>
-              ¿Tiene trastero? <span className="text-destructive">*</span>
+          <div className="space-y-2">
+            <Label className="text-xs">
+              ¿Trastero? <span className="text-destructive">*</span>
             </Label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-1.5">
               <button
                 onClick={() => setHasStorage(true)}
                 className={cn(
-                  "py-3 px-4 rounded-lg border-2 transition-all text-sm font-medium",
+                  "py-2 px-2 rounded-md border-2 transition-all text-[10px] font-medium",
                   "hover:border-primary/50",
                   hasStorage === true
                     ? "border-primary bg-primary text-primary-foreground"
@@ -298,7 +292,7 @@ export const Step7AdvancedFeatures = () => {
               <button
                 onClick={() => setHasStorage(false)}
                 className={cn(
-                  "py-3 px-4 rounded-lg border-2 transition-all text-sm font-medium",
+                  "py-2 px-2 rounded-md border-2 transition-all text-[10px] font-medium",
                   "hover:border-primary/50",
                   hasStorage === false
                     ? "border-primary bg-primary text-primary-foreground"

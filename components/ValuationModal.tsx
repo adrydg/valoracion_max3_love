@@ -80,10 +80,10 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-2xl p-0 gap-0"
+        className="max-w-2xl p-0 gap-0 h-[100dvh] max-h-[100dvh]"
         style={{
-          maxHeight: 'calc(var(--vh, 1vh) * 90)',
-          height: 'auto',
+          maxHeight: 'calc(var(--vh, 1vh) * 100)',
+          height: '100%',
         }}
       >
         <DialogTitle className="sr-only">Valoración de propiedad</DialogTitle>
