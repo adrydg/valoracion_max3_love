@@ -40,11 +40,14 @@ export const DirectOfferScreen = () => {
       <div className="space-y-3">
         <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
           <Sparkles className="w-7 h-7 text-amber-500" />
-          Un momento...
+          Valoración básica
         </h2>
         <p className="text-lg text-muted-foreground text-center">
           Ya tenemos tu valoración, pero antes de que la veas te queremos hacer una{" "}
           <span className="font-semibold text-primary">propuesta</span>.
+        </p>
+        <p className="text-sm text-center text-primary font-semibold">
+          Solo 2 pasos más para completar tu valoración
         </p>
       </div>
 
