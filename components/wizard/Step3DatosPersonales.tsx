@@ -29,6 +29,7 @@ export const Step3DatosPersonales = () => {
     postalCode,
     street,
     squareMeters,
+    landSize,
     bathrooms,
     floor,
     hasElevator,
