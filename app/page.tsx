@@ -29,7 +29,11 @@ export default function Home() {
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                ✨ Descubre el valor real de tu inmueble{" "}
+                ✨ Descubre el{" "}
+                <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
+                  valor real
+                </span>{" "}
+                de tu inmueble{" "}
                 <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
                   al instante
                 </span>
