@@ -4,21 +4,21 @@ import { CheckCircle2 } from "lucide-react";
 const steps = [
   {
     number: "01",
-    title: "Valoración instantánea",
+    title: "Datos básicos",
     description:
-      "Completa nuestro formulario y recibe una valoración preliminar en menos de 24 horas. Nuestro algoritmo analiza el mercado en tiempo real.",
+      "Introduce la información de tu inmueble en nuestro wizard intuitivo. Versión básica o avanzada según el detalle que prefieras.",
   },
   {
     number: "02",
-    title: "Visita personalizada",
+    title: "Análisis inteligente (Opcional)",
     description:
-      "Un experto certificado visita tu propiedad para realizar una tasación profesional y fotografías de alta calidad para la publicación.",
+      "Sube fotos de tu inmueble para que nuestra IA analice acabados y estado, aumentando la precisión hasta un 95%.",
   },
   {
     number: "03",
-    title: "Venta garantizada",
+    title: "Informe detallado",
     description:
-      "Publicamos tu propiedad en nuestra red exclusiva y gestionamos todas las visitas. Cobras en tu cuenta en un plazo máximo de 30 días.",
+      "Recibe al instante tu valoración profesional con comparativa de mercado, tendencias de tu zona y recomendaciones personalizadas.",
   },
 ];
 
@@ -27,9 +27,9 @@ export const Process = () => {
     <section className="py-12 md:py-16 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10 md:mb-12 space-y-4 animate-fade-in">
-          <h2 className="text-3xl md:text-4xl font-bold">Nuestro proceso de venta</h2>
+          <h2 className="text-3xl md:text-4xl font-bold">Cómo funciona ValoracionMax</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Tres simples pasos que transforman la venta de tu propiedad en una experiencia fluida
+            Tres simples pasos para conocer el valor exacto de tu inmueble
           </p>
         </div>
 

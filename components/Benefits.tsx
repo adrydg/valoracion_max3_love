@@ -1,36 +1,36 @@
-import { Zap, Shield, TrendingUp, Clock, Users, Award } from "lucide-react";
+import { Zap, Shield, TrendingUp, Clock, Users, Award, Database, Smartphone } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const benefits = [
   {
     icon: Zap,
-    title: "Venta rápida garantizada",
-    description: "Vendemos tu propiedad en un tiempo récord con nuestra tecnología avanzada",
+    title: "Valoración instantánea",
+    description: "Conoce el valor de tu propiedad en 2 minutos desde tu móvil",
   },
   {
     icon: TrendingUp,
-    title: "Máximo precio de mercado",
-    description: "Optimizamos el precio para conseguir la mejor oferta posible",
+    title: "Máxima precisión",
+    description: "Algoritmo propio que consulta +20 fuentes de datos oficiales",
   },
   {
-    icon: Shield,
-    title: "Proceso 100% seguro",
-    description: "Transacciones protegidas y proceso legal totalmente gestionado",
+    icon: Smartphone,
+    title: "100% Online y Digital",
+    description: "Sin desplazamientos, sin esperas, desde cualquier dispositivo",
   },
   {
     icon: Clock,
-    title: "Disponibilidad 24/7",
-    description: "Soporte y seguimiento continuo durante todo el proceso",
+    title: "Disponible 24/7",
+    description: "Valora tu inmueble cuando quieras, donde quieras",
   },
   {
-    icon: Users,
-    title: "Red de compradores exclusiva",
-    description: "Acceso a miles de compradores verificados en nuestra plataforma",
+    icon: Database,
+    title: "Datos reales de tu zona",
+    description: "Información actualizada de compraventas en tu barrio",
   },
   {
     icon: Award,
-    title: "Expertos certificados",
-    description: "Equipo de profesionales con más de 15 años de experiencia",
+    title: "Tecnología avanzada",
+    description: "Análisis de fotos con IA para mayor precisión (opcional)",
   },
 ];
 
@@ -40,10 +40,10 @@ export const Benefits = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10 md:mb-12 space-y-4 animate-fade-in">
           <h2 className="text-3xl md:text-4xl font-bold">
-            ¿Por qué elegirnos para vender tu propiedad?
+            ¿Por qué confiar en ValoracionMax?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Combinamos tecnología de vanguardia con experiencia humana para ofrecerte el mejor servicio
+            Combinamos inteligencia artificial con datos reales de compraventas para ofrecerte la valoración más precisa del mercado
           </p>
         </div>
 

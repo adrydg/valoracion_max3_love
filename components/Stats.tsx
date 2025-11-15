@@ -6,27 +6,27 @@ import { useEffect, useState, useRef } from "react";
 const stats = [
   {
     icon: Home,
-    value: 5000,
+    value: 50000,
     suffix: "+",
-    label: "Propiedades vendidas",
+    label: "Valoraciones realizadas",
   },
   {
     icon: Users,
-    value: 12000,
+    value: 45000,
     suffix: "+",
-    label: "Clientes satisfechos",
+    label: "Propietarios informados",
   },
   {
     icon: Clock,
-    value: 18,
-    suffix: " días",
-    label: "Tiempo medio de venta",
+    value: 2,
+    suffix: " minutos",
+    label: "Tiempo de valoración",
   },
   {
     icon: TrendingUp,
-    value: 98,
+    value: 95,
     suffix: "%",
-    label: "Precio objetivo alcanzado",
+    label: "Precisión garantizada",
   },
 ];
 

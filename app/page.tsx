@@ -25,30 +25,29 @@ export default function Home() {
             <div className="space-y-4 md:space-y-6 animate-fade-in">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20">
                 <Zap className="w-4 h-4 text-accent" />
-                <span className="text-sm font-medium">Venta en 30 días garantizada</span>
+                <span className="text-sm font-medium">Valoración exacta en 2 minutos</span>
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                ✨ Vende tu propiedad{" "}
+                ✨ Descubre el valor real de tu inmueble{" "}
                 <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
-                  rápido y seguro
+                  al instante
                 </span>
               </h1>
 
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                La plataforma inmobiliaria más innovadora de España. Combinamos tecnología de vanguardia con
-                expertos certificados para venderte tu casa al mejor precio del mercado.
+                La plataforma de valoración inmobiliaria más precisa de España. Nuestro algoritmo analiza +20 bases de datos y compraventas reales de tu zona para darte una valoración exacta desde tu móvil.
               </p>
 
               {/* Key Features */}
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="flex items-start gap-3">
                   <div className="text-3xl flex-shrink-0">
-                    🛡️
+                    📊
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">100% Seguro</p>
-                    <p className="text-xs text-muted-foreground">Proceso legal garantizado</p>
+                    <p className="font-semibold text-sm">100% Exacto</p>
+                    <p className="text-xs text-muted-foreground">Datos reales de tu zona</p>
                   </div>
                 </div>
 
@@ -57,8 +56,8 @@ export default function Home() {
                     💰
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Mejor precio</p>
-                    <p className="text-xs text-muted-foreground">Maximizamos tu ganancia</p>
+                    <p className="font-semibold text-sm">Primera valoración GRATIS</p>
+                    <p className="text-xs text-muted-foreground">Ahórrate 65€</p>
                   </div>
                 </div>
 
@@ -67,8 +66,8 @@ export default function Home() {
                     ⚡
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Venta rápida</p>
-                    <p className="text-xs text-muted-foreground">En 18 días de media</p>
+                    <p className="font-semibold text-sm">Resultado inmediato</p>
+                    <p className="text-xs text-muted-foreground">En solo 2 minutos</p>
                   </div>
                 </div>
               </div>
