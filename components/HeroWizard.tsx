@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Home, Building2, Store, HelpCircle, ArrowRight } from "lucide-react";
+import { Home, Building2, Store, HelpCircle, ArrowRight, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ValuationModal } from "./ValuationModal";
 
@@ -104,8 +104,10 @@ export const HeroWizard = () => {
 
         {/* Land Size Selection - only for casa */}
         {propertyType === "casa" && (
-          <div className="space-y-2">
+          <div className="space-y-3">
             <label className="text-sm font-medium">Tamaño del terreno</label>
+
+            {/* Bubbles selector */}
             <div className="flex flex-wrap gap-2 justify-center">
               {landSizeOptions.map((option) => (
                 <button
@@ -122,6 +124,28 @@ export const HeroWizard = () => {
                   {option.label}
                 </button>
               ))}
+            </div>
+
+            {/* Numeric selector with - and + */}
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => setLandSize(Math.max(0, (parseInt(landSize || "0") - 10)).toString() as LandSize)}
+                className="w-10 h-10 rounded-full border-2 border-border hover:border-primary/50 flex items-center justify-center transition-all hover:bg-primary/5"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+
+              <div className="flex items-center gap-2 bg-muted px-4 py-2 rounded-lg min-w-[100px] justify-center">
+                <span className="text-2xl font-bold">{landSize || "0"}</span>
+                <span className="text-sm text-muted-foreground">m²</span>
+              </div>
+
+              <button
+                onClick={() => setLandSize((parseInt(landSize || "0") + 10).toString() as LandSize)}
+                className="w-10 h-10 rounded-full border-2 border-border hover:border-primary/50 flex items-center justify-center transition-all hover:bg-primary/5"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
             </div>
           </div>
         )}

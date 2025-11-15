@@ -75,7 +75,7 @@ export const Step1Ubicacion = () => {
   ];
 
   return (
-    <div className="space-y-4 p-4 pt-2">
+    <div className="space-y-4 p-4 pt-0">
       <div className="text-center space-y-1">
         <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
           <MapPin className="w-6 h-6 text-primary" />

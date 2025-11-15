@@ -72,10 +72,28 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
     }
   }, [open, reset, currentStep, totalSteps]);
 
-  // Calcular progreso - solo para pasos del wizard (no loading/results)
-  const wizardSteps = [1, 2, 3, 7, 8]; // Pasos con formulario
-  const isWizardStep = wizardSteps.includes(currentStep);
-  const progress = isWizardStep ? (wizardSteps.indexOf(currentStep) + 1) / wizardSteps.length * 100 : 0;
+  // Calcular progreso - separar proceso corto (1-6) y largo (7-10)
+  const shortProcessSteps = [1, 2, 3]; // Pasos del proceso corto
+  const longProcessSteps = [7, 8]; // Pasos del proceso largo (avanzado)
+
+  const isShortProcess = currentStep >= 1 && currentStep <= 6;
+  const isLongProcess = currentStep >= 7 && currentStep <= 10;
+
+  const isWizardStep = shortProcessSteps.includes(currentStep) || longProcessSteps.includes(currentStep);
+
+  let progress = 0;
+  let currentStepNum = 0;
+  let totalStepsNum = 0;
+
+  if (shortProcessSteps.includes(currentStep)) {
+    currentStepNum = shortProcessSteps.indexOf(currentStep) + 1;
+    totalStepsNum = shortProcessSteps.length;
+    progress = (currentStepNum / totalStepsNum) * 100;
+  } else if (longProcessSteps.includes(currentStep)) {
+    currentStepNum = longProcessSteps.indexOf(currentStep) + 1;
+    totalStepsNum = longProcessSteps.length;
+    progress = (currentStepNum / totalStepsNum) * 100;
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -93,7 +111,7 @@ export const ValuationModal = ({ open, onOpenChange }: ValuationModalProps) => {
           <div className="sticky top-0 z-10 bg-background border-b p-4 rounded-t-lg">
             <Progress value={progress} className="h-2" />
             <p className="text-sm text-muted-foreground mt-2 text-center">
-              Paso {wizardSteps.indexOf(currentStep) + 1} de {wizardSteps.length}
+              Paso {currentStepNum} de {totalStepsNum}
             </p>
           </div>
         )}
