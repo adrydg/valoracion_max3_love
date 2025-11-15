@@ -211,7 +211,7 @@ export const Step1Ubicacion = () => {
             {/* Numeric selector con - y + */}
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
-                onClick={() => setLandSize(Math.max(0, (landSize || 0) - 10))}
+                onClick={() => setLandSize(Math.max(0, (landSize || 0) - 100))}
                 className="w-10 h-10 rounded-full border-2 border-border hover:border-primary/50 flex items-center justify-center transition-all hover:bg-primary/5"
               >
                 <Minus className="w-4 h-4" />
@@ -223,7 +223,7 @@ export const Step1Ubicacion = () => {
               </div>
 
               <button
-                onClick={() => setLandSize((landSize || 0) + 10)}
+                onClick={() => setLandSize((landSize || 0) + 100)}
                 className="w-10 h-10 rounded-full border-2 border-border hover:border-primary/50 flex items-center justify-center transition-all hover:bg-primary/5"
               >
                 <Plus className="w-4 h-4" />

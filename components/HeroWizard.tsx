@@ -129,7 +129,7 @@ export const HeroWizard = () => {
             {/* Numeric selector with - and + */}
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
-                onClick={() => setLandSize(Math.max(0, (parseInt(landSize || "0") - 10)).toString() as LandSize)}
+                onClick={() => setLandSize(Math.max(0, (parseInt(landSize || "0") - 100)).toString() as LandSize)}
                 className="w-10 h-10 rounded-full border-2 border-border hover:border-primary/50 flex items-center justify-center transition-all hover:bg-primary/5"
               >
                 <Minus className="w-4 h-4" />
@@ -141,7 +141,7 @@ export const HeroWizard = () => {
               </div>
 
               <button
-                onClick={() => setLandSize((parseInt(landSize || "0") + 10).toString() as LandSize)}
+                onClick={() => setLandSize((parseInt(landSize || "0") + 100).toString() as LandSize)}
                 className="w-10 h-10 rounded-full border-2 border-border hover:border-primary/50 flex items-center justify-center transition-all hover:bg-primary/5"
               >
                 <Plus className="w-4 h-4" />

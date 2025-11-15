@@ -121,7 +121,10 @@ export const Step3DatosPersonales = () => {
           Último paso
         </h2>
         <p className="text-muted-foreground">
-          ¿Dónde te enviamos tu valoración?
+          Introduce tus datos de contacto
+        </p>
+        <p className="text-sm text-primary font-semibold">
+          Te enviaremos el informe completo a tu email
         </p>
       </div>
 
