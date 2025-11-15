@@ -76,10 +76,15 @@ export const Step1Ubicacion = () => {
           <Input
             id="postalCode"
             type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
             placeholder="28001"
             value={postalCode}
             onChange={(e) => setPostalCode(e.target.value.slice(0, 5))}
             maxLength={5}
+            autoComplete="postal-code"
+            autoCorrect="off"
+            spellCheck={false}
             className={errors.postalCode ? "border-destructive" : ""}
           />
           {errors.postalCode && (
@@ -98,6 +103,8 @@ export const Step1Ubicacion = () => {
             placeholder="Calle Gran Vía 28"
             value={street}
             onChange={(e) => setStreet(e.target.value)}
+            autoComplete="street-address"
+            spellCheck={false}
           />
           <p className="text-xs text-muted-foreground">
             No lo mostraremos públicamente
@@ -113,11 +120,14 @@ export const Step1Ubicacion = () => {
             <Input
               id="squareMeters"
               type="number"
+              inputMode="decimal"
               placeholder="85"
               value={squareMeters || ""}
               onChange={(e) => setSquareMeters(Number(e.target.value))}
               min={20}
               max={1000}
+              autoComplete="off"
+              autoCorrect="off"
               className={errors.squareMeters ? "border-destructive pr-12" : "pr-12"}
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">

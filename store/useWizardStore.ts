@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 type PropertyType = "piso" | "casa" | "local" | "otros";
 type FloorLevel = "bajo" | "entresuelo" | "1-2" | "3-5" | "6+" | "atico";
@@ -144,12 +145,14 @@ const initialState = {
   detailedValuation: null,
 };
 
-export const useWizardStore = create<WizardState>((set) => ({
-  ...initialState,
+export const useWizardStore = create<WizardState>()(
+  persist(
+    (set) => ({
+      ...initialState,
 
-  setCurrentStep: (step) => set({ currentStep: step }),
-  nextStep: () => set((state) => ({ currentStep: Math.min(state.currentStep + 1, state.totalSteps) })),
-  prevStep: () => set((state) => ({ currentStep: Math.max(state.currentStep - 1, 1) })),
+      setCurrentStep: (step) => set({ currentStep: step }),
+      nextStep: () => set((state) => ({ currentStep: Math.min(state.currentStep + 1, state.totalSteps) })),
+      prevStep: () => set((state) => ({ currentStep: Math.max(state.currentStep - 1, 1) })),
 
   setPropertyType: (propertyType) => set({ propertyType }),
   setBedrooms: (bedrooms) => set({ bedrooms }),
@@ -191,9 +194,45 @@ export const useWizardStore = create<WizardState>((set) => ({
   })),
   clearPhotos: () => set({ photos: [], photoUrls: [] }),
 
-  setLeadId: (leadId) => set({ leadId }),
-  setValuation: (valuation) => set({ valuation }),
-  setDetailedValuation: (detailedValuation) => set({ detailedValuation }),
+      setLeadId: (leadId) => set({ leadId }),
+      setValuation: (valuation) => set({ valuation }),
+      setDetailedValuation: (detailedValuation) => set({ detailedValuation }),
 
-  reset: () => set(initialState),
-}));
+      reset: () => set(initialState),
+    }),
+    {
+      name: 'wizard-storage',
+      storage: createJSONStorage(() => localStorage),
+      // No persistir fotos (son objetos File, no serializables)
+      // No persistir photoUrls (se regeneran)
+      partialize: (state) => ({
+        currentStep: state.currentStep,
+        propertyType: state.propertyType,
+        bedrooms: state.bedrooms,
+        postalCode: state.postalCode,
+        street: state.street,
+        squareMeters: state.squareMeters,
+        bathrooms: state.bathrooms,
+        floor: state.floor,
+        hasElevator: state.hasElevator,
+        buildingAge: state.buildingAge,
+        name: state.name,
+        email: state.email,
+        phone: state.phone,
+        consentMarketing: state.consentMarketing,
+        consentDataProcessing: state.consentDataProcessing,
+        directOfferInterest: state.directOfferInterest,
+        orientation: state.orientation,
+        propertyCondition: state.propertyCondition,
+        hasTerrace: state.hasTerrace,
+        terraceSize: state.terraceSize,
+        hasGarage: state.hasGarage,
+        hasStorage: state.hasStorage,
+        quality: state.quality,
+        leadId: state.leadId,
+        valuation: state.valuation,
+        detailedValuation: state.detailedValuation,
+      }),
+    }
+  )
+);

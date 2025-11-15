@@ -137,6 +137,9 @@ export const Step3DatosPersonales = () => {
             placeholder="Juan Pérez"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            autoComplete="name"
+            autoCorrect="off"
+            spellCheck={false}
             className={errors.name ? "border-destructive" : ""}
           />
           {errors.name && (
@@ -152,9 +155,14 @@ export const Step3DatosPersonales = () => {
           <Input
             id="email"
             type="email"
+            inputMode="email"
             placeholder="juan@ejemplo.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            autoCapitalize="off"
+            autoCorrect="off"
+            spellCheck={false}
             className={errors.email ? "border-destructive" : ""}
           />
           {errors.email && (
@@ -170,9 +178,12 @@ export const Step3DatosPersonales = () => {
           <Input
             id="phone"
             type="tel"
+            inputMode="tel"
             placeholder="612345678"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+            autoComplete="tel"
+            autoCorrect="off"
             className={errors.phone ? "border-destructive" : ""}
           />
           {errors.phone && (
