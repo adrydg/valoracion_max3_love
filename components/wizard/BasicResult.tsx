@@ -61,22 +61,24 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
   return (
     <div className="space-y-4 p-4">
       {/* Header con precio integrado */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <CheckCircle2 className="w-6 h-6 text-green-600" />
-          <div>
-            <h2 className="text-lg font-bold">Primera estimación</h2>
-            <p className="text-2xl font-bold text-primary">{formatPrice(valuation.avg)}</p>
+      <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0" />
+            <div>
+              <h2 className="text-base font-bold">Primera estimación</h2>
+              <p className="text-3xl font-bold text-primary mt-1">{formatPrice(valuation.avg)}</p>
+            </div>
           </div>
-        </div>
-        <div className="text-right text-xs space-y-1">
-          <p className="text-muted-foreground">
-            {formatPrice(valuation.min)} - {formatPrice(valuation.max)}
-          </p>
-          <p className="text-muted-foreground flex items-center gap-1 justify-end">
-            <span>{precisionMessage.icon}</span>
-            <span>±20%</span>
-          </p>
+          <div className="text-right text-xs space-y-1 flex-shrink-0">
+            <p className="text-muted-foreground font-medium">
+              {formatPrice(valuation.min)} - {formatPrice(valuation.max)}
+            </p>
+            <div className="flex items-center gap-1 justify-end bg-primary/10 px-2 py-1 rounded">
+              <span>{precisionMessage.icon}</span>
+              <span className="font-semibold text-primary">±20%</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -137,9 +139,9 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
                 )}
               </div>
               <div className="flex-1">
-                <p className="font-semibold text-sm">Sí, continuar con estimación precisa</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Reduce el margen a ±8% (1 minuto)
+                <p className="font-semibold text-base">Sí, continuar con estimación más precisa</p>
+                <p className="text-xs text-green-700 font-medium mt-1 bg-green-50 inline-block px-2 py-0.5 rounded">
+                  Solo 1 minuto • Reduce margen a ±8%
                 </p>
               </div>
             </div>
@@ -178,14 +180,16 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
         </div>
       </div>
 
-      {/* Botón Continuar - Desactivado hasta seleccionar */}
+      {/* Botón Continuar/Cerrar - Desactivado hasta seleccionar */}
       <Button
         onClick={handleContinue}
         disabled={wantsPrecision === null}
         className={cn(
           "w-full h-auto py-3 text-base font-bold shadow-lg transition-all",
-          wantsPrecision !== null
+          wantsPrecision === true
             ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+            : wantsPrecision === false
+            ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
             : "bg-muted text-muted-foreground cursor-not-allowed"
         )}
         size="lg"
@@ -194,7 +198,7 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
       </Button>
 
       <p className="text-xs text-center text-muted-foreground">
-        Valoración orientativa. Para tasación oficial, contacta con expertos.
+        Con la información básica es nuestra estimación, pero si continuamos podremos afinar más.
       </p>
     </div>
   );

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useWizardStore } from "@/store/useWizardStore";
 import { Button } from "@/components/ui/button";
-import { Sparkles, CheckCircle, ArrowRight } from "lucide-react";
+import { Sparkles, CheckCircle, ArrowRight, PartyPopper, Skull } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const DirectOfferScreen = () => {
@@ -78,11 +78,14 @@ export const DirectOfferScreen = () => {
                   <CheckCircle className="w-4 h-4 text-white" fill="currentColor" />
                 )}
               </div>
+              <PartyPopper className="w-10 h-10 text-green-600 flex-shrink-0" />
               <div className="flex-1">
                 <p className="font-semibold text-base">Recibir valoración y escuchar oferta</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Siempre está bien escuchar propuestas
-                </p>
+                <div className="mt-2">
+                  <span className="inline-block bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">
+                    Siempre está bien escuchar ofertas
+                  </span>
+                </div>
               </div>
             </div>
           </button>
@@ -109,11 +112,14 @@ export const DirectOfferScreen = () => {
                   <CheckCircle className="w-4 h-4 text-white" fill="currentColor" />
                 )}
               </div>
+              <Skull className="w-10 h-10 text-red-600 flex-shrink-0" />
               <div className="flex-1">
                 <p className="font-semibold text-base">Solo valoración, no me interesan propuestas</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Ver el informe directamente
-                </p>
+                <div className="mt-2">
+                  <span className="inline-block bg-red-100 text-red-800 text-xs font-medium px-3 py-1 rounded-full">
+                    No me interesan oportunidades
+                  </span>
+                </div>
               </div>
             </div>
           </button>
@@ -138,13 +144,15 @@ export const DirectOfferScreen = () => {
 
       {/* Beneficios debajo del botón verde */}
       <div className="space-y-2 text-sm text-muted-foreground text-center">
-        <p>✓ Sin comisiones de agencia</p>
+        <p>✓ 100% gratuito, sin compromiso</p>
         <p>✓ Proceso rápido y transparente</p>
-        <p>✓ Pago al contado garantizado</p>
+        <p>✓ Desde el sofá de tu casa</p>
       </div>
 
-      <p className="text-xs text-center text-muted-foreground">
-        No te preocupes, podrás ver tu valoración en el siguiente paso
+      <p className="text-xs text-center flex items-center justify-center gap-1">
+        <span className="text-green-600">✓</span>
+        <span className="font-medium text-foreground">No te preocupes</span>
+        <span className="text-muted-foreground">, podrás ver tu valoración en el siguiente paso</span>
       </p>
     </div>
   );

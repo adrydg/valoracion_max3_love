@@ -22,7 +22,6 @@ const orientationOptions = [
 const conditionOptions = [
   { id: "a-estrenar", label: "A estrenar", description: "Nunca habitado" },
   { id: "reformado", label: "Reformado", description: "Recientemente renovado" },
-  { id: "muy-buen-estado", label: "Muy buen estado", description: "No necesita reformas" },
   { id: "buen-estado", label: "Buen estado", description: "Pequeñas mejoras" },
   { id: "para-reformar", label: "Para reformar", description: "Necesita actualización" },
 ];
@@ -63,6 +62,7 @@ export const Step7AdvancedFeatures = () => {
   const [selectedConditions, setSelectedConditions] = useState<string[]>(
     propertyCondition ? [propertyCondition] : []
   );
+  const [selectedTerraceTypes, setSelectedTerraceTypes] = useState<string[]>([]);
 
   // PRECARGA DE DATOS PARA TESTING
   useEffect(() => {
@@ -117,18 +117,33 @@ export const Step7AdvancedFeatures = () => {
     );
   };
 
+  const toggleTerraceType = (type: string) => {
+    if (type === "ninguno") {
+      setSelectedTerraceTypes(["ninguno"]);
+      setHasTerrace(false);
+    } else {
+      setSelectedTerraceTypes(prev => {
+        const filtered = prev.filter(t => t !== "ninguno");
+        if (filtered.includes(type)) {
+          return filtered.filter(t => t !== type);
+        } else {
+          return [...filtered, type];
+        }
+      });
+      setHasTerrace(true);
+    }
+  };
+
   return (
     <div className="space-y-6 p-4">
       {/* Header */}
       <div className="text-center space-y-2">
-        <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+        <h2 className="text-xl md:text-2xl font-bold flex items-center justify-center gap-2">
           <Sparkles className="w-6 h-6 text-primary" />
-        </div>
-        <h2 className="text-xl md:text-2xl font-bold">
           Características avanzadas
         </h2>
         <p className="text-sm text-muted-foreground">
-          Estos detalles mejorarán la precisión a <strong>±8%</strong>
+          Estos detalles mejorarán la precisión a <strong className="text-green-600">±8%</strong>
         </p>
       </div>
 
@@ -144,15 +159,15 @@ export const Step7AdvancedFeatures = () => {
                 key={option.id}
                 onClick={() => toggleOrientation(option.id)}
                 className={cn(
-                  "py-2 px-2 rounded-lg border-2 transition-all text-xs font-medium",
-                  "hover:border-primary/50 flex flex-col items-center gap-1",
+                  "py-2 px-1 rounded-lg border-2 transition-all text-xs font-medium",
+                  "hover:border-primary/50 flex flex-col items-center gap-0.5",
                   selectedOrientations.includes(option.id)
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-background"
                 )}
               >
-                <span className="text-base">{option.icon}</span>
-                <span>{option.label}</span>
+                <span className="text-sm">{option.icon}</span>
+                <span className="text-[10px]">{option.label}</span>
               </button>
             ))}
           </div>
@@ -194,66 +209,35 @@ export const Step7AdvancedFeatures = () => {
           )}
         </div>
 
-        {/* Terraza */}
+        {/* Terraza/Balcón/Patio */}
         <div className="space-y-3">
           <Label>
-            ¿Tiene terraza, balcón o patio? <span className="text-destructive">*</span>
+            ¿Tiene terraza, balcón o patio? (puedes seleccionar varios) <span className="text-destructive">*</span>
           </Label>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => setHasTerrace(true)}
-              className={cn(
-                "py-3 px-4 rounded-lg border-2 transition-all text-sm font-medium",
-                "hover:border-primary/50",
-                hasTerrace === true
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-background"
-              )}
-            >
-              Sí
-            </button>
-            <button
-              onClick={() => setHasTerrace(false)}
-              className={cn(
-                "py-3 px-4 rounded-lg border-2 transition-all text-sm font-medium",
-                "hover:border-primary/50",
-                hasTerrace === false
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-background"
-              )}
-            >
-              No
-            </button>
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { id: "terraza", label: "Terraza" },
+              { id: "balcon", label: "Balcón" },
+              { id: "patio", label: "Patio" },
+              { id: "ninguno", label: "Ninguno" },
+            ].map((option) => (
+              <button
+                key={option.id}
+                onClick={() => toggleTerraceType(option.id)}
+                className={cn(
+                  "py-2 px-2 rounded-lg border-2 transition-all text-xs font-medium",
+                  "hover:border-primary/50",
+                  selectedTerraceTypes.includes(option.id)
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-background"
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
           {errors.hasTerrace && (
             <p className="text-sm text-destructive">{errors.hasTerrace}</p>
-          )}
-
-          {/* Tamaño de terraza (condicional) */}
-          {hasTerrace && (
-            <div className="space-y-2 pt-2">
-              <Label htmlFor="terraceSize">
-                Tamaño aproximado <span className="text-destructive">*</span>
-              </Label>
-              <div className="relative">
-                <Input
-                  id="terraceSize"
-                  type="number"
-                  placeholder="15"
-                  value={terraceSize || ""}
-                  onChange={(e) => setTerraceSize(Number(e.target.value))}
-                  min={1}
-                  max={200}
-                  className={errors.terraceSize ? "border-destructive pr-12" : "pr-12"}
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                  m²
-                </span>
-              </div>
-              {errors.terraceSize && (
-                <p className="text-sm text-destructive">{errors.terraceSize}</p>
-              )}
-            </div>
           )}
         </div>
 
