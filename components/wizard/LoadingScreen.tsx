@@ -9,25 +9,25 @@ const loadingSteps = [
     icon: MapPin,
     title: "Analizando el código postal",
     description: "Identificando zona y precios de referencia",
-    duration: 1200,
+    duration: 1400,
   },
   {
     icon: TrendingUp,
     title: "Consultando precios de mercado",
     description: "Comparando con propiedades similares",
-    duration: 1200,
+    duration: 1600,
   },
   {
     icon: Calculator,
     title: "Aplicando ajustes por características",
     description: "Evaluando metros, baños, planta y ascensor",
-    duration: 1000,
+    duration: 1400,
   },
   {
     icon: FileText,
     title: "Generando tu informe",
     description: "Preparando valoración preliminar",
-    duration: 600,
+    duration: 1000,
   },
 ];
 
@@ -55,16 +55,16 @@ export const LoadingScreen = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Simular progreso - duración mínima 4 segundos
+    // Simular progreso - duración mínima 5.4 segundos
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(progressInterval);
           return 100;
         }
-        return prev + 1; // 100 iteraciones * 40ms = 4000ms = 4 segundos
+        return prev + 1; // 100 iteraciones * 54ms = 5400ms = 5.4 segundos
       });
-    }, 40);
+    }, 54);
 
     // Cambiar pasos
     const processSteps = async () => {

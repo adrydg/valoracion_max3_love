@@ -59,40 +59,40 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
   };
 
   return (
-    <div className="space-y-4 p-4 pt-8">
+    <div className="space-y-4 p-4 pt-12">
       {/* Header con precio integrado - MEJORADO */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 rounded-xl p-6 border-2 border-primary/20 shadow-lg">
+      <div className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 rounded-2xl p-5 md:p-6 border-2 border-primary/20 shadow-xl">
         {/* Efecto de brillo sutil */}
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent" />
 
-        <div className="relative space-y-4">
+        <div className="relative space-y-5">
           {/* Badge superior */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 bg-green-50 dark:bg-green-950/30 px-3 py-1.5 rounded-full border border-green-200 dark:border-green-800">
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 bg-green-50 dark:bg-green-950/30 px-4 py-2 rounded-full border-2 border-green-200 dark:border-green-800 shadow-sm">
               <CheckCircle2 className="w-4 h-4 text-green-600" />
-              <span className="text-xs font-semibold text-green-700 dark:text-green-400">Primera estimación</span>
+              <span className="text-sm font-bold text-green-700 dark:text-green-400">Primera estimación</span>
             </div>
-            <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full border border-primary/20">
-              <span className="text-sm">{precisionMessage.icon}</span>
-              <span className="text-xs font-bold text-primary">±20%</span>
+            <div className="flex items-center gap-1.5 bg-primary/15 px-3 py-2 rounded-full border-2 border-primary/30">
+              <span className="text-base">{precisionMessage.icon}</span>
+              <span className="text-sm font-bold text-primary">±20%</span>
             </div>
           </div>
 
           {/* Precio principal destacado */}
-          <div className="text-center">
-            <p className="text-5xl md:text-6xl font-black bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent drop-shadow-sm">
+          <div className="text-center py-2">
+            <p className="text-4xl md:text-5xl font-black bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent drop-shadow-sm leading-tight">
               {formatPrice(valuation.avg)}
             </p>
           </div>
 
           {/* Rango de precios */}
-          <div className="flex items-center justify-center gap-2 text-sm">
-            <div className="px-3 py-1.5 bg-background/60 rounded-lg border border-border/50">
-              <span className="text-muted-foreground font-medium">{formatPrice(valuation.min)}</span>
+          <div className="flex items-center justify-center gap-3 text-sm">
+            <div className="px-4 py-2 bg-background/80 rounded-xl border-2 border-border/50 shadow-sm">
+              <span className="text-muted-foreground font-semibold">{formatPrice(valuation.min)}</span>
             </div>
-            <span className="text-muted-foreground">—</span>
-            <div className="px-3 py-1.5 bg-background/60 rounded-lg border border-border/50">
-              <span className="text-muted-foreground font-medium">{formatPrice(valuation.max)}</span>
+            <span className="text-muted-foreground font-bold">—</span>
+            <div className="px-4 py-2 bg-background/80 rounded-xl border-2 border-border/50 shadow-sm">
+              <span className="text-muted-foreground font-semibold">{formatPrice(valuation.max)}</span>
             </div>
           </div>
         </div>
