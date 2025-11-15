@@ -13,24 +13,23 @@ export const CTASection = () => {
           {/* Content */}
           <div className="relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground">
-            ¿Listo para vender tu propiedad?
+            ¿Listo para conocer el valor real de tu inmueble?
           </h2>
           <p className="text-lg text-primary-foreground/90 max-w-2xl mx-auto">
-            Obtén una valoración gratuita en 24 horas y descubre cuánto puedes ganar con la venta de tu
-            propiedad. Sin compromiso.
+            Obtén tu valoración profesional GRATIS en solo 2 minutos. Análisis de +20 bases de datos oficiales y compraventas reales de tu zona. Sin compromiso.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button variant="accent" size="xl">
-              Valoración gratuita
+              Valorar GRATIS ahora
               <ArrowRight className="w-5 h-5" />
             </Button>
             <Button variant="outline" size="xl" className="bg-background/10 border-primary-foreground/20 text-primary-foreground hover:bg-background/20">
               <Phone className="w-5 h-5" />
-              Llamar ahora
+              663 616 147
             </Button>
           </div>
           <p className="text-sm text-primary-foreground/70 pt-2">
-            Más de 5.000 propietarios confían en nosotros cada año
+            Más de 45.000 valoraciones realizadas con éxito
           </p>
           </div>
         </div>

@@ -7,28 +7,28 @@ import {
 
 const faqs = [
   {
-    question: "¿Cuánto tiempo tarda el proceso de valoración?",
-    answer: "Recibirás tu valoración inicial en menos de 24 horas. Nuestro equipo de expertos analiza tu propiedad y el mercado local para ofrecerte el precio más competitivo."
+    question: "¿Cuánto tarda la valoración?",
+    answer: "La valoración básica es instantánea (2 minutos). Si optas por la versión avanzada con análisis de fotos por IA, recibirás tu informe completo en menos de 10 minutos."
   },
   {
-    question: "¿Qué documentación necesito para vender mi propiedad?",
-    answer: "Necesitarás la escritura de la propiedad, nota simple del registro, certificado energético, IBI al corriente de pago y cédula de habitabilidad. Nosotros te ayudamos a gestionar toda la documentación necesaria."
+    question: "¿Qué datos necesito para valorar mi inmueble?",
+    answer: "Para la valoración básica solo necesitas: código postal, metros cuadrados, número de habitaciones y baños. Para mayor precisión puedes añadir orientación, estado de conservación y subir fotos."
   },
   {
-    question: "¿Cuánto cobráis por vuestros servicios?",
-    answer: "Nuestros honorarios son competitivos y totalmente transparentes. La valoración inicial es completamente gratuita y sin compromiso. Los honorarios de gestión se discuten una vez recibas tu valoración personalizada."
+    question: "¿Es realmente gratis la primera valoración?",
+    answer: "Sí, tu primera valoración básica es 100% gratuita y sin compromiso. La versión avanzada con análisis de fotos por IA tiene un coste de solo 29€ (normalmente 65€)."
   },
   {
-    question: "¿Realmente puedo vender en 30 días?",
-    answer: "Sí, gracias a nuestra amplia red de compradores potenciales y estrategias de marketing avanzadas, la mayoría de nuestras propiedades se venden en un promedio de 18 días. Garantizamos que encontrarás comprador en 30 días o menos."
+    question: "¿Qué diferencia hay entre versión básica y avanzada?",
+    answer: "La básica analiza datos del mercado y características generales (±20% precisión). La avanzada suma análisis de fotos con IA, calidad de acabados y estado real, reduciendo el margen a ±8%."
   },
   {
-    question: "¿Qué pasa si no estoy satisfecho con la valoración?",
-    answer: "La valoración es completamente gratuita y sin compromiso. Si no estás satisfecho, no hay ninguna obligación de continuar. Queremos que tomes la mejor decisión para ti."
+    question: "¿Cómo de precisa es la valoración online?",
+    answer: "Nuestra valoración básica tiene un margen de ±20%. Con la versión avanzada alcanzamos ±8% de precisión al analizar +20 bases de datos oficiales de compraventas reales más el análisis de fotos con IA."
   },
   {
-    question: "¿Puedo vender si todavía tengo hipoteca?",
-    answer: "Sí, es completamente posible vender una propiedad con hipoteca. Te ayudamos a coordinar con tu banco para la cancelación de la hipoteca durante el proceso de compraventa."
+    question: "¿Puedo valorar desde el móvil?",
+    answer: "Sí, nuestra plataforma está 100% optimizada para móvil. Puedes valorar tu inmueble, subir fotos y recibir tu informe desde cualquier dispositivo, en cualquier momento."
   }
 ];
 
@@ -41,7 +41,7 @@ export const FAQ = () => {
             Preguntas frecuentes
           </h2>
           <p className="text-lg text-muted-foreground">
-            Resolvemos tus dudas sobre el proceso de venta
+            Resolvemos tus dudas sobre la valoración online
           </p>
         </div>
 

@@ -6,21 +6,21 @@ const testimonials = [
     name: "María González",
     location: "Madrid",
     rating: 5,
-    text: "Increíble experiencia. Vendí mi piso en menos de dos semanas y obtuve un precio por encima de mis expectativas. El equipo fue muy profesional.",
+    text: "Increíble precisión. La valoración online coincidió casi exactamente con la tasación bancaria. Me ahorré tiempo y dinero. 100% recomendable.",
     property: "Piso en Chamberí",
   },
   {
     name: "Carlos Ruiz",
     location: "Barcelona",
     rating: 5,
-    text: "La plataforma es muy intuitiva y el seguimiento fue excelente. Me mantuvieron informado en cada paso. Lo recomiendo totalmente.",
+    text: "Súper fácil de usar desde el móvil. En 2 minutos tenía mi valoración con datos reales de ventas en mi barrio. Totalmente gratis y muy profesional.",
     property: "Casa en Sarrià",
   },
   {
     name: "Ana Martínez",
     location: "Valencia",
     rating: 5,
-    text: "Después de intentar vender por mi cuenta durante meses, ellos lo consiguieron en 3 semanas. El servicio de valoración fue muy preciso.",
+    text: "Probé la versión avanzada con análisis de fotos y me sorprendió la exactitud. El informe es muy completo con gráficos y tendencias del mercado.",
     property: "Apartamento en Ruzafa",
   },
 ];
@@ -30,9 +30,9 @@ export const Testimonials = () => {
     <section className="py-12 md:py-16 px-4 bg-secondary/30">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10 md:mb-12 space-y-4 animate-fade-in">
-          <h2 className="text-3xl md:text-4xl font-bold">Lo que dicen nuestros clientes</h2>
+          <h2 className="text-3xl md:text-4xl font-bold">Opiniones de usuarios ValoracionMax</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Miles de propietarios han confiado en nosotros para vender sus propiedades
+            Miles de propietarios ya conocen el valor real de su inmueble
           </p>
         </div>
 

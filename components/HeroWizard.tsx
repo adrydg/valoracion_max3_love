@@ -50,7 +50,7 @@ export const HeroWizard = () => {
     <div className="space-y-6 p-6 md:p-8 animate-scale-in">
       <div className="text-center space-y-2">
         <p className="text-sm md:text-base text-muted-foreground">
-          Miles de propietarios ya han confiado en nosotros
+          Miles de propietarios ya conocen el valor exacto de su inmueble
         </p>
       </div>
 
