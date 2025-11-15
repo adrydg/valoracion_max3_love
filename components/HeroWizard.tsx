@@ -8,6 +8,7 @@ import { ValuationModal } from "./ValuationModal";
 
 type PropertyType = "piso" | "casa" | "local" | "otros" | null;
 type Bedrooms = "1" | "2" | "3" | "4" | "5+" | null;
+type LandSize = "0" | "150" | "400" | "1000" | "1500" | null;
 
 const propertyTypes = [
   { id: "piso", label: "Piso", icon: Building2 },
@@ -24,9 +25,18 @@ const bedroomOptions = [
   { id: "5+", label: "5+" },
 ];
 
+const landSizeOptions = [
+  { id: "0", label: "No tiene" },
+  { id: "150", label: "150 m²" },
+  { id: "400", label: "400 m²" },
+  { id: "1000", label: "1000 m²" },
+  { id: "1500", label: "1500 m²" },
+];
+
 export const HeroWizard = () => {
   const [propertyType, setPropertyType] = useState<PropertyType>("piso");
   const [bedrooms, setBedrooms] = useState<Bedrooms>(null);
+  const [landSize, setLandSize] = useState<LandSize>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleSubmit = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -91,6 +101,30 @@ export const HeroWizard = () => {
             ))}
           </div>
         </div>
+
+        {/* Land Size Selection - only for casa */}
+        {propertyType === "casa" && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Tamaño del terreno</label>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {landSizeOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => setLandSize(option.id as LandSize)}
+                  className={cn(
+                    "py-2 px-4 rounded-full border-2 transition-all duration-300 text-sm font-medium",
+                    "hover:border-primary/50 hover:shadow-sm",
+                    landSize === option.id
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-background"
+                  )}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Submit Button */}
         <button

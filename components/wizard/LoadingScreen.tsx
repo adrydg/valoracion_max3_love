@@ -141,7 +141,7 @@ export const LoadingScreen = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center p-8 space-y-6 min-h-[500px]">
+    <div className="flex flex-col items-center justify-start p-4 pt-8 space-y-6 min-h-[500px]">
       {/* Spinner animado */}
       <div className="relative">
         <div className="w-20 h-20 rounded-full border-4 border-primary/20"></div>
