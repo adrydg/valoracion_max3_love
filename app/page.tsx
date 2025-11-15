@@ -23,9 +23,16 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Left Column - Commercial Info */}
             <div className="space-y-4 md:space-y-6 animate-fade-in">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20">
-                <Zap className="w-4 h-4 text-accent" />
-                <span className="text-sm font-medium">Valoración exacta en 2 minutos</span>
+              {/* Badges promocionales en verde */}
+              <div className="flex flex-wrap gap-2">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30">
+                  <Zap className="w-4 h-4 text-green-600" />
+                  <span className="text-sm font-medium text-green-700">Valoración exacta en 2 minutos</span>
+                </div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30">
+                  <span className="text-lg">🎉</span>
+                  <span className="text-sm font-medium text-green-700">Primera valoración GRATIS · Siguientes 49€</span>
+                </div>
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
@@ -81,38 +88,7 @@ export default function Home() {
             </div>
 
             {/* Right Column - Wizard */}
-            <div className="animate-fade-in space-y-4" style={{ animationDelay: "200ms" }}>
-              {/* Promotional Badge */}
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 p-1 shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
-                <div className="relative bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 rounded-xl p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-bold uppercase tracking-wider text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/50 px-2 py-0.5 rounded-full">
-                          🎉 Promoción
-                        </span>
-                      </div>
-                      <p className="text-sm font-bold text-green-900 dark:text-green-100">
-                        Primera valoración <span className="text-green-600 dark:text-green-400">GRATIS</span>
-                      </p>
-                      <p className="text-xs text-green-700 dark:text-green-300 mt-0.5">
-                        Siguientes: <span className="font-bold">49€</span>
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0">
-                      <div className="relative">
-                        <div className="text-4xl font-black text-green-600 dark:text-green-400 leading-none">
-                          0€
-                        </div>
-                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
-                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
+            <div className="animate-fade-in" style={{ animationDelay: "200ms" }}>
               <HeroWizard />
             </div>
 

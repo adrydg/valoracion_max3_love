@@ -20,10 +20,10 @@ export const Header = () => {
             </div>
             <div className="flex flex-col leading-none">
               <span className="text-lg md:text-xl font-black tracking-tight bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
-                ValorMax
+                ValoraMax
               </span>
-              <span className="text-[8px] md:text-[9px] font-semibold text-muted-foreground tracking-wider uppercase">
-                Valoración IA
+              <span className="text-[8px] md:text-[9px] font-semibold text-muted-foreground tracking-wider">
+                Valora tu casa online
               </span>
             </div>
           </div>
