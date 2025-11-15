@@ -178,7 +178,7 @@ export const HeroWizard = () => {
             <span className="text-green-700 dark:text-green-400">Valoración inmediata online</span>
           </div>
           <span className="text-muted-foreground">•</span>
-          <span className="text-muted-foreground font-semibold">Totalmente gratis</span>
+          <span className="text-muted-foreground font-semibold">En solo dos minutos</span>
         </div>
 
       <ValuationModal open={modalOpen} onOpenChange={setModalOpen} />
