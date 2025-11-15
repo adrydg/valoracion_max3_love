@@ -100,6 +100,42 @@ export const Step3DatosPersonales = () => {
         buildingAge,
       });
 
+      // Enviar email con formulario corto
+      try {
+        console.log("📧 Enviando email con formulario corto...");
+        const emailResponse = await fetch("/api/lead/send-progress-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            formType: "short",
+            leadId: fakeLeadId,
+            name,
+            email,
+            phone,
+            propertyType,
+            bedrooms,
+            postalCode,
+            street,
+            squareMeters,
+            bathrooms,
+            floor,
+            hasElevator,
+            buildingAge,
+            landSize,
+            consentMarketing,
+          }),
+        });
+
+        if (emailResponse.ok) {
+          console.log("✅ Email enviado correctamente");
+        } else {
+          console.warn("⚠️ Error al enviar email (continuando de todos modos)");
+        }
+      } catch (emailError) {
+        console.error("❌ Error enviando email:", emailError);
+        // No bloqueamos el flujo si falla el email
+      }
+
       // Simular delay de API
       await new Promise(resolve => setTimeout(resolve, 500));
 

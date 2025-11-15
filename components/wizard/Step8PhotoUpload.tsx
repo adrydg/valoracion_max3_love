@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { useWizardStore } from "@/store/useWizardStore";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, Camera, Upload, X, ImageIcon } from "lucide-react";
+import { ArrowRight, ArrowLeft, Camera, Upload, X, ImageIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const MAX_PHOTOS = 10;
@@ -18,10 +18,35 @@ export const Step8PhotoUpload = () => {
     removePhoto,
     nextStep,
     prevStep,
+    // Todos los datos para el email
+    name,
+    email,
+    phone,
+    propertyType,
+    bedrooms,
+    postalCode,
+    street,
+    squareMeters,
+    bathrooms,
+    floor,
+    hasElevator,
+    buildingAge,
+    landSize,
+    consentMarketing,
+    leadId,
+    // Características avanzadas
+    orientation,
+    propertyCondition,
+    hasTerrace,
+    terraceSize,
+    hasGarage,
+    hasStorage,
+    quality,
   } = useWizardStore();
 
   const [isDragging, setIsDragging] = useState(false);
   const [errors, setErrors] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (files: FileList | null) => {
@@ -78,9 +103,57 @@ export const Step8PhotoUpload = () => {
     fileInputRef.current?.click();
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
+    setIsSubmitting(true);
+
+    try {
+      // Enviar email con formulario largo
+      console.log("📧 Enviando email con formulario largo...");
+      const emailResponse = await fetch("/api/lead/send-progress-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          formType: "long",
+          leadId,
+          name,
+          email,
+          phone,
+          propertyType,
+          bedrooms,
+          postalCode,
+          street,
+          squareMeters,
+          bathrooms,
+          floor,
+          hasElevator,
+          buildingAge,
+          landSize,
+          consentMarketing,
+          // Características avanzadas
+          orientation,
+          propertyCondition,
+          hasTerrace,
+          terraceSize,
+          hasGarage,
+          hasStorage,
+          quality,
+          photos: photos.length, // Solo enviamos el número de fotos
+        }),
+      });
+
+      if (emailResponse.ok) {
+        console.log("✅ Email formulario largo enviado correctamente");
+      } else {
+        console.warn("⚠️ Error al enviar email (continuando de todos modos)");
+      }
+    } catch (emailError) {
+      console.error("❌ Error enviando email:", emailError);
+      // No bloqueamos el flujo si falla el email
+    }
+
     // Las fotos son OPCIONALES - se puede continuar sin fotos
     nextStep();
+    setIsSubmitting(false);
   };
 
   return (
@@ -222,6 +295,7 @@ export const Step8PhotoUpload = () => {
           variant="outline"
           size="lg"
           className="flex-1"
+          disabled={isSubmitting}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Atrás
@@ -230,9 +304,19 @@ export const Step8PhotoUpload = () => {
           onClick={handleContinue}
           className="flex-1 group"
           size="lg"
+          disabled={isSubmitting}
         >
-          {photos.length > 0 ? `Continuar con ${photos.length} foto${photos.length > 1 ? 's' : ''}` : 'Continuar sin fotos'}
-          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Enviando...
+            </>
+          ) : (
+            <>
+              {photos.length > 0 ? `Continuar con ${photos.length} foto${photos.length > 1 ? 's' : ''}` : 'Continuar sin fotos'}
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </>
+          )}
         </Button>
       </div>
 

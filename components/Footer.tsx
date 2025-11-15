@@ -1,4 +1,4 @@
-import { Home, Mail, Phone, MapPin } from "lucide-react";
+import { TrendingUp, Phone, MapPin } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -7,15 +7,15 @@ export const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center">
-                <Home className="w-6 h-6 text-accent-foreground" />
+            <div className="flex items-center gap-2.5">
+              <div className="relative w-9 h-9 rounded-lg bg-gradient-to-br from-white via-white to-accent flex items-center justify-center shadow-lg">
+                <TrendingUp className="w-5 h-5 text-primary" strokeWidth={2.5} />
+                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-accent rounded-full"></div>
               </div>
-              <span className="text-xl font-bold">PropTech</span>
+              <span className="text-xl font-bold">ValoraMax</span>
             </div>
             <p className="text-sm text-primary-foreground/80">
-              La plataforma inmobiliaria más innovadora de España. Vendemos tu propiedad rápido y al mejor
-              precio.
+              Empresa innovadora española de valoración inmobiliaria. La plataforma de valoración más precisa de España.
             </p>
           </div>
 
@@ -79,11 +79,7 @@ export const Footer = () => {
             <ul className="space-y-3 text-sm text-primary-foreground/80">
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
-                <span>+34 900 123 456</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                <span>info@proptech.es</span>
+                <span>663 616 147</span>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
@@ -94,7 +90,7 @@ export const Footer = () => {
         </div>
 
         <div className="mt-8 md:mt-10 pt-6 md:pt-8 border-t border-primary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/70">
-          <p>&copy; 2024 PropTech. Todos los derechos reservados.</p>
+          <p>&copy; 2024 ValoraMax. Todos los derechos reservados.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-accent transition-colors">
               Privacidad

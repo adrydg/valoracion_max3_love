@@ -27,7 +27,7 @@ export default function Home() {
               <div className="flex flex-wrap gap-2">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30">
                   <Zap className="w-4 h-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-700">Valoración exacta en 2 minutos</span>
+                  <span className="text-sm font-medium text-green-700">Empresa innovadora Española</span>
                 </div>
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30">
                   <span className="text-lg">🎉</span>
