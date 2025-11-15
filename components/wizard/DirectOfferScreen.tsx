@@ -43,9 +43,8 @@ export const DirectOfferScreen = () => {
           Un momento...
         </h2>
         <p className="text-lg text-muted-foreground text-center">
-          Tu inmueble nos parece interesante y nos gustaría hacerte una{" "}
-          <span className="font-semibold text-primary">oferta de compra directa</span>,
-          sin intermediarios.
+          Ya tenemos tu valoración, pero antes de que la veas te queremos hacer una{" "}
+          <span className="font-semibold text-primary">propuesta</span>.
         </p>
       </div>
 

@@ -6,28 +6,16 @@ import { Sparkles, Brain, Image as ImageIcon, BarChart3, CheckCircle2 } from "lu
 
 const processingSteps = [
   {
-    icon: ImageIcon,
-    title: "Analizando fotografías",
-    description: "Reconocimiento de características visuales",
-    duration: 2000,
-  },
-  {
-    icon: Brain,
-    title: "Procesando características avanzadas",
-    description: "Evaluando orientación, calidad y estado",
-    duration: 1500,
-  },
-  {
     icon: BarChart3,
-    title: "Calculando valoración optimizada",
-    description: "Aplicando modelo avanzado de valoración",
-    duration: 2000,
+    title: "Ajustes aplicados por sistema experto",
+    description: "Evaluando orientación, calidad, estado y características",
+    duration: 3000,
   },
   {
     icon: Sparkles,
-    title: "Generando informe detallado",
-    description: "Preparando tu valoración final",
-    duration: 1500,
+    title: "Calculando precio por metro cuadrado",
+    description: "Aplicando modelo de valoración optimizado",
+    duration: 3000,
   },
 ];
 
@@ -158,10 +146,10 @@ export const Step9AIProcessing = () => {
       {/* Título principal */}
       <div className="text-center space-y-2">
         <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-          Analizando tu propiedad
+          Análisis con nuestro sistema experto
         </h2>
         <p className="text-sm text-muted-foreground">
-          Procesando {photos.length} foto{photos.length !== 1 ? 's' : ''} y características avanzadas
+          Analizando {photos.length} foto{photos.length !== 1 ? 's' : ''} y características avanzadas
         </p>
       </div>
 

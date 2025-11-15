@@ -35,16 +35,16 @@ export const LoadingScreen = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Simular progreso
+    // Simular progreso - duración mínima 4 segundos
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(progressInterval);
           return 100;
         }
-        return prev + 2;
+        return prev + 1; // 100 iteraciones * 40ms = 4000ms = 4 segundos
       });
-    }, 60);
+    }, 40);
 
     // Cambiar mensajes
     const messageInterval = setInterval(() => {

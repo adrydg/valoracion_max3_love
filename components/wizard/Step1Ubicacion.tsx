@@ -5,7 +5,8 @@ import { useWizardStore } from "@/store/useWizardStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, MapPin, Minus, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const Step1Ubicacion = () => {
   const {
@@ -27,7 +28,7 @@ export const Step1Ubicacion = () => {
   // PRECARGA DE DATOS PARA TESTING
   useEffect(() => {
     if (!postalCode) setPostalCode("28001");
-    if (!squareMeters) setSquareMeters(85);
+    if (!squareMeters) setSquareMeters(75);
     if (!street) setStreet("Calle Gran Vía 28");
     if (!bedrooms) setBedrooms(3);
     if (!propertyType) setPropertyType("piso");
@@ -55,14 +56,22 @@ export const Step1Ubicacion = () => {
     nextStep();
   };
 
+  const squareMetersOptions = [
+    { id: 50, label: "<50" },
+    { id: 60, label: "60" },
+    { id: 75, label: "75" },
+    { id: 90, label: "90" },
+    { id: 110, label: "110" },
+  ];
+
   return (
-    <div className="space-y-6 p-4">
-      <div className="text-center space-y-2">
+    <div className="space-y-4 p-4 pt-2">
+      <div className="text-center space-y-1">
         <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
           <MapPin className="w-6 h-6 text-primary" />
           Ubicación y tamaño
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Cuéntanos dónde está tu propiedad
         </p>
       </div>
@@ -112,28 +121,52 @@ export const Step1Ubicacion = () => {
         </div>
 
         {/* Metros cuadrados */}
-        <div className="space-y-2">
-          <Label htmlFor="squareMeters">
+        <div className="space-y-3">
+          <Label>
             Metros cuadrados <span className="text-destructive">*</span>
           </Label>
-          <div className="relative">
-            <Input
-              id="squareMeters"
-              type="number"
-              inputMode="decimal"
-              placeholder="85"
-              value={squareMeters || ""}
-              onChange={(e) => setSquareMeters(Number(e.target.value))}
-              min={20}
-              max={1000}
-              autoComplete="off"
-              autoCorrect="off"
-              className={errors.squareMeters ? "border-destructive pr-12" : "pr-12"}
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-              m²
-            </span>
+
+          {/* Bubbles selector */}
+          <div className="grid grid-cols-5 gap-2">
+            {squareMetersOptions.map((option) => (
+              <button
+                key={option.id}
+                onClick={() => setSquareMeters(option.id)}
+                className={cn(
+                  "py-2 px-2 rounded-full border-2 transition-all text-sm font-medium",
+                  "hover:border-primary/50",
+                  squareMeters === option.id
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-background"
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
+
+          {/* Numeric selector con - y + */}
+          <div className="flex items-center justify-center gap-3 pt-2">
+            <button
+              onClick={() => setSquareMeters(Math.max(20, (squareMeters || 75) - 1))}
+              className="w-10 h-10 rounded-full border-2 border-border hover:border-primary/50 flex items-center justify-center transition-all hover:bg-primary/5"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-2 bg-muted px-4 py-2 rounded-lg min-w-[100px] justify-center">
+              <span className="text-2xl font-bold">{squareMeters || 75}</span>
+              <span className="text-sm text-muted-foreground">m²</span>
+            </div>
+
+            <button
+              onClick={() => setSquareMeters(Math.min(1000, (squareMeters || 75) + 1))}
+              className="w-10 h-10 rounded-full border-2 border-border hover:border-primary/50 flex items-center justify-center transition-all hover:bg-primary/5"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+
           {errors.squareMeters && (
             <p className="text-sm text-destructive">{errors.squareMeters}</p>
           )}

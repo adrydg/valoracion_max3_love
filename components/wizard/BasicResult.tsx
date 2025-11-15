@@ -59,7 +59,7 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
   };
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-4 p-4 pt-8">
       {/* Header con precio integrado */}
       <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg p-4 border border-primary/20">
         <div className="flex items-start justify-between gap-4">
@@ -90,7 +90,7 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
             Factores considerados
           </h3>
           <div className="space-y-1">
-            {valuation.adjustments.slice(0, 3).map((adj: any, index: number) => (
+            {valuation.adjustments.map((adj: any, index: number) => (
               <div
                 key={index}
                 className="flex items-center justify-between p-2 bg-muted/50 rounded text-xs"
@@ -140,9 +140,14 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
               </div>
               <div className="flex-1">
                 <p className="font-semibold text-base">Sí, continuar con estimación más precisa</p>
-                <p className="text-xs text-green-700 font-medium mt-1 bg-green-50 inline-block px-2 py-0.5 rounded">
-                  Solo 1 minuto • Reduce margen a ±8%
-                </p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-sm text-green-700 font-bold bg-green-50 inline-block px-3 py-1 rounded-full border-2 border-green-200">
+                    ⚡ Solo 1 minuto • Reduce margen a ±8%
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Valoración mucho más precisa con fotos y detalles avanzados
+                  </p>
+                </div>
               </div>
             </div>
           </button>

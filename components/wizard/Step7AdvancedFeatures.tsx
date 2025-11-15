@@ -309,30 +309,24 @@ export const Step7AdvancedFeatures = () => {
         </div>
 
         {/* Calidad de acabados */}
-        <div className="space-y-3">
-          <Label>
+        <div className="space-y-2">
+          <Label className="text-xs">
             Calidad de acabados <span className="text-destructive">*</span>
           </Label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="grid grid-cols-4 gap-1.5">
             {qualityOptions.map((option) => (
               <button
                 key={option.id}
                 onClick={() => setQuality(option.id as any)}
                 className={cn(
-                  "py-3 px-4 rounded-lg border-2 transition-all text-left",
+                  "py-2 px-1 rounded-md border-2 transition-all text-center",
                   "hover:border-primary/50",
                   quality === option.id
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-background"
                 )}
               >
-                <div className="font-medium text-sm">{option.label}</div>
-                <div className={cn(
-                  "text-xs mt-0.5",
-                  quality === option.id ? "text-primary-foreground/80" : "text-muted-foreground"
-                )}>
-                  {option.description}
-                </div>
+                <div className="font-medium text-[10px] leading-tight">{option.label}</div>
               </button>
             ))}
           </div>

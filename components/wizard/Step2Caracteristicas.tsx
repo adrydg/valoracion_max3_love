@@ -94,7 +94,7 @@ export const Step2Caracteristicas = () => {
                 key={option.id}
                 onClick={() => setBathrooms(option.id)}
                 className={cn(
-                  "py-3 px-4 rounded-lg border-2 transition-all text-sm font-medium",
+                  "py-2 px-2 rounded-lg border-2 transition-all text-xs font-medium",
                   "hover:border-primary/50",
                   bathrooms === option.id
                     ? "border-primary bg-primary text-primary-foreground"
@@ -146,7 +146,7 @@ export const Step2Caracteristicas = () => {
             <button
               onClick={() => setHasElevator(true)}
               className={cn(
-                "py-3 px-4 rounded-lg border-2 transition-all text-sm font-medium",
+                "py-2 px-2 rounded-lg border-2 transition-all text-xs font-medium",
                 "hover:border-primary/50",
                 hasElevator === true
                   ? "border-primary bg-primary text-primary-foreground"
@@ -158,7 +158,7 @@ export const Step2Caracteristicas = () => {
             <button
               onClick={() => setHasElevator(false)}
               className={cn(
-                "py-3 px-4 rounded-lg border-2 transition-all text-sm font-medium",
+                "py-2 px-2 rounded-lg border-2 transition-all text-xs font-medium",
                 "hover:border-primary/50",
                 hasElevator === false
                   ? "border-primary bg-primary text-primary-foreground"
@@ -184,7 +184,7 @@ export const Step2Caracteristicas = () => {
                 key={option.id}
                 onClick={() => setBuildingAge(option.id as any)}
                 className={cn(
-                  "py-2 px-1 rounded-lg border-2 transition-all text-xs font-medium text-center",
+                  "py-2 px-2 rounded-lg border-2 transition-all text-xs font-medium text-center",
                   "hover:border-primary/50",
                   buildingAge === option.id
                     ? "border-primary bg-primary text-primary-foreground"

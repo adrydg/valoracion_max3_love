@@ -115,7 +115,7 @@ export const Step8PhotoUpload = () => {
         onDragLeave={handleDragLeave}
         onClick={handleClickUpload}
         className={cn(
-          "border-2 border-dashed rounded-xl p-8 transition-all cursor-pointer",
+          "border-2 border-dashed rounded-xl p-4 transition-all cursor-pointer",
           "hover:border-primary/50 hover:bg-primary/5",
           isDragging
             ? "border-primary bg-primary/10"
@@ -131,24 +131,21 @@ export const Step8PhotoUpload = () => {
           className="hidden"
         />
 
-        <div className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-            <Upload className="w-8 h-8 text-primary" />
+        <div className="text-center space-y-3">
+          <div className="mx-auto w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center relative">
+            <Upload className="w-7 h-7 text-primary animate-bounce" />
+            <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping"></div>
           </div>
 
-          <div className="space-y-2">
-            <p className="text-base font-semibold">
-              Arrastra tus fotos aquí
+          <div className="space-y-1">
+            <p className="text-sm font-semibold">
+              Selecciona o arrastra tus fotos aquí
             </p>
-            <p className="text-sm text-muted-foreground">
-              o haz clic para seleccionar desde tu dispositivo
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
-            <span>• JPG, PNG o WebP</span>
-            <span>• Máx 10MB por foto</span>
-            <span>• Hasta {MAX_PHOTOS} fotos</span>
+            <div className="flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
+              <span>• JPG, PNG o WebP</span>
+              <span>• Máx 10MB</span>
+              <span>• Hasta {MAX_PHOTOS} fotos</span>
+            </div>
           </div>
         </div>
       </div>
