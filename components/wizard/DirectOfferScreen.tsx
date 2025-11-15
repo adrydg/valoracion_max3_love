@@ -3,19 +3,23 @@
 import { useState } from "react";
 import { useWizardStore } from "@/store/useWizardStore";
 import { Button } from "@/components/ui/button";
-import { Sparkles, CheckCircle, XCircle } from "lucide-react";
+import { Sparkles, CheckCircle, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const DirectOfferScreen = () => {
   const { leadId, setDirectOfferInterest, nextStep } = useWizardStore();
+  const [selected, setSelected] = useState<"open-to-offers" | "not-interested" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleResponse = async (interest: "open-to-offers" | "not-interested") => {
+  const handleContinue = async () => {
+    if (!selected) return;
+
     setIsSubmitting(true);
-    setDirectOfferInterest(interest);
+    setDirectOfferInterest(selected);
 
     try {
       // MODO TESTING: No llamar API, solo loguear
-      console.log("🎁 Interés oferta directa (testing):", interest);
+      console.log("🎁 Interés oferta directa (testing):", selected);
 
       // Simular delay
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -46,48 +50,100 @@ export const DirectOfferScreen = () => {
       </div>
 
       {/* Pregunta */}
-      <div className="pt-4 text-center">
-        <p className="text-lg font-medium mb-6">
+      <div className="pt-4">
+        <p className="text-lg font-medium mb-6 text-center">
           ¿Te interesaría escuchar una propuesta?
         </p>
 
         <div className="space-y-3">
-          {/* Sí, me interesa - GRANDE Y VERDE */}
-          <Button
-            size="lg"
-            onClick={() => handleResponse("open-to-offers")}
-            disabled={isSubmitting}
-            className="w-full h-auto py-6 flex flex-col gap-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
+          {/* Opción 1: Recibir valoración y escuchar oferta */}
+          <button
+            onClick={() => setSelected("open-to-offers")}
+            className={cn(
+              "w-full p-4 rounded-lg border-2 transition-all text-left",
+              "hover:border-primary/50",
+              selected === "open-to-offers"
+                ? "border-primary bg-primary/5"
+                : "border-border bg-background"
+            )}
           >
-            <CheckCircle className="w-12 h-12" strokeWidth={2.5} />
-            <span className="text-xl font-bold">¡Sí, me interesa!</span>
-            <span className="text-sm opacity-95">
-              Siempre está bien escuchar propuestas
-            </span>
-          </Button>
+            <div className="flex items-start gap-3">
+              <div className={cn(
+                "flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center mt-0.5",
+                selected === "open-to-offers"
+                  ? "border-primary bg-primary"
+                  : "border-muted-foreground/30"
+              )}>
+                {selected === "open-to-offers" && (
+                  <CheckCircle className="w-4 h-4 text-white" fill="currentColor" />
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-base">Recibir valoración y escuchar oferta</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Siempre está bien escuchar propuestas
+                </p>
+              </div>
+            </div>
+          </button>
 
-          {/* No, solo mi valoración - PEQUEÑO Y ROJO CLARO */}
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => handleResponse("not-interested")}
-            disabled={isSubmitting}
-            className="w-full h-auto py-3 flex items-center justify-center gap-2 bg-red-50 border-red-200 hover:bg-red-100 text-red-800"
+          {/* Opción 2: Solo valoración */}
+          <button
+            onClick={() => setSelected("not-interested")}
+            className={cn(
+              "w-full p-4 rounded-lg border-2 transition-all text-left",
+              "hover:border-primary/50",
+              selected === "not-interested"
+                ? "border-primary bg-primary/5"
+                : "border-border bg-background"
+            )}
           >
-            <XCircle className="w-5 h-5" />
-            <span className="text-sm">No, solo mi valoración</span>
-          </Button>
+            <div className="flex items-start gap-3">
+              <div className={cn(
+                "flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center mt-0.5",
+                selected === "not-interested"
+                  ? "border-primary bg-primary"
+                  : "border-muted-foreground/30"
+              )}>
+                {selected === "not-interested" && (
+                  <CheckCircle className="w-4 h-4 text-white" fill="currentColor" />
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-base">Solo valoración, no me interesan propuestas</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Ver el informe directamente
+                </p>
+              </div>
+            </div>
+          </button>
         </div>
       </div>
 
-      {/* Beneficios */}
-      <div className="pt-4 space-y-2 text-sm text-muted-foreground">
+      {/* Botón Continuar - Desactivado hasta seleccionar */}
+      <Button
+        onClick={handleContinue}
+        disabled={!selected || isSubmitting}
+        className={cn(
+          "w-full h-auto py-4 text-lg font-bold shadow-lg transition-all",
+          selected
+            ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+            : "bg-muted text-muted-foreground cursor-not-allowed"
+        )}
+        size="lg"
+      >
+        <span>Continuar</span>
+        <ArrowRight className="ml-2 h-5 w-5" />
+      </Button>
+
+      {/* Beneficios debajo del botón verde */}
+      <div className="space-y-2 text-sm text-muted-foreground text-center">
         <p>✓ Sin comisiones de agencia</p>
         <p>✓ Proceso rápido y transparente</p>
         <p>✓ Pago al contado garantizado</p>
       </div>
 
-      <p className="text-xs text-muted-foreground pt-4">
+      <p className="text-xs text-center text-muted-foreground">
         No te preocupes, podrás ver tu valoración en el siguiente paso
       </p>
     </div>

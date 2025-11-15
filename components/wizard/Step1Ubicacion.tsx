@@ -142,7 +142,7 @@ export const Step1Ubicacion = () => {
 
       <Button
         onClick={handleContinue}
-        className="w-full group"
+        className="w-full group bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
         size="lg"
       >
         Continuar

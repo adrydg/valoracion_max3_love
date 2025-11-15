@@ -242,15 +242,14 @@ export const Step3DatosPersonales = () => {
           onClick={prevStep}
           variant="outline"
           size="lg"
-          className="flex-1"
+          className="w-[20%]"
           disabled={isSubmitting}
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Atrás
+          <ArrowLeft className="h-4 w-4" />
         </Button>
         <Button
           onClick={handleContinue}
-          className="flex-1 group"
+          className="w-[80%] group bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
           size="lg"
           disabled={isSubmitting}
         >

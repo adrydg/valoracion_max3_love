@@ -56,6 +56,14 @@ export const Step7AdvancedFeatures = () => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Local state para multi-select
+  const [selectedOrientations, setSelectedOrientations] = useState<string[]>(
+    orientation ? [orientation] : []
+  );
+  const [selectedConditions, setSelectedConditions] = useState<string[]>(
+    propertyCondition ? [propertyCondition] : []
+  );
+
   // PRECARGA DE DATOS PARA TESTING
   useEffect(() => {
     if (!orientation) setOrientation("sur");
@@ -70,8 +78,8 @@ export const Step7AdvancedFeatures = () => {
   const handleContinue = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!orientation) newErrors.orientation = "Selecciona la orientación";
-    if (!propertyCondition) newErrors.propertyCondition = "Selecciona el estado";
+    if (selectedOrientations.length === 0) newErrors.orientation = "Selecciona al menos una orientación";
+    if (selectedConditions.length === 0) newErrors.propertyCondition = "Selecciona al menos un estado";
     if (hasTerrace === null) newErrors.hasTerrace = "Indica si tiene terraza";
     if (hasTerrace && (!terraceSize || terraceSize < 1)) {
       newErrors.terraceSize = "Indica el tamaño de la terraza";
@@ -85,8 +93,28 @@ export const Step7AdvancedFeatures = () => {
       return;
     }
 
+    // Guardar el primero seleccionado en el store (para compatibilidad)
+    if (selectedOrientations.length > 0) {
+      setOrientation(selectedOrientations[0] as any);
+    }
+    if (selectedConditions.length > 0) {
+      setPropertyCondition(selectedConditions[0] as any);
+    }
+
     setErrors({});
     nextStep();
+  };
+
+  const toggleOrientation = (id: string) => {
+    setSelectedOrientations(prev =>
+      prev.includes(id) ? prev.filter(o => o !== id) : [...prev, id]
+    );
+  };
+
+  const toggleCondition = (id: string) => {
+    setSelectedConditions(prev =>
+      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+    );
   };
 
   return (
@@ -108,22 +136,22 @@ export const Step7AdvancedFeatures = () => {
         {/* Orientación */}
         <div className="space-y-3">
           <Label>
-            Orientación principal <span className="text-destructive">*</span>
+            Orientación principal (puedes seleccionar varias) <span className="text-destructive">*</span>
           </Label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-2">
             {orientationOptions.map((option) => (
               <button
                 key={option.id}
-                onClick={() => setOrientation(option.id as any)}
+                onClick={() => toggleOrientation(option.id)}
                 className={cn(
-                  "py-3 px-3 rounded-lg border-2 transition-all text-sm font-medium",
+                  "py-2 px-2 rounded-lg border-2 transition-all text-xs font-medium",
                   "hover:border-primary/50 flex flex-col items-center gap-1",
-                  orientation === option.id
+                  selectedOrientations.includes(option.id)
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-background"
                 )}
               >
-                <span className="text-xl">{option.icon}</span>
+                <span className="text-base">{option.icon}</span>
                 <span>{option.label}</span>
               </button>
             ))}
@@ -136,17 +164,17 @@ export const Step7AdvancedFeatures = () => {
         {/* Estado de la propiedad */}
         <div className="space-y-3">
           <Label>
-            Estado de la propiedad <span className="text-destructive">*</span>
+            Estado de la propiedad (puedes seleccionar varios) <span className="text-destructive">*</span>
           </Label>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {conditionOptions.map((option) => (
               <button
                 key={option.id}
-                onClick={() => setPropertyCondition(option.id as any)}
+                onClick={() => toggleCondition(option.id)}
                 className={cn(
-                  "py-3 px-4 rounded-lg border-2 transition-all text-left",
+                  "py-3 px-3 rounded-lg border-2 transition-all text-left",
                   "hover:border-primary/50",
-                  propertyCondition === option.id
+                  selectedConditions.includes(option.id)
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-background"
                 )}
@@ -154,7 +182,7 @@ export const Step7AdvancedFeatures = () => {
                 <div className="font-medium text-sm">{option.label}</div>
                 <div className={cn(
                   "text-xs mt-0.5",
-                  propertyCondition === option.id ? "text-primary-foreground/80" : "text-muted-foreground"
+                  selectedConditions.includes(option.id) ? "text-primary-foreground/80" : "text-muted-foreground"
                 )}>
                   {option.description}
                 </div>
@@ -342,14 +370,13 @@ export const Step7AdvancedFeatures = () => {
           onClick={prevStep}
           variant="outline"
           size="lg"
-          className="flex-1"
+          className="w-[20%]"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Atrás
+          <ArrowLeft className="h-4 w-4" />
         </Button>
         <Button
           onClick={handleContinue}
-          className="flex-1 group"
+          className="w-[80%] group bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
           size="lg"
         >
           Continuar
