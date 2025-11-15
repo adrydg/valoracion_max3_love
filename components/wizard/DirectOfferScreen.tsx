@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useWizardStore } from "@/store/useWizardStore";
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { Sparkles, CheckCircle, XCircle } from "lucide-react";
 
 export const DirectOfferScreen = () => {
   const { leadId, setDirectOfferInterest, nextStep } = useWizardStore();
@@ -31,18 +31,14 @@ export const DirectOfferScreen = () => {
   };
 
   return (
-    <div className="space-y-6 p-4 text-center">
-      {/* Icon */}
-      <div className="mx-auto w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
-        <Sparkles className="w-8 h-8 text-white" />
-      </div>
-
-      {/* Título */}
-      <div className="space-y-2">
-        <h2 className="text-2xl font-bold">
-          Un momento antes de mostrarte tu valoración...
+    <div className="space-y-6 p-4">
+      {/* Título con icono */}
+      <div className="space-y-3">
+        <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
+          <Sparkles className="w-7 h-7 text-amber-500" />
+          Un momento...
         </h2>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-lg text-muted-foreground text-center">
           Tu inmueble nos parece interesante y nos gustaría hacerte una{" "}
           <span className="font-semibold text-primary">oferta de compra directa</span>,
           sin intermediarios.
@@ -50,39 +46,36 @@ export const DirectOfferScreen = () => {
       </div>
 
       {/* Pregunta */}
-      <div className="pt-4">
+      <div className="pt-4 text-center">
         <p className="text-lg font-medium mb-6">
           ¿Te interesaría escuchar una propuesta?
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Sí, me interesa */}
+        <div className="space-y-3">
+          {/* Sí, me interesa - GRANDE Y VERDE */}
           <Button
             size="lg"
             onClick={() => handleResponse("open-to-offers")}
             disabled={isSubmitting}
-            className="h-auto py-6 flex flex-col gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+            className="w-full h-auto py-6 flex flex-col gap-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
           >
-            <span className="text-2xl">✨</span>
-            <span className="font-semibold">Sí, me interesa</span>
-            <span className="text-xs opacity-90">
+            <CheckCircle className="w-12 h-12" strokeWidth={2.5} />
+            <span className="text-xl font-bold">¡Sí, me interesa!</span>
+            <span className="text-sm opacity-95">
               Siempre está bien escuchar propuestas
             </span>
           </Button>
 
-          {/* No, solo mi valoración */}
+          {/* No, solo mi valoración - PEQUEÑO Y ROJO CLARO */}
           <Button
-            size="lg"
+            size="sm"
             variant="outline"
             onClick={() => handleResponse("not-interested")}
             disabled={isSubmitting}
-            className="h-auto py-6 flex flex-col gap-2"
+            className="w-full h-auto py-3 flex items-center justify-center gap-2 bg-red-50 border-red-200 hover:bg-red-100 text-red-800"
           >
-            <span className="text-2xl">📊</span>
-            <span className="font-semibold">No, solo mi valoración</span>
-            <span className="text-xs text-muted-foreground">
-              Ver el informe directamente
-            </span>
+            <XCircle className="w-5 h-5" />
+            <span className="text-sm">No, solo mi valoración</span>
           </Button>
         </div>
       </div>

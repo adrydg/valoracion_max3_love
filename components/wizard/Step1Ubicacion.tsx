@@ -58,10 +58,10 @@ export const Step1Ubicacion = () => {
   return (
     <div className="space-y-6 p-4">
       <div className="text-center space-y-2">
-        <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+        <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
           <MapPin className="w-6 h-6 text-primary" />
-        </div>
-        <h2 className="text-2xl font-bold">Ubicación y tamaño</h2>
+          Ubicación y tamaño
+        </h2>
         <p className="text-muted-foreground">
           Cuéntanos dónde está tu propiedad
         </p>
