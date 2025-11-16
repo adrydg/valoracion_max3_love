@@ -12,11 +12,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "ValoraciónMAX - Tasación Online de Viviendas | Valoración Inmobiliaria Gratis con IA",
+    default: "ValoraciónMAX - Herramienta Online de Valoración de Inmuebles | Datos del Registro de la Propiedad",
     template: "%s | ValoraciónMAX",
   },
   description:
-    "La plataforma de valoración inmobiliaria más precisa de España. Descubre el valor real de tu piso, casa o local al instante. Algoritmo con IA que analiza +20 bases de datos y compraventas reales de tu zona. Primera valoración 100% gratis en 2 minutos.",
+    "Herramienta online de valoración de inmuebles con datos reales del Registro de la Propiedad y algoritmo propio. Valora tu piso, casa o local de forma rápida, segura e inmediata. Resultado en 2 minutos. Primera valoración 100% gratis.",
   keywords: [
     "valoración inmobiliaria online",
     "tasación vivienda gratis",
@@ -47,9 +47,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_ES",
     url: "https://valoracionmax.es",
-    title: "ValoraciónMAX - Valoración Inmobiliaria con IA | Tasación Gratis en 2 Minutos",
+    title: "ValoraciónMAX - Herramienta Online de Valoración de Inmuebles | Registro de la Propiedad",
     description:
-      "Descubre el valor exacto de tu vivienda con inteligencia artificial. Analizamos +20 bases de datos y compraventas reales. Primera valoración 100% gratis. Empresa innovadora española.",
+      "Herramienta online de valoración de inmuebles con datos reales del Registro de la Propiedad y algoritmo propio. Valora tu piso, casa o local de forma rápida, segura e inmediata en 2 minutos. Primera valoración gratis.",
     siteName: "ValoraciónMAX",
     images: [
       {
@@ -62,9 +62,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ValoraciónMAX - Valoración Inmobiliaria con IA | Tasación Gratis",
+    title: "ValoraciónMAX - Herramienta Online de Valoración de Inmuebles",
     description:
-      "Descubre el valor exacto de tu vivienda con IA. Analizamos +20 bases de datos. Primera valoración gratis en 2 minutos.",
+      "Herramienta online con datos reales del Registro de la Propiedad y algoritmo propio. Valora tu inmueble de forma rápida, segura e inmediata en 2 minutos.",
     images: ["/og-image.jpg"],
   },
   robots: {
