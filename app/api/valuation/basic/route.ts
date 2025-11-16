@@ -44,21 +44,50 @@ export async function POST(request: Request) {
     let marketData: any = null;
 
     try {
-      const marketPrompt = `Basándote en tu conocimiento actualizado del mercado inmobiliario español, investiga y proporciona datos de precios para:
+      // Mapear valores para hacerlos más legibles
+      const floorMap: Record<string, string> = {
+        "bajo": "Planta baja",
+        "entresuelo": "Entresuelo",
+        "1-2": "Planta 1ª-2ª",
+        "3-5": "Planta 3ª-5ª",
+        "6+": "Planta 6ª o superior",
+        "atico": "Ático"
+      };
 
-Ubicación: ${street || ''}, Código Postal: ${postalCode}
-Tipo de propiedad: ${propertyType || 'piso'}
+      const buildingAgeMap: Record<string, string> = {
+        "nueva": "Menos de 5 años",
+        "reciente": "Entre 5-15 años",
+        "moderna": "Entre 15-30 años",
+        "antigua": "Entre 30-50 años",
+        "muy-antigua": "Más de 50 años"
+      };
 
-IMPORTANTE: Usa tu conocimiento actualizado para identificar:
-- La ciudad/municipio que corresponde a este código postal
-- El barrio o zona específica si es posible identificarlo de la dirección
-- Los precios actuales de mercado (2025) para esa zona específica
+      const marketPrompt = `Basándote en tu conocimiento actualizado del mercado inmobiliario español, analiza y proporciona datos de precios para esta propiedad:
+
+📍 UBICACIÓN:
+- Dirección: ${street || 'No especificada'}
+- Código Postal: ${postalCode}
+
+🏠 CARACTERÍSTICAS DE LA PROPIEDAD:
+- Tipo: ${propertyType || 'piso'}
+- Superficie: ${squareMeters} m²
+- Habitaciones: ${bedrooms}
+- Baños: ${bathrooms || 'No especificado'}
+- Planta: ${floor ? floorMap[floor] : 'No especificado'}
+- Ascensor: ${hasElevator === true ? 'Sí' : hasElevator === false ? 'No' : 'No especificado'}
+- Antigüedad: ${buildingAge ? buildingAgeMap[buildingAge] : 'No especificado'}
+
+IMPORTANTE: Usa tu conocimiento actualizado del mercado inmobiliario 2025 para:
+1. Identificar la ciudad/municipio del código postal ${postalCode}
+2. Identificar el barrio o zona si es posible
+3. Analizar TODAS las características de la propiedad (tamaño, habitaciones, planta, ascensor, antigüedad)
+4. Proporcionar precios realistas de mercado para ESA ZONA ESPECÍFICA considerando TODAS las características
 
 Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
 {
-  "precio_min_m2": número (precio mínimo €/m² en esta zona),
-  "precio_medio_m2": número (precio medio €/m² en esta zona),
-  "precio_max_m2": número (precio máximo €/m² en esta zona),
+  "precio_min_m2": número (precio mínimo €/m² para esta propiedad en esta zona),
+  "precio_medio_m2": número (precio medio €/m² considerando todas las características),
+  "precio_max_m2": número (precio máximo €/m² para esta propiedad en esta zona),
   "municipality": "nombre del municipio",
   "neighborhood": "nombre del barrio si se puede identificar",
   "province": "nombre de la provincia",
@@ -66,6 +95,11 @@ Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
   "tendencia": "subiendo" | "estable" | "bajando",
   "descripcion_zona": "breve descripción de 1-2 líneas sobre características de la zona que afectan al precio"
 }`;
+
+      console.log("📤 ENVIANDO A CLAUDE:");
+      console.log("═══════════════════════════════════════");
+      console.log(marketPrompt);
+      console.log("═══════════════════════════════════════");
 
       const marketResponse = await anthropic.messages.create({
         model: "claude-3-haiku-20240307",
@@ -81,6 +115,11 @@ Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
       const marketText = marketResponse.content[0].type === "text"
         ? marketResponse.content[0].text
         : "";
+
+      console.log("📥 RESPUESTA DE CLAUDE:");
+      console.log("═══════════════════════════════════════");
+      console.log(marketText);
+      console.log("═══════════════════════════════════════");
 
       // Parsear JSON
       const marketJson = JSON.parse(marketText);
