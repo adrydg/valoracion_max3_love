@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
 export async function POST(request: Request) {
-  // Instanciar Resend solo en runtime, no en build time
-  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     const body = await request.json();
     const { formType, ...data } = body;
@@ -16,9 +14,23 @@ export async function POST(request: Request) {
       );
     }
 
-    // Email al administrador
-    const adminEmail = process.env.ADMIN_EMAIL || "a.durandez@gmail.com";
-    const fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
+    // Verificar que la API key esté configurada
+    console.log('RESEND_API_KEY configurada:', !!process.env.RESEND_API_KEY);
+    console.log('RESEND_API_KEY valor:', process.env.RESEND_API_KEY ? 'Configurada' : 'No configurada');
+
+    if (!process.env.RESEND_API_KEY) {
+      console.error('RESEND_API_KEY no está configurada');
+      return NextResponse.json({
+        error: "Configuración de email no disponible"
+      }, { status: 500 });
+    }
+
+    // Instanciar Resend DENTRO de la función para evitar errores de build
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
+    // Configuración de emails
+    const adminEmail = "a.durandez@gmail.com";
+    const fromEmail = "onboarding@resend.dev"; // Usar dominio de Resend para testing
 
     // Construir el HTML del email según el tipo de formulario
     const emailHtml = formType === "short"
@@ -32,12 +44,20 @@ export async function POST(request: Request) {
     // Enviar email
     const emailResult = await resend.emails.send({
       from: fromEmail,
-      to: adminEmail,
+      to: [adminEmail],
       subject: subject,
       html: emailHtml,
     });
 
-    console.log(`✅ Email ${formType} enviado:`, emailResult);
+    console.log(`Email enviado con Resend (${formType}):`, emailResult);
+
+    // Verificar si hubo error en el envío
+    if (emailResult.error) {
+      console.error("Error enviando email:", emailResult.error);
+      return NextResponse.json({
+        error: "Error al enviar el email. Inténtalo de nuevo."
+      }, { status: 500 });
+    }
 
     return NextResponse.json({
       success: true,
@@ -45,10 +65,10 @@ export async function POST(request: Request) {
       emailId: emailResult.data?.id,
     });
   } catch (error) {
-    console.error("❌ Error enviando email:", error);
+    console.error("Error enviando email con Resend:", error);
     return NextResponse.json(
       {
-        error: "Error al enviar email",
+        error: "Error al enviar el formulario. Inténtalo de nuevo.",
         details: error instanceof Error ? error.message : "Unknown error"
       },
       { status: 500 }
