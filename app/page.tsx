@@ -55,8 +55,8 @@ export default function Home() {
               </p>
 
               {/* Key Features */}
-              <div className="flex flex-nowrap gap-3 overflow-x-auto sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible">
-                <div className="flex items-start gap-3 flex-shrink-0 min-w-[160px] sm:min-w-0">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                <div className="flex items-start gap-3">
                   <div className="text-3xl flex-shrink-0">
                     📊
                   </div>
@@ -66,7 +66,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 flex-shrink-0 min-w-[200px] sm:min-w-0">
+                <div className="flex items-start gap-3">
                   <div className="text-3xl flex-shrink-0">
                     💰
                   </div>
@@ -76,7 +76,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 flex-shrink-0 min-w-[180px] sm:min-w-0">
+                <div className="flex items-start gap-3">
                   <div className="text-3xl flex-shrink-0">
                     ⚡
                   </div>
