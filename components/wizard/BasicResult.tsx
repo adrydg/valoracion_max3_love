@@ -78,6 +78,13 @@ export const BasicResult = ({ onClose }: BasicResultProps) => {
             </div>
           </div>
 
+          {/* Título de la estimación */}
+          <div className="text-center px-2">
+            <p className="text-sm md:text-base text-muted-foreground font-medium">
+              Con los datos facilitados nuestro sistema ha estimado que el valor aproximado es:
+            </p>
+          </div>
+
           {/* Precio principal destacado */}
           <div className="text-center py-2">
             <p className="text-4xl md:text-5xl font-black bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent drop-shadow-sm leading-tight">
