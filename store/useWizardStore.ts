@@ -35,6 +35,7 @@ interface WizardState {
   name: string;
   email: string;
   phone: string;
+  additionalComments: string;
   consentMarketing: boolean;
   consentDataProcessing: boolean;
 
@@ -81,6 +82,7 @@ interface WizardState {
   setName: (name: string) => void;
   setEmail: (email: string) => void;
   setPhone: (phone: string) => void;
+  setAdditionalComments: (comments: string) => void;
   setConsentMarketing: (consent: boolean) => void;
   setConsentDataProcessing: (consent: boolean) => void;
 
@@ -128,6 +130,7 @@ const initialState = {
   name: "",
   email: "",
   phone: "",
+  additionalComments: "",
   consentMarketing: false,
   consentDataProcessing: false,
 
@@ -177,6 +180,7 @@ export const useWizardStore = create<WizardState>()(
   setName: (name) => set({ name }),
   setEmail: (email) => set({ email }),
   setPhone: (phone) => set({ phone }),
+  setAdditionalComments: (additionalComments) => set({ additionalComments }),
   setConsentMarketing: (consentMarketing) => set({ consentMarketing }),
   setConsentDataProcessing: (consentDataProcessing) => set({ consentDataProcessing }),
 
@@ -229,6 +233,7 @@ export const useWizardStore = create<WizardState>()(
         name: state.name,
         email: state.email,
         phone: state.phone,
+        additionalComments: state.additionalComments,
         consentMarketing: state.consentMarketing,
         consentDataProcessing: state.consentDataProcessing,
         directOfferInterest: state.directOfferInterest,

@@ -22,6 +22,7 @@ export const Step8PhotoUpload = () => {
     name,
     email,
     phone,
+    additionalComments,
     propertyType,
     bedrooms,
     postalCode,
@@ -33,6 +34,8 @@ export const Step8PhotoUpload = () => {
     buildingAge,
     landSize,
     consentMarketing,
+    directOfferInterest,
+    agencyStatus,
     leadId,
     // Características avanzadas
     orientation,
@@ -151,6 +154,7 @@ export const Step8PhotoUpload = () => {
           name,
           email,
           phone,
+          additionalComments,
           propertyType,
           bedrooms,
           postalCode,
@@ -162,6 +166,8 @@ export const Step8PhotoUpload = () => {
           buildingAge,
           landSize,
           consentMarketing,
+          directOfferInterest,
+          agencyStatus,
           // Características avanzadas
           orientation,
           propertyCondition,

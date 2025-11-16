@@ -114,7 +114,7 @@ export const Step1Ubicacion = () => {
         {/* Calle */}
         <div className="space-y-2">
           <Label htmlFor="street">
-            Calle (opcional)
+            Calle y número
           </Label>
           <Input
             id="street"

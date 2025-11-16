@@ -94,6 +94,7 @@ function buildShortFormEmail(data: any) {
     name,
     email,
     phone,
+    additionalComments,
     propertyType,
     bedrooms,
     postalCode,
@@ -105,8 +106,27 @@ function buildShortFormEmail(data: any) {
     buildingAge,
     landSize,
     consentMarketing,
+    directOfferInterest,
+    agencyStatus,
     leadId,
   } = data;
+
+  // Helper para transformar valores
+  const getOfferInterestText = (value: string | null) => {
+    if (!value) return 'No especificado';
+    if (value === 'open-to-offers') return '✅ SÍ - Interesado en escuchar ofertas';
+    if (value === 'not-interested') return '❌ NO - Solo quiere la valoración';
+    return 'No especificado';
+  };
+
+  const getAgencyStatusText = (value: string | null) => {
+    if (!value) return 'No especificado';
+    if (value === 'yes') return 'Sí, publicado en agencias';
+    if (value === 'no') return 'No publicado';
+    if (value === 'soon') return 'Próximamente';
+    if (value === 'no-agencies') return 'No quiere agencias';
+    return 'No especificado';
+  };
 
   return `
     <!DOCTYPE html>
@@ -242,6 +262,33 @@ function buildShortFormEmail(data: any) {
             </div>
           </div>
 
+          ${additionalComments ? `
+          <!-- Comentarios adicionales -->
+          <div class="section">
+            <div class="section-title">💬 Comentarios adicionales</div>
+            <div class="info-item" style="grid-column: 1 / -1; background: #fef3c7; border-left-color: #f59e0b;">
+              <div class="info-value" style="white-space: pre-wrap;">${additionalComments}</div>
+            </div>
+          </div>
+          ` : ''}
+
+          <!-- Interés en Ofertas -->
+          <div class="section">
+            <div class="section-title">🎁 Interés en Ofertas</div>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">¿Quiere escuchar ofertas?</div>
+                <div class="info-value">${getOfferInterestText(directOfferInterest)}</div>
+              </div>
+              ${agencyStatus ? `
+              <div class="info-item">
+                <div class="info-label">¿Publicado en agencias?</div>
+                <div class="info-value">${getAgencyStatusText(agencyStatus)}</div>
+              </div>
+              ` : ''}
+            </div>
+          </div>
+
           <!-- Datos de Propiedad -->
           <div class="section">
             <div class="section-title">🏠 Datos de la Propiedad</div>
@@ -321,6 +368,7 @@ function buildLongFormEmail(data: any) {
     name,
     email,
     phone,
+    additionalComments,
     propertyType,
     bedrooms,
     postalCode,
@@ -341,8 +389,27 @@ function buildLongFormEmail(data: any) {
     quality,
     photos,
     consentMarketing,
+    directOfferInterest,
+    agencyStatus,
     leadId,
   } = data;
+
+  // Helper para transformar valores
+  const getOfferInterestText = (value: string | null) => {
+    if (!value) return 'No especificado';
+    if (value === 'open-to-offers') return '✅ SÍ - Interesado en escuchar ofertas';
+    if (value === 'not-interested') return '❌ NO - Solo quiere la valoración';
+    return 'No especificado';
+  };
+
+  const getAgencyStatusText = (value: string | null) => {
+    if (!value) return 'No especificado';
+    if (value === 'yes') return 'Sí, publicado en agencias';
+    if (value === 'no') return 'No publicado';
+    if (value === 'soon') return 'Próximamente';
+    if (value === 'no-agencies') return 'No quiere agencias';
+    return 'No especificado';
+  };
 
   return `
     <!DOCTYPE html>
@@ -484,6 +551,33 @@ function buildLongFormEmail(data: any) {
                 <div class="info-label">Dispuesto a ofertas</div>
                 <div class="info-value">${consentMarketing ? '✅ Sí, acepta ofertas' : '❌ No acepta ofertas'}</div>
               </div>
+            </div>
+          </div>
+
+          ${additionalComments ? `
+          <!-- Comentarios adicionales -->
+          <div class="section">
+            <div class="section-title">💬 Comentarios adicionales</div>
+            <div class="info-item" style="grid-column: 1 / -1; background: #fef3c7; border-left-color: #f59e0b;">
+              <div class="info-value" style="white-space: pre-wrap;">${additionalComments}</div>
+            </div>
+          </div>
+          ` : ''}
+
+          <!-- Interés en Ofertas -->
+          <div class="section">
+            <div class="section-title">🎁 Interés en Ofertas</div>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">¿Quiere escuchar ofertas?</div>
+                <div class="info-value">${getOfferInterestText(directOfferInterest)}</div>
+              </div>
+              ${agencyStatus ? `
+              <div class="info-item">
+                <div class="info-label">¿Publicado en agencias?</div>
+                <div class="info-value">${getAgencyStatusText(agencyStatus)}</div>
+              </div>
+              ` : ''}
             </div>
           </div>
 

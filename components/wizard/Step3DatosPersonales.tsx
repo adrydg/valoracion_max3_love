@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight, ArrowLeft, User, Loader2 } from "lucide-react";
 import { nanoid } from "nanoid";
 
@@ -14,11 +15,13 @@ export const Step3DatosPersonales = () => {
     name,
     email,
     phone,
+    additionalComments,
     consentMarketing,
     consentDataProcessing,
     setName,
     setEmail,
     setPhone,
+    setAdditionalComments,
     setConsentMarketing,
     setConsentDataProcessing,
     nextStep,
@@ -34,6 +37,8 @@ export const Step3DatosPersonales = () => {
     floor,
     hasElevator,
     buildingAge,
+    directOfferInterest,
+    agencyStatus,
     setLeadId,
   } = useWizardStore();
 
@@ -113,6 +118,7 @@ export const Step3DatosPersonales = () => {
             name,
             email,
             phone,
+            additionalComments,
             propertyType,
             bedrooms,
             postalCode,
@@ -124,6 +130,8 @@ export const Step3DatosPersonales = () => {
             buildingAge,
             landSize,
             consentMarketing,
+            directOfferInterest,
+            agencyStatus,
           }),
         });
 
@@ -229,6 +237,21 @@ export const Step3DatosPersonales = () => {
           {errors.phone && (
             <p className="text-sm text-destructive">{errors.phone}</p>
           )}
+        </div>
+
+        {/* Comentarios adicionales */}
+        <div className="space-y-2">
+          <Label htmlFor="additionalComments">
+            Comentarios adicionales
+          </Label>
+          <Textarea
+            id="additionalComments"
+            placeholder="Cuéntanos algo más sobre tu propiedad..."
+            value={additionalComments}
+            onChange={(e) => setAdditionalComments(e.target.value)}
+            rows={3}
+            className="resize-none"
+          />
         </div>
 
         {/* Consentimientos */}
