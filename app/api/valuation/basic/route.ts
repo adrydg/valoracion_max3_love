@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { Resend } from "resend";
+import preciosPorCP from "@/data/precios_por_cp.json";
 
 // Inicializar cliente de Anthropic
 const anthropic = new Anthropic({
@@ -10,6 +11,20 @@ const anthropic = new Anthropic({
 // Inicializar Resend para emails
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
+// Helper para parsear precio de formato "1.866 €/m²" a número
+function parsePrecioRegistradores(precioTexto: string): number | null {
+  try {
+    // "1.866 €/m²" → quitar todo excepto números y coma → "1866" → 1866
+    const numero = precioTexto
+      .replace(/[€\/m²\s]/g, '')  // quitar €, /, m², espacios
+      .replace(/\./g, '')          // quitar puntos (separadores de miles)
+      .replace(',', '.');          // cambiar coma decimal por punto
+    return parseFloat(numero);
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -17,6 +32,7 @@ export async function POST(request: Request) {
     const {
       leadId,
       postalCode,
+      municipality,
       street,
       squareMeters,
       bedrooms,
@@ -38,7 +54,16 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log(`🔍 FASE 1: Buscando precio de mercado para ${street || 'Sin dirección'}, CP: ${postalCode}`);
+    // Buscar precio de Registradores si existe
+    const cpData = (preciosPorCP as any)[postalCode];
+    const precioRegistradores = cpData?.precio ? parsePrecioRegistradores(cpData.precio) : null;
+
+    console.log(`🔍 FASE 1: Buscando precio de mercado para ${street || 'Sin dirección'}, ${municipality || 'Sin municipio'}, CP: ${postalCode}`);
+    if (precioRegistradores) {
+      console.log(`💰 Precio Registradores encontrado: ${precioRegistradores}€/m² (${cpData.precio})`);
+    } else {
+      console.log(`⚠️ No hay precio de Registradores para CP ${postalCode}, consultando a Claude...`);
+    }
 
     // 1. Buscar datos de mercado usando Claude
     let marketData: any = null;
@@ -65,10 +90,15 @@ export async function POST(request: Request) {
       const marketPrompt = `Basándote en tu conocimiento actualizado del mercado inmobiliario español, analiza y proporciona datos de precios para esta propiedad:
 
 📍 UBICACIÓN:
-- Dirección: ${street || 'No especificada'}
+- Población/Municipio: ${municipality || 'No especificado'}
 - Código Postal: ${postalCode}
+- Dirección: ${street || 'No especificada'}
 
-🏠 CARACTERÍSTICAS DE LA PROPIEDAD:
+${precioRegistradores ? `📊 PRECIO DE REFERENCIA (Registradores 2024):
+- Precio medio zona según datos oficiales: ${precioRegistradores} €/m²
+- Fuente: Colegio de Registradores de España
+
+` : ''}🏠 CARACTERÍSTICAS DE LA PROPIEDAD:
 - Tipo: ${propertyType || 'piso'}
 - Superficie: ${squareMeters} m²
 - Habitaciones: ${bedrooms}
@@ -78,8 +108,10 @@ export async function POST(request: Request) {
 - Antigüedad: ${buildingAge ? buildingAgeMap[buildingAge] : 'No especificado'}
 
 IMPORTANTE: Usa tu conocimiento actualizado del mercado inmobiliario 2025 para:
-1. Identificar la ciudad/municipio del código postal ${postalCode}
-2. Identificar el barrio o zona si es posible
+1. ${precioRegistradores
+   ? `Usa el precio de Registradores (${precioRegistradores} €/m²) como BASE PRINCIPAL y ajústalo según las características específicas de la propiedad`
+   : `Analizar el mercado en ${municipality || 'la zona del código postal ' + postalCode} para determinar el precio base`}
+2. Identificar el barrio o zona dentro del municipio si es posible
 3. Analizar TODAS las características de la propiedad (tamaño, habitaciones, planta, ascensor, antigüedad)
 4. Proporcionar precios realistas de mercado para ESA ZONA ESPECÍFICA considerando TODAS las características
 
@@ -291,11 +323,17 @@ Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
     // 4. Aplicar factor total
     const adjustedPrice = basePrice * totalFactor;
 
+    // 4.5. Aplicar optimismo del 10% al precio final
+    const optimismFactor = 1.10;
+    const optimisticPrice = adjustedPrice * optimismFactor;
+
+    console.log(`📈 Aplicando optimismo del 10%: ${Math.round(adjustedPrice).toLocaleString()}€ → ${Math.round(optimisticPrice).toLocaleString()}€`);
+
     // 5. Calcular rango con incertidumbre ±20%
     const uncertainty = 0.20;
-    const min = Math.round(adjustedPrice * (1 - uncertainty));
-    const max = Math.round(adjustedPrice * (1 + uncertainty));
-    const avg = Math.round(adjustedPrice);
+    const min = Math.round(optimisticPrice * (1 - uncertainty));
+    const max = Math.round(optimisticPrice * (1 + uncertainty));
+    const avg = Math.round(optimisticPrice);
 
     // 6. Calcular precio por m²
     const pricePerM2 = Math.round(avg / squareMeters);

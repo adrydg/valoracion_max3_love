@@ -35,6 +35,7 @@ export const LoadingScreen = () => {
   const {
     leadId,
     postalCode,
+    municipality,
     street,
     squareMeters,
     bedrooms,
@@ -98,6 +99,7 @@ export const LoadingScreen = () => {
           body: JSON.stringify({
             leadId,
             postalCode,
+            municipality,
             street,
             squareMeters,
             bedrooms,

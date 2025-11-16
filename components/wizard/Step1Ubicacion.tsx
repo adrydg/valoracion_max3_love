@@ -11,12 +11,14 @@ import { cn } from "@/lib/utils";
 export const Step1Ubicacion = () => {
   const {
     postalCode,
+    municipality,
     street,
     squareMeters,
     landSize,
     bedrooms,
     propertyType,
     setPostalCode,
+    setMunicipality,
     setStreet,
     setSquareMeters,
     setLandSize,
@@ -29,12 +31,26 @@ export const Step1Ubicacion = () => {
 
   // PRECARGA DE DATOS PARA TESTING
   useEffect(() => {
-    if (!postalCode) setPostalCode("28001");
+    if (!postalCode) setPostalCode("28941");
     if (!squareMeters) setSquareMeters(75);
     if (!street) setStreet("Calle Gran Vía 28");
     if (!bedrooms) setBedrooms(3);
     if (!propertyType) setPropertyType("piso");
   }, []);
+
+  // Buscar municipio automáticamente cuando cambia el CP
+  useEffect(() => {
+    if (postalCode && postalCode.length === 5) {
+      fetch(`/api/postal-code?cp=${postalCode}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.found && data.municipio) {
+            setMunicipality(data.municipio);
+          }
+        })
+        .catch(err => console.error("Error buscando CP:", err));
+    }
+  }, [postalCode, setMunicipality]);
 
   const handleContinue = () => {
     const newErrors: Record<string, string> = {};
@@ -42,6 +58,11 @@ export const Step1Ubicacion = () => {
     // Validar código postal
     if (!postalCode || postalCode.length !== 5 || !/^\d{5}$/.test(postalCode)) {
       newErrors.postalCode = "Código postal inválido (5 dígitos)";
+    }
+
+    // Validar población
+    if (!municipality || municipality.trim().length < 2) {
+      newErrors.municipality = "Población inválida";
     }
 
     // Validar metros cuadrados
@@ -87,28 +108,52 @@ export const Step1Ubicacion = () => {
       </div>
 
       <div className="space-y-4">
-        {/* Código Postal */}
-        <div className="space-y-2">
-          <Label htmlFor="postalCode">
-            Código postal <span className="text-destructive">*</span>
-          </Label>
-          <Input
-            id="postalCode"
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            placeholder="28001"
-            value={postalCode}
-            onChange={(e) => setPostalCode(e.target.value.slice(0, 5))}
-            maxLength={5}
-            autoComplete="postal-code"
-            autoCorrect="off"
-            spellCheck={false}
-            className={errors.postalCode ? "border-destructive" : ""}
-          />
-          {errors.postalCode && (
-            <p className="text-sm text-destructive">{errors.postalCode}</p>
-          )}
+        {/* Código Postal y Población en grid */}
+        <div className="grid grid-cols-2 gap-3">
+          {/* Código Postal */}
+          <div className="space-y-2">
+            <Label htmlFor="postalCode">
+              Código postal <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="postalCode"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="28001"
+              value={postalCode}
+              onChange={(e) => setPostalCode(e.target.value.slice(0, 5))}
+              maxLength={5}
+              autoComplete="postal-code"
+              autoCorrect="off"
+              spellCheck={false}
+              className={errors.postalCode ? "border-destructive" : ""}
+            />
+            {errors.postalCode && (
+              <p className="text-sm text-destructive">{errors.postalCode}</p>
+            )}
+          </div>
+
+          {/* Población */}
+          <div className="space-y-2">
+            <Label htmlFor="municipality">
+              Población <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="municipality"
+              type="text"
+              placeholder="Madrid"
+              value={municipality}
+              onChange={(e) => setMunicipality(e.target.value)}
+              autoComplete="address-level2"
+              autoCorrect="off"
+              spellCheck={false}
+              className={errors.municipality ? "border-destructive" : ""}
+            />
+            {errors.municipality && (
+              <p className="text-sm text-destructive">{errors.municipality}</p>
+            )}
+          </div>
         </div>
 
         {/* Calle */}
