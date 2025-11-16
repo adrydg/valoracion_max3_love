@@ -43,17 +43,21 @@ export function buildMarketDataFromRegistradores(
  * 2. Si NO hay precio → Llamar a Claude
  *
  * Ahorra tokens cuando ya tenemos datos oficiales.
+ * Ahora también retorna el prompt si se llamó a Claude (para historial).
  */
 export async function getMarketDataSmart(
   property: PropertyData,
   precioRegistradores: number | null
-): Promise<MarketData> {
+): Promise<{ marketData: MarketData; prompt?: string }> {
   // CASO 1: HAY PRECIO EN JSON → NO llamar a Claude
   if (precioRegistradores) {
     console.log(`💰 Precio en JSON encontrado: ${precioRegistradores}€/m²`);
     console.log(`⏭️  SALTANDO llamada a Claude (ahorro de tokens)`);
 
-    return buildMarketDataFromRegistradores(property, precioRegistradores);
+    return {
+      marketData: buildMarketDataFromRegistradores(property, precioRegistradores),
+      prompt: undefined,
+    };
   }
 
   // CASO 2: NO HAY PRECIO → SÍ llamar a Claude
@@ -61,25 +65,29 @@ export async function getMarketDataSmart(
   console.log(`🤖 Consultando a Claude...`);
 
   try {
-    return await getMarketDataFromClaude(property, null);
+    const result = await getMarketDataFromClaude(property, null);
+    return result;
   } catch (error) {
     console.error('❌ Error llamando a Claude:', error);
 
     // Fallback: construir datos genéricos
     console.warn('⚠️  Usando datos de mercado genéricos como fallback');
     return {
-      postalCode: property.postalCode,
-      municipality: property.municipality || 'No especificado',
-      neighborhood: undefined,
-      province: 'España',
-      precio_medio_m2: 3000, // Precio genérico conservador
-      precio_min_m2: 2700,
-      precio_max_m2: 3300,
-      demanda_zona: 'media',
-      tendencia: 'estable',
-      descripcion_zona: 'Estimación genérica (sin datos específicos disponibles)',
-      fuente: 'Estimación genérica',
-      fecha_actualizacion: new Date().toISOString().split('T')[0],
+      marketData: {
+        postalCode: property.postalCode,
+        municipality: property.municipality || 'No especificado',
+        neighborhood: undefined,
+        province: 'España',
+        precio_medio_m2: 3000, // Precio genérico conservador
+        precio_min_m2: 2700,
+        precio_max_m2: 3300,
+        demanda_zona: 'media',
+        tendencia: 'estable',
+        descripcion_zona: 'Estimación genérica (sin datos específicos disponibles)',
+        fuente: 'Estimación genérica',
+        fecha_actualizacion: new Date().toISOString().split('T')[0],
+      },
+      prompt: undefined,
     };
   }
 }

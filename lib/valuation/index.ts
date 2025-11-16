@@ -55,3 +55,13 @@ export {
   type AuditReport,
   type AuditStep,
 } from './audit';
+
+// Historial de valoraciones
+export {
+  addToHistory,
+  getHistory,
+  getHistoryEntry,
+  clearHistory,
+  getHistoryStats,
+  type ValuationHistoryEntry,
+} from './history';

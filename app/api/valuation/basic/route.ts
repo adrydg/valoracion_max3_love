@@ -9,6 +9,8 @@ import {
   parsePrecioRegistradores,
   generateAuditReport,
   printAuditReport,
+  trackClaudeUsage,
+  addToHistory,
   type PropertyData,
   type MarketData,
 } from "@/lib/valuation";
@@ -45,6 +47,10 @@ export async function POST(request: Request) {
       );
     }
 
+    // Timestamp de inicio (para medir duración)
+    const startTime = Date.now();
+    const timestamp = new Date().toISOString();
+
     console.log(`\n${'═'.repeat(80)}`);
     console.log(`🏠 NUEVA VALORACIÓN - ${new Date().toLocaleString('es-ES')}`);
     console.log(`${'═'.repeat(80)}\n`);
@@ -78,7 +84,11 @@ export async function POST(request: Request) {
 
     // 3. OBTENER DATOS DE MERCADO (con prioridad JSON > Claude)
     console.log(`\n📊 OBTENIENDO DATOS DE MERCADO...`);
-    const marketData: MarketData = await getMarketDataSmart(property, precioRegistradores);
+    const { marketData, prompt } = await getMarketDataSmart(property, precioRegistradores);
+
+    // Trackear uso de Claude (para estadísticas)
+    const calledClaude = !precioRegistradores; // Solo llamamos a Claude si no hay precio
+    trackClaudeUsage(calledClaude, !!precioRegistradores);
 
     // 4. CALCULAR VALORACIÓN
     console.log(`\n💰 CALCULANDO VALORACIÓN...`);
@@ -89,6 +99,24 @@ export async function POST(request: Request) {
     printAuditReport(auditReport);
 
     console.log(`\n✅ Valoración completada para lead ${leadId}`);
+
+    // 6. GUARDAR EN HISTORIAL
+    const duration = Date.now() - startTime;
+    const historyId = `val_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+    addToHistory({
+      id: historyId,
+      timestamp,
+      property,
+      marketData,
+      valuation,
+      usedJSON: !!precioRegistradores,
+      calledClaude,
+      precioRegistradores,
+      tokensUsed: calledClaude ? 500 : 0, // Estimación
+      prompt: prompt,
+      duration,
+    });
 
     // Enviar email al administrador con los datos del lead
     try {

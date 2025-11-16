@@ -86,11 +86,12 @@ Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
 
 /**
  * Obtiene datos de mercado usando Claude
+ * Ahora también retorna el prompt usado (para historial)
  */
 export async function getMarketDataFromClaude(
   property: PropertyData,
   precioRegistradores: number | null = null
-): Promise<MarketData> {
+): Promise<{ marketData: MarketData; prompt: string }> {
   try {
     console.log(`🔍 Consultando a Claude sobre mercado en ${property.municipality || property.postalCode}...`);
 
@@ -137,7 +138,7 @@ export async function getMarketDataFromClaude(
 
     console.log(`✅ Datos de mercado obtenidos: ${marketData.precio_medio_m2}€/m² en ${marketData.municipality}`);
 
-    return marketData;
+    return { marketData, prompt };
   } catch (error) {
     console.error("❌ Error consultando a Claude:", error);
     throw error;
@@ -150,9 +151,10 @@ export async function getMarketDataFromClaude(
 export async function getMarketDataWithFallback(
   property: PropertyData,
   precioRegistradores: number | null = null
-): Promise<MarketData> {
+): Promise<{ marketData: MarketData; prompt?: string }> {
   try {
-    return await getMarketDataFromClaude(property, precioRegistradores);
+    const result = await getMarketDataFromClaude(property, precioRegistradores);
+    return result;
   } catch (error) {
     console.warn("⚠️ Usando datos de mercado fallback debido a error en Claude");
 
@@ -160,14 +162,17 @@ export async function getMarketDataWithFallback(
     const fallbackPrice = precioRegistradores || FALLBACK_MARKET_DATA.precio_medio_m2;
 
     return {
-      ...FALLBACK_MARKET_DATA,
-      postalCode: property.postalCode,
-      municipality: property.municipality || FALLBACK_MARKET_DATA.municipality,
-      precio_medio_m2: fallbackPrice,
-      precio_min_m2: Math.round(fallbackPrice * 0.9),
-      precio_max_m2: Math.round(fallbackPrice * 1.1),
-      fuente: precioRegistradores ? "Registradores (fallback)" : "estimación genérica (fallback)",
-      fecha_actualizacion: new Date().toISOString().split("T")[0],
+      marketData: {
+        ...FALLBACK_MARKET_DATA,
+        postalCode: property.postalCode,
+        municipality: property.municipality || FALLBACK_MARKET_DATA.municipality,
+        precio_medio_m2: fallbackPrice,
+        precio_min_m2: Math.round(fallbackPrice * 0.9),
+        precio_max_m2: Math.round(fallbackPrice * 1.1),
+        fuente: precioRegistradores ? "Registradores (fallback)" : "estimación genérica (fallback)",
+        fecha_actualizacion: new Date().toISOString().split("T")[0],
+      },
+      prompt: undefined,
     };
   }
 }
