@@ -68,15 +68,34 @@ export const Step9AIProcessing = () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       const basePrice = valuation?.avg || 320000;
+
+      // Calcular ajustes avanzados y sus porcentajes
+      const advancedAdjustments = [
+        { factor: `Orientación ${orientation}`, value: orientation === "sur" ? "+2%" : "0%", percentage: orientation === "sur" ? 2 : 0 },
+        { factor: `Estado: ${propertyCondition}`, value: propertyCondition === "muy-buen-estado" ? "+3%" : "+1%", percentage: propertyCondition === "muy-buen-estado" ? 3 : 1 },
+        { factor: hasTerrace ? `Terraza ${terraceSize}m²` : "Sin terraza", value: hasTerrace ? "+4%" : "0%", percentage: hasTerrace ? 4 : 0 },
+        { factor: hasGarage ? "Plaza de garaje" : "Sin garaje", value: hasGarage ? "+5%" : "0%", percentage: hasGarage ? 5 : 0 },
+        { factor: hasStorage ? "Trastero incluido" : "Sin trastero", value: hasStorage ? "+2%" : "0%", percentage: hasStorage ? 2 : 0 },
+        { factor: `Calidad ${quality}`, value: quality === "alta" ? "+3%" : quality === "media" ? "+1%" : "0%", percentage: quality === "alta" ? 3 : quality === "media" ? 1 : 0 },
+      ];
+
+      // SUMAR TODOS los porcentajes de adjustments
+      const totalAdjustmentPercentage = advancedAdjustments.reduce((sum, adj) => sum + adj.percentage, 0);
+      console.log(`📊 Ajustes avanzados totales: ${totalAdjustmentPercentage}% (${advancedAdjustments.map(a => a.value).join(', ')})`);
+
+      // Aplicar ajustes al precio base
+      const adjustedPrice = Math.round(basePrice * (1 + totalAdjustmentPercentage / 100));
+      console.log(`💰 Precio base: ${basePrice.toLocaleString()}€ → Con ajustes: ${adjustedPrice.toLocaleString()}€`);
+
       const detailedValuation = {
         ...valuation,
-        avg: Math.round(basePrice * 1.05), // Ligera mejora con datos avanzados
-        min: Math.round(basePrice * 0.92), // Margen más estrecho
-        max: Math.round(basePrice * 1.08),
-        uncertainty: "±8%",
+        avg: adjustedPrice,
+        min: Math.round(adjustedPrice * 0.98), // ±2%
+        max: Math.round(adjustedPrice * 1.02),
+        uncertainty: "±2%",
         precisionScore: 92,
         confidenceLevel: "muy-alta" as const,
-        aiAnalysis: {
+        aiAnalysis: photos.length > 0 ? {
           photoQuality: "buena",
           photoCount: photos.length,
           detectedFeatures: [
@@ -84,18 +103,17 @@ export const Step9AIProcessing = () => {
             "Estado de conservación bueno",
             "Distribución optimizada",
           ],
+        } : {
+          photoQuality: "no-disponible",
+          photoCount: 0,
+          detectedFeatures: [
+            "No se ha podido determinar valoración de fotos",
+          ],
         },
-        advancedAdjustments: [
-          { factor: `Orientación ${orientation}`, value: orientation === "sur" ? "+2%" : "0%", percentage: orientation === "sur" ? 2 : 0 },
-          { factor: `Estado: ${propertyCondition}`, value: propertyCondition === "muy-buen-estado" ? "+3%" : "+1%", percentage: 2 },
-          { factor: hasTerrace ? `Terraza ${terraceSize}m²` : "Sin terraza", value: hasTerrace ? "+4%" : "-2%", percentage: hasTerrace ? 4 : -2 },
-          { factor: hasGarage ? "Plaza de garaje" : "Sin garaje", value: hasGarage ? "+5%" : "-3%", percentage: hasGarage ? 5 : -3 },
-          { factor: hasStorage ? "Trastero incluido" : "Sin trastero", value: hasStorage ? "+2%" : "0%", percentage: hasStorage ? 2 : 0 },
-          { factor: `Calidad ${quality}`, value: quality === "alta" ? "+3%" : quality === "media" ? "+1%" : "0%", percentage: quality === "alta" ? 3 : quality === "media" ? 1 : 0 },
-        ],
+        advancedAdjustments,
         marketComparison: {
           similarProperties: 47,
-          avgPricePerM2: 3920,
+          avgPricePerM2: valuation?.precioZona || null, // Precio EXACTO del Excel, o null si no existe
           pricePosition: "por encima de la media",
         },
         calculatedAt: new Date().toISOString(),

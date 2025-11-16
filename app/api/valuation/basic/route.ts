@@ -14,12 +14,13 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 // Helper para parsear precio de formato "1.866 €/m²" a número
 function parsePrecioRegistradores(precioTexto: string): number | null {
   try {
-    // "1.866 €/m²" → quitar todo excepto números y coma → "1866" → 1866
+    // "1.866 €/m²" → quitar todo excepto números y coma → "1866" → 1866 → aplicar 15%
     const numero = precioTexto
       .replace(/[€\/m²\s]/g, '')  // quitar €, /, m², espacios
       .replace(/\./g, '')          // quitar puntos (separadores de miles)
       .replace(',', '.');          // cambiar coma decimal por punto
-    return parseFloat(numero);
+    const precioBase = parseFloat(numero);
+    return Math.round(precioBase * 1.15); // Aplicar 15% adicional
   } catch {
     return null;
   }
@@ -87,7 +88,7 @@ export async function POST(request: Request) {
         "muy-antigua": "Más de 50 años"
       };
 
-      const marketPrompt = `Basándote en tu conocimiento actualizado del mercado inmobiliario español, analiza y proporciona datos de precios para esta propiedad:
+      const marketPrompt = `Eres un tasador inmobiliario experimentado y optimista. Basándote en tu conocimiento actualizado del mercado inmobiliario español, analiza y proporciona datos de precios para esta propiedad:
 
 📍 UBICACIÓN:
 - Población/Municipio: ${municipality || 'No especificado'}
@@ -100,20 +101,20 @@ ${precioRegistradores ? `📊 PRECIO DE REFERENCIA (Registradores 2024):
 
 ` : ''}🏠 CARACTERÍSTICAS DE LA PROPIEDAD:
 - Tipo: ${propertyType || 'piso'}
-- Superficie: ${squareMeters} m²
+- Superficie vivienda: ${squareMeters} m²${body.landSize ? `\n- Tamaño del terreno: ${body.landSize} m² (IMPORTANTE: Si es una casa con terreno, el tamaño del terreno es un factor CLAVE que aumenta significativamente el valor)` : ''}
 - Habitaciones: ${bedrooms}
 - Baños: ${bathrooms || 'No especificado'}
 - Planta: ${floor ? floorMap[floor] : 'No especificado'}
 - Ascensor: ${hasElevator === true ? 'Sí' : hasElevator === false ? 'No' : 'No especificado'}
 - Antigüedad: ${buildingAge ? buildingAgeMap[buildingAge] : 'No especificado'}
 
-IMPORTANTE: Usa tu conocimiento actualizado del mercado inmobiliario 2025 para:
+IMPORTANTE: Actúa como un tasador inmobiliario experimentado y optimista. Usa tu conocimiento actualizado del mercado inmobiliario 2025 para:
 1. ${precioRegistradores
    ? `Usa el precio de Registradores (${precioRegistradores} €/m²) como BASE PRINCIPAL y ajústalo según las características específicas de la propiedad`
    : `Analizar el mercado en ${municipality || 'la zona del código postal ' + postalCode} para determinar el precio base`}
 2. Identificar el barrio o zona dentro del municipio si es posible
-3. Analizar TODAS las características de la propiedad (tamaño, habitaciones, planta, ascensor, antigüedad)
-4. Proporcionar precios realistas de mercado para ESA ZONA ESPECÍFICA considerando TODAS las características
+3. Analizar TODAS las características de la propiedad (tamaño, habitaciones, planta, ascensor, antigüedad)${body.landSize ? '\n4. Si es una casa con terreno, VALORAR MUY POSITIVAMENTE el tamaño del terreno como un activo importante' : '\n4. Proporcionar precios realistas de mercado'}
+5. Ser optimista en la valoración, destacando los aspectos positivos de la propiedad
 
 Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
 {
@@ -329,8 +330,8 @@ Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
 
     console.log(`📈 Aplicando optimismo del 10%: ${Math.round(adjustedPrice).toLocaleString()}€ → ${Math.round(optimisticPrice).toLocaleString()}€`);
 
-    // 5. Calcular rango con incertidumbre ±20%
-    const uncertainty = 0.20;
+    // 5. Calcular rango con incertidumbre ±2%
+    const uncertainty = 0.02;
     const min = Math.round(optimisticPrice * (1 - uncertainty));
     const max = Math.round(optimisticPrice * (1 + uncertainty));
     const avg = Math.round(optimisticPrice);
@@ -342,11 +343,13 @@ Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
       avg,
       min,
       max,
-      uncertainty: "±20%",
+      uncertainty: "±2%",
       pricePerM2,
+      precioZona: precioRegistradores || null, // Precio del Excel o null
       adjustments,
       marketData,
       calculatedAt: new Date().toISOString(),
+      disclaimer: "Valoración sin comisiones e impuestos",
     };
 
     console.log(`Valoración calculada para lead ${leadId}:`, valuation);
@@ -403,7 +406,7 @@ Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
                     </div>
 
                     <div class="section">
-                      <h2 style="margin-top: 0; color: #1e40af;">💰 Valoración Básica (±20%)</h2>
+                      <h2 style="margin-top: 0; color: #1e40af;">💰 Valoración Básica (±2%)</h2>
                       <p style="text-align: center; font-size: 24px; font-weight: bold; color: #3b82f6;">
                         ${valuation.min.toLocaleString()}€ - ${valuation.max.toLocaleString()}€
                       </p>
@@ -411,6 +414,7 @@ Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
                         <span class="label">Valor medio:</span> <span style="font-size: 20px; font-weight: bold;">${valuation.avg.toLocaleString()}€</span>
                       </p>
                       <p><span class="label">Precio/m²:</span> <span class="value">${valuation.pricePerM2.toLocaleString()}€</span></p>
+                      <p style="text-align: center; margin-top: 10px; color: #6b7280; font-size: 14px;">Sin comisiones e impuestos</p>
                     </div>
 
                     <div class="section">
@@ -423,7 +427,7 @@ Proporciona ÚNICAMENTE un JSON con este formato exacto (sin texto adicional):
                     </div>
 
                     <div style="background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-top: 20px;">
-                      <p style="margin: 0; font-size: 14px;"><strong>⏭️ Próximo paso:</strong> El cliente continuará con la FASE 2 (datos avanzados + fotos) para reducir el margen a ±8%</p>
+                      <p style="margin: 0; font-size: 14px;"><strong>⏭️ Próximo paso:</strong> El cliente continuará con la FASE 2 (datos avanzados + fotos) para obtener una valoración aún más precisa</p>
                     </div>
                   </div>
                 </div>

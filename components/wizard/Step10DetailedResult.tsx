@@ -139,7 +139,11 @@ export const Step10DetailedResult = ({ onClose }: DetailedResultProps) => {
             </div>
             <div>
               <p className="text-muted-foreground">Precio medio zona</p>
-              <p className="font-semibold">{formatPrice(detailedValuation.marketComparison.avgPricePerM2)}/m²</p>
+              {detailedValuation.precioZona ? (
+                <p className="font-semibold">{formatPrice(detailedValuation.precioZona)}/m²</p>
+              ) : (
+                <p className="font-semibold text-muted-foreground">Datos de zona insuficientes</p>
+              )}
             </div>
             <div className="col-span-2">
               <p className="text-muted-foreground">Posición</p>
@@ -156,7 +160,7 @@ export const Step10DetailedResult = ({ onClose }: DetailedResultProps) => {
             <div className="p-2 bg-blue-500 rounded-lg">
               <Eye className="w-4 h-4 text-white" />
             </div>
-            <h3 className="font-semibold text-sm">Análisis visual con IA</h3>
+            <h3 className="font-semibold text-sm">Análisis visual</h3>
             <span className="ml-auto text-xs bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded-full font-medium">
               {detailedValuation.aiAnalysis.photoCount} fotos
             </span>
