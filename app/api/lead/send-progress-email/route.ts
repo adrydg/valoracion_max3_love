@@ -211,6 +211,9 @@ function buildShortFormEmail(data: any) {
     <body>
       <div class="container">
         <div class="header">
+          <div style="font-size: 28px; font-weight: 800; margin-bottom: 10px; color: white;">
+            ValoraciónMax
+          </div>
           <h1>📝 Nuevo Lead - Formulario Corto</h1>
           <span class="badge">Formulario Básico Completado</span>
         </div>
@@ -297,9 +300,14 @@ function buildShortFormEmail(data: any) {
 
           ${leadId ? `
           <div class="footer">
-            Lead ID: <code>${leadId}</code>
+            Lead ID: <code>${leadId}</code><br>
+            Origen: <strong>valoracionmax.es</strong>
           </div>
-          ` : ''}
+          ` : `
+          <div class="footer">
+            Origen: <strong>valoracionmax.es</strong>
+          </div>
+          `}
         </div>
       </div>
     </body>
@@ -448,6 +456,9 @@ function buildLongFormEmail(data: any) {
     <body>
       <div class="container">
         <div class="header">
+          <div style="font-size: 28px; font-weight: 800; margin-bottom: 10px; color: white;">
+            ValoraciónMax
+          </div>
           <h1>📸 Lead Completo - Formulario Largo</h1>
           <span class="badge">Formulario Completo + Fotos</span>
         </div>
@@ -586,9 +597,14 @@ function buildLongFormEmail(data: any) {
 
           ${leadId ? `
           <div class="footer">
-            Lead ID: <code>${leadId}</code>
+            Lead ID: <code>${leadId}</code><br>
+            Origen: <strong>valoracionmax.es</strong>
           </div>
-          ` : ''}
+          ` : `
+          <div class="footer">
+            Origen: <strong>valoracionmax.es</strong>
+          </div>
+          `}
         </div>
       </div>
     </body>

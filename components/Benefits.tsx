@@ -1,4 +1,4 @@
-import { Zap, Shield, TrendingUp, Clock, Users, Award, Database, Smartphone } from "lucide-react";
+import { Zap, Shield, TrendingUp, Clock, Users, Award, Database, Smartphone, Lightbulb } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const benefits = [
@@ -31,6 +31,11 @@ const benefits = [
     icon: Award,
     title: "Tecnología avanzada",
     description: "Análisis de fotos con IA para mayor precisión (opcional)",
+  },
+  {
+    icon: Lightbulb,
+    title: "Recomendaciones personalizadas",
+    description: "Según la información y fotos subidas, nuestro sistema te hace recomendaciones de mejora para conseguir mayor rentabilidad de tu inmueble",
   },
 ];
 

@@ -55,6 +55,9 @@ export const LoadingScreen = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    let isMounted = true; // Flag para evitar updates después de unmount
+    const timeouts: NodeJS.Timeout[] = []; // Array para trackear todos los timeouts
+
     // Simular progreso - duración mínima 5.4 segundos
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
@@ -70,11 +73,14 @@ export const LoadingScreen = () => {
     const processSteps = async () => {
       for (let i = 0; i < loadingSteps.length; i++) {
         await new Promise((resolve) => {
-          setTimeout(() => {
-            setCurrentStepIndex(i);
-            setCompletedSteps((prev) => [...prev, i]);
+          const timeout = setTimeout(() => {
+            if (isMounted) {
+              setCurrentStepIndex(i);
+              setCompletedSteps((prev) => [...prev, i]);
+            }
             resolve(true);
           }, loadingSteps[i].duration);
+          timeouts.push(timeout);
         });
       }
     };
@@ -112,12 +118,18 @@ export const LoadingScreen = () => {
 
         const data = await response.json();
         console.log("💰 Valoración FASE 1 recibida:", data.valuation);
-        setValuation(data.valuation);
+        if (isMounted) {
+          setValuation(data.valuation);
+        }
 
-        // Esperar a que termine la animación
-        setTimeout(() => {
-          nextStep(); // Ir a oferta directa
-        }, 500);
+        // Esperar a que termine toda la animación de loading (mínimo 5.5 segundos)
+        const finalTimeout = setTimeout(() => {
+          if (isMounted) {
+            console.log("🔄 LoadingScreen: Avanzando a DirectOfferScreen (step 5)");
+            nextStep(); // Ir a oferta directa
+          }
+        }, 5500);
+        timeouts.push(finalTimeout);
       } catch (error) {
         console.error("Error en valoración:", error);
         // Fallback a valoración genérica
@@ -128,15 +140,27 @@ export const LoadingScreen = () => {
           uncertainty: "±20%",
           pricePerM2: 3800,
         };
-        setValuation(fallbackVal);
-        setTimeout(() => nextStep(), 500);
+        if (isMounted) {
+          setValuation(fallbackVal);
+        }
+        const fallbackTimeout = setTimeout(() => {
+          if (isMounted) {
+            console.log("🔄 LoadingScreen: Avanzando a DirectOfferScreen (step 5) [fallback]");
+            nextStep();
+          }
+        }, 5500);
+        timeouts.push(fallbackTimeout);
       }
     };
 
     fetchValuation();
 
+    // Cleanup: cancelar todos los timers y marcar como unmounted
     return () => {
+      console.log("🧹 LoadingScreen: Cleanup - Cancelando", timeouts.length, "timeouts");
+      isMounted = false;
       clearInterval(progressInterval);
+      timeouts.forEach(timeout => clearTimeout(timeout));
     };
   }, []);
 

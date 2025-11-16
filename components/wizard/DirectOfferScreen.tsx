@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useWizardStore } from "@/store/useWizardStore";
 import { Button } from "@/components/ui/button";
 import { Sparkles, CheckCircle, ArrowRight, PartyPopper, Skull } from "lucide-react";
@@ -11,9 +11,21 @@ export const DirectOfferScreen = () => {
   const [selected, setSelected] = useState<"open-to-offers" | "not-interested" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleContinue = async () => {
-    if (!selected) return;
+  // Debug: Log when component mounts/unmounts
+  useEffect(() => {
+    console.log("✅ DirectOfferScreen: Montado - Esperando selección del usuario");
+    return () => {
+      console.log("❌ DirectOfferScreen: Desmontado");
+    };
+  }, []);
 
+  const handleContinue = async () => {
+    if (!selected) {
+      console.warn("⚠️ DirectOfferScreen: Intento de continuar sin selección");
+      return;
+    }
+
+    console.log("👆 DirectOfferScreen: Usuario hizo clic en Continuar con selección:", selected);
     setIsSubmitting(true);
     setDirectOfferInterest(selected);
 
@@ -25,6 +37,7 @@ export const DirectOfferScreen = () => {
       await new Promise(resolve => setTimeout(resolve, 300));
 
       // Continuar al resultado
+      console.log("🔄 DirectOfferScreen: Avanzando a BasicResult (step 6)");
       nextStep();
     } catch (error) {
       console.error("Error:", error);
@@ -60,7 +73,10 @@ export const DirectOfferScreen = () => {
         <div className="space-y-3">
           {/* Opción 1: Recibir valoración y escuchar oferta */}
           <button
-            onClick={() => setSelected("open-to-offers")}
+            onClick={() => {
+              console.log("👆 DirectOfferScreen: Usuario seleccionó 'open-to-offers'");
+              setSelected("open-to-offers");
+            }}
             className={cn(
               "w-full p-4 rounded-lg border-2 transition-all text-left",
               "hover:border-primary/50",
@@ -94,7 +110,10 @@ export const DirectOfferScreen = () => {
 
           {/* Opción 2: Solo valoración */}
           <button
-            onClick={() => setSelected("not-interested")}
+            onClick={() => {
+              console.log("👆 DirectOfferScreen: Usuario seleccionó 'not-interested'");
+              setSelected("not-interested");
+            }}
             className={cn(
               "w-full p-4 rounded-lg border-2 transition-all text-left",
               "hover:border-primary/50",
