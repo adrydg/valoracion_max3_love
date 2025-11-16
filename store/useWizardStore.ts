@@ -5,6 +5,7 @@ type PropertyType = "piso" | "casa" | "local" | "otros";
 type FloorLevel = "bajo" | "entresuelo" | "1-2" | "3-5" | "6+" | "atico";
 type BuildingAge = "nueva" | "reciente" | "moderna" | "antigua" | "muy-antigua";
 type DirectOfferInterest = "not-interested" | "open-to-offers";
+type AgencyStatus = "yes" | "no" | "soon" | "no-agencies";
 type Orientation = "norte" | "sur" | "este" | "oeste" | "noreste" | "noroeste" | "sureste" | "suroeste";
 type PropertyCondition = "a-estrenar" | "muy-buen-estado" | "buen-estado" | "para-reformar" | "reformado";
 type Quality = "lujo" | "alta" | "media" | "basica";
@@ -39,6 +40,7 @@ interface WizardState {
 
   // Oferta directa
   directOfferInterest: DirectOfferInterest | null;
+  agencyStatus: AgencyStatus | null;
 
   // Paso 7: Características avanzadas
   orientation: Orientation | null;
@@ -83,6 +85,7 @@ interface WizardState {
   setConsentDataProcessing: (consent: boolean) => void;
 
   setDirectOfferInterest: (interest: DirectOfferInterest) => void;
+  setAgencyStatus: (status: AgencyStatus) => void;
 
   // Advanced actions
   setOrientation: (orientation: Orientation) => void;
@@ -129,6 +132,7 @@ const initialState = {
   consentDataProcessing: false,
 
   directOfferInterest: null,
+  agencyStatus: null,
 
   // Advanced fields
   orientation: null,
@@ -177,6 +181,7 @@ export const useWizardStore = create<WizardState>()(
   setConsentDataProcessing: (consentDataProcessing) => set({ consentDataProcessing }),
 
   setDirectOfferInterest: (directOfferInterest) => set({ directOfferInterest }),
+  setAgencyStatus: (agencyStatus) => set({ agencyStatus }),
 
   // Advanced setters
   setOrientation: (orientation) => set({ orientation }),
@@ -227,6 +232,7 @@ export const useWizardStore = create<WizardState>()(
         consentMarketing: state.consentMarketing,
         consentDataProcessing: state.consentDataProcessing,
         directOfferInterest: state.directOfferInterest,
+        agencyStatus: state.agencyStatus,
         orientation: state.orientation,
         propertyCondition: state.propertyCondition,
         hasTerrace: state.hasTerrace,

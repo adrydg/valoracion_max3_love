@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, CheckCircle, ArrowRight, PartyPopper, Skull } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+type AgencyStatus = "yes" | "no" | "soon" | "no-agencies";
+
 export const DirectOfferScreen = () => {
-  const { leadId, setDirectOfferInterest, nextStep } = useWizardStore();
+  const { leadId, setDirectOfferInterest, setAgencyStatus, nextStep } = useWizardStore();
   const [selected, setSelected] = useState<"open-to-offers" | "not-interested" | null>(null);
+  const [agencyAnswer, setAgencyAnswer] = useState<AgencyStatus | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Debug: Log when component mounts/unmounts
@@ -25,13 +28,25 @@ export const DirectOfferScreen = () => {
       return;
     }
 
-    console.log("👆 DirectOfferScreen: Usuario hizo clic en Continuar con selección:", selected);
+    // Si seleccionó "open-to-offers", también debe responder la pregunta de agencias
+    if (selected === "open-to-offers" && !agencyAnswer) {
+      console.warn("⚠️ DirectOfferScreen: Falta responder la pregunta de agencias");
+      return;
+    }
+
+    console.log("👆 DirectOfferScreen: Usuario hizo clic en Continuar con selección:", selected, "agencia:", agencyAnswer);
     setIsSubmitting(true);
     setDirectOfferInterest(selected);
+    if (agencyAnswer) {
+      setAgencyStatus(agencyAnswer);
+    }
 
     try {
       // MODO TESTING: No llamar API, solo loguear
       console.log("🎁 Interés oferta directa (testing):", selected);
+      if (agencyAnswer) {
+        console.log("🏢 Estado agencias:", agencyAnswer);
+      }
 
       // Simular delay
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -147,13 +162,92 @@ export const DirectOfferScreen = () => {
         </div>
       </div>
 
-      {/* Botón Continuar - Desactivado hasta seleccionar */}
+      {/* Pregunta sobre agencias - solo si seleccionó "open-to-offers" */}
+      {selected === "open-to-offers" && (
+        <div className="space-y-3 pt-2 animate-fade-in border-t border-border/50">
+          <p className="text-base font-medium text-center pt-3">
+            ¿Lo tienes publicado en agencias?
+          </p>
+
+          <div className="grid grid-cols-2 gap-2">
+            {/* Opción: Sí */}
+            <button
+              onClick={() => {
+                console.log("👆 DirectOfferScreen: Usuario seleccionó agencias: yes");
+                setAgencyAnswer("yes");
+              }}
+              className={cn(
+                "p-3 rounded-lg border-2 transition-all text-center",
+                "hover:border-primary/50",
+                agencyAnswer === "yes"
+                  ? "border-primary bg-primary/10"
+                  : "border-border bg-background"
+              )}
+            >
+              <p className="font-semibold text-sm">Sí</p>
+            </button>
+
+            {/* Opción: No */}
+            <button
+              onClick={() => {
+                console.log("👆 DirectOfferScreen: Usuario seleccionó agencias: no");
+                setAgencyAnswer("no");
+              }}
+              className={cn(
+                "p-3 rounded-lg border-2 transition-all text-center",
+                "hover:border-primary/50",
+                agencyAnswer === "no"
+                  ? "border-primary bg-primary/10"
+                  : "border-border bg-background"
+              )}
+            >
+              <p className="font-semibold text-sm">No</p>
+            </button>
+
+            {/* Opción: Próximamente */}
+            <button
+              onClick={() => {
+                console.log("👆 DirectOfferScreen: Usuario seleccionó agencias: soon");
+                setAgencyAnswer("soon");
+              }}
+              className={cn(
+                "p-3 rounded-lg border-2 transition-all text-center",
+                "hover:border-primary/50",
+                agencyAnswer === "soon"
+                  ? "border-primary bg-primary/10"
+                  : "border-border bg-background"
+              )}
+            >
+              <p className="font-semibold text-sm">Próximamente</p>
+            </button>
+
+            {/* Opción: No quiero agencias */}
+            <button
+              onClick={() => {
+                console.log("👆 DirectOfferScreen: Usuario seleccionó agencias: no-agencies");
+                setAgencyAnswer("no-agencies");
+              }}
+              className={cn(
+                "p-3 rounded-lg border-2 transition-all text-center",
+                "hover:border-primary/50",
+                agencyAnswer === "no-agencies"
+                  ? "border-primary bg-primary/10"
+                  : "border-border bg-background"
+              )}
+            >
+              <p className="font-semibold text-sm">No quiero agencias</p>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Botón Continuar - Desactivado hasta completar todas las selecciones */}
       <Button
         onClick={handleContinue}
-        disabled={!selected || isSubmitting}
+        disabled={!selected || (selected === "open-to-offers" && !agencyAnswer) || isSubmitting}
         className={cn(
           "w-full h-auto py-4 text-lg font-bold shadow-lg transition-all",
-          selected
+          (selected && (selected === "not-interested" || agencyAnswer))
             ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
             : "bg-muted text-muted-foreground cursor-not-allowed"
         )}
