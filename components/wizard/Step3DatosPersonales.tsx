@@ -265,7 +265,7 @@ export const Step3DatosPersonales = () => {
               htmlFor="consentMarketing"
               className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              Acepto recibir información comercial sobre servicios inmobiliarios
+              Estoy dispuesto a recibir ofertas de compra por mi propiedad
             </label>
           </div>
         </div>

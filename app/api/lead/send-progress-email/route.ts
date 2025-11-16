@@ -233,8 +233,8 @@ function buildShortFormEmail(data: any) {
                 <div class="info-value">${phone}</div>
               </div>
               <div class="info-item">
-                <div class="info-label">Marketing</div>
-                <div class="info-value">${consentMarketing ? '✅ Acepta' : '❌ No acepta'}</div>
+                <div class="info-label">Dispuesto a ofertas</div>
+                <div class="info-value">${consentMarketing ? '✅ Sí, acepta ofertas' : '❌ No acepta ofertas'}</div>
               </div>
             </div>
           </div>
@@ -470,8 +470,8 @@ function buildLongFormEmail(data: any) {
                 <div class="info-value">${phone}</div>
               </div>
               <div class="info-item">
-                <div class="info-label">Marketing</div>
-                <div class="info-value">${consentMarketing ? '✅ Acepta' : '❌ No acepta'}</div>
+                <div class="info-label">Dispuesto a ofertas</div>
+                <div class="info-value">${consentMarketing ? '✅ Sí, acepta ofertas' : '❌ No acepta ofertas'}</div>
               </div>
             </div>
           </div>
