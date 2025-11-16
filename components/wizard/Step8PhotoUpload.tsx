@@ -103,10 +103,43 @@ export const Step8PhotoUpload = () => {
     fileInputRef.current?.click();
   };
 
+  // Función helper para convertir File a base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          // Extraer solo la parte base64 (sin el prefijo data:image/...)
+          const base64 = reader.result.split(',')[1];
+          resolve(base64);
+        } else {
+          reject(new Error('Error al convertir archivo'));
+        }
+      };
+      reader.onerror = error => reject(error);
+    });
+  };
+
   const handleContinue = async () => {
     setIsSubmitting(true);
 
     try {
+      // Convertir fotos a base64 si hay alguna
+      let photosAttachments: Array<{ filename: string; content: string; type: string }> = [];
+
+      if (photos.length > 0) {
+        console.log(`📸 Convirtiendo ${photos.length} fotos a base64...`);
+        photosAttachments = await Promise.all(
+          photos.map(async (photo, index) => ({
+            filename: photo.name || `foto-${index + 1}.jpg`,
+            content: await fileToBase64(photo),
+            type: photo.type,
+          }))
+        );
+        console.log(`✅ ${photosAttachments.length} fotos convertidas`);
+      }
+
       // Enviar email con formulario largo
       console.log("📧 Enviando email con formulario largo...");
       const emailResponse = await fetch("/api/lead/send-progress-email", {
@@ -137,7 +170,7 @@ export const Step8PhotoUpload = () => {
           hasGarage,
           hasStorage,
           quality,
-          photos: photos.length, // Solo enviamos el número de fotos
+          photos: photosAttachments, // Enviar fotos en base64
         }),
       });
 

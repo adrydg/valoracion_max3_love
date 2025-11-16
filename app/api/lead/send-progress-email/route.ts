@@ -41,13 +41,25 @@ export async function POST(request: Request) {
       ? `📝 Nuevo lead - Formulario CORTO - ${data.name}`
       : `📸 Lead completado - Formulario LARGO - ${data.name}`;
 
-    // Enviar email
-    const emailResult = await resend.emails.send({
+    // Preparar attachments si es formulario largo y hay fotos
+    const emailPayload: any = {
       from: fromEmail,
       to: [adminEmail],
       subject: subject,
       html: emailHtml,
-    });
+    };
+
+    // Si es formulario largo y hay fotos, añadirlas como attachments
+    if (formType === "long" && data.photos && Array.isArray(data.photos) && data.photos.length > 0) {
+      console.log(`📎 Añadiendo ${data.photos.length} fotos como attachments...`);
+      emailPayload.attachments = data.photos.map((photo: any) => ({
+        filename: photo.filename,
+        content: photo.content, // base64 string
+      }));
+    }
+
+    // Enviar email
+    const emailResult = await resend.emails.send(emailPayload);
 
     console.log(`Email enviado con Resend (${formType}):`, emailResult);
 
@@ -557,10 +569,10 @@ function buildLongFormEmail(data: any) {
           </div>
 
           <!-- Fotos -->
-          ${photos && photos > 0 ? `
+          ${photos && Array.isArray(photos) && photos.length > 0 ? `
           <div class="section">
             <div class="photo-notice">
-              📸 El cliente ha subido ${photos} foto${photos > 1 ? 's' : ''} de la propiedad
+              📎 ${photos.length} foto${photos.length > 1 ? 's' : ''} adjunta${photos.length > 1 ? 's' : ''} en este email
             </div>
           </div>
           ` : ''}
