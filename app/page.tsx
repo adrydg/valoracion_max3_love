@@ -7,6 +7,7 @@ import { Testimonials } from "@/components/Testimonials";
 import { Stats } from "@/components/Stats";
 import { CTASection } from "@/components/CTASection";
 import { FAQ } from "@/components/FAQ";
+import { ScrollToFormButton } from "@/components/ScrollToFormButton";
 import { Zap } from "lucide-react";
 
 export default function Home() {
@@ -25,13 +26,13 @@ export default function Home() {
             <div className="space-y-4 md:space-y-6 animate-fade-in">
               {/* Badges promocionales en verde */}
               <div className="flex flex-wrap gap-2">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30">
-                  <Zap className="w-4 h-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-700">Empresa innovadora Española</span>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30 flex-1 min-w-0">
+                  <Zap className="w-4 h-4 text-green-600 flex-shrink-0" />
+                  <span className="text-xs md:text-sm font-medium text-green-700">Empresa innovadora Española</span>
                 </div>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30">
-                  <span className="text-lg">🎉</span>
-                  <span className="text-sm font-medium text-green-700">Primera valoración GRATIS</span>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30 flex-1 min-w-0">
+                  <span className="text-lg flex-shrink-0">🎉</span>
+                  <span className="text-xs md:text-sm font-medium text-green-700">Primera valoración GRATIS</span>
                 </div>
               </div>
 
@@ -49,13 +50,13 @@ export default function Home() {
                 </span>
               </h1>
 
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+              <p className="text-base md:text-xl text-muted-foreground leading-relaxed">
                 La plataforma de valoración inmobiliaria más precisa de España. Nuestro algoritmo analiza +20 bases de datos y compraventas reales de tu zona para darte una valoración exacta desde tu móvil.
               </p>
 
               {/* Key Features */}
-              <div className="grid sm:grid-cols-3 gap-4">
-                <div className="flex items-start gap-3">
+              <div className="flex flex-nowrap gap-3 overflow-x-auto sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible">
+                <div className="flex items-start gap-3 flex-shrink-0 min-w-[160px] sm:min-w-0">
                   <div className="text-3xl flex-shrink-0">
                     📊
                   </div>
@@ -65,7 +66,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 flex-shrink-0 min-w-[200px] sm:min-w-0">
                   <div className="text-3xl flex-shrink-0">
                     💰
                   </div>
@@ -75,7 +76,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 flex-shrink-0 min-w-[180px] sm:min-w-0">
                   <div className="text-3xl flex-shrink-0">
                     ⚡
                   </div>
@@ -121,6 +122,9 @@ export default function Home() {
       <CTASection />
 
       <Footer />
+
+      {/* Botón flotante para volver al formulario */}
+      <ScrollToFormButton />
     </div>
   );
 }

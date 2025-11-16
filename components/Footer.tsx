@@ -12,7 +12,7 @@ export const Footer = () => {
                 <TrendingUp className="w-5 h-5 text-primary" strokeWidth={2.5} />
                 <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-accent rounded-full"></div>
               </div>
-              <span className="text-xl font-bold">ValoraMax</span>
+              <span className="text-xl font-bold">ValoraciónMAX</span>
             </div>
             <p className="text-sm text-primary-foreground/80">
               Empresa innovadora española de valoración inmobiliaria. La plataforma de valoración más precisa de España.
@@ -24,24 +24,24 @@ export const Footer = () => {
             <h3 className="font-semibold text-lg">Servicios</h3>
             <ul className="space-y-2 text-sm text-primary-foreground/80">
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <span className="cursor-default">
                   Valoración gratuita
-                </a>
+                </span>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <span className="cursor-default">
                   Venta rápida
-                </a>
+                </span>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <span className="cursor-default">
                   Asesoramiento legal
-                </a>
+                </span>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <span className="cursor-default">
                   Fotografía profesional
-                </a>
+                </span>
               </li>
             </ul>
           </div>
@@ -51,24 +51,24 @@ export const Footer = () => {
             <h3 className="font-semibold text-lg">Empresa</h3>
             <ul className="space-y-2 text-sm text-primary-foreground/80">
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <span className="cursor-default">
                   Sobre nosotros
-                </a>
+                </span>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <span className="cursor-default">
                   Equipo
-                </a>
+                </span>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <span className="cursor-default">
                   Testimonios
-                </a>
+                </span>
               </li>
               <li>
-                <a href="#" className="hover:text-accent transition-colors">
+                <span className="cursor-default">
                   Blog
-                </a>
+                </span>
               </li>
             </ul>
           </div>
@@ -90,7 +90,7 @@ export const Footer = () => {
         </div>
 
         <div className="mt-8 md:mt-10 pt-6 md:pt-8 border-t border-primary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/70">
-          <p>&copy; 2024 ValoraMax. Todos los derechos reservados.</p>
+          <p>&copy; 2025 ValoraciónMAX. Todos los derechos reservados.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-accent transition-colors">
               Privacidad
