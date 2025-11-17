@@ -110,6 +110,27 @@ function calculateAdjustments(property: PropertyData): { adjustments: Adjustment
     totalFactor *= factor;
   }
 
+  // 5. APLICAR LÍMITES A LOS AJUSTES ACUMULADOS
+  // Evita penalizaciones o bonificaciones extremas
+  const originalFactor = totalFactor;
+  totalFactor = Math.max(
+    VALUATION_CONFIG.ADJUSTMENT_LIMITS.MIN_FACTOR,
+    Math.min(totalFactor, VALUATION_CONFIG.ADJUSTMENT_LIMITS.MAX_FACTOR)
+  );
+
+  // Si se aplicó un límite, añadirlo a los ajustes para transparencia
+  if (totalFactor !== originalFactor) {
+    const limitLabel = totalFactor === VALUATION_CONFIG.ADJUSTMENT_LIMITS.MIN_FACTOR
+      ? "Límite mínimo aplicado (-10% máximo)"
+      : "Límite máximo aplicado (+25% máximo)";
+    const limitPercentage = (totalFactor - originalFactor) * 100;
+    adjustments.push({
+      factor: limitLabel,
+      value: `Factor: ${originalFactor.toFixed(3)} → ${totalFactor.toFixed(3)}`,
+      percentage: limitPercentage,
+    });
+  }
+
   return { adjustments, totalFactor };
 }
 

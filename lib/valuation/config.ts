@@ -25,6 +25,15 @@ export const VALUATION_CONFIG = {
   REGISTRADORES_INCREMENT: 1.15,
 
   /**
+   * Límites a los ajustes acumulados (antes del optimismo)
+   * Evita penalizaciones o bonificaciones extremas
+   */
+  ADJUSTMENT_LIMITS: {
+    MIN_FACTOR: 0.90,   // Máximo -10% de penalización acumulada
+    MAX_FACTOR: 1.25,   // Máximo +25% de bonificación acumulada
+  },
+
+  /**
    * Ajustes por superficie
    */
   SURFACE_ADJUSTMENTS: {
@@ -44,7 +53,7 @@ export const VALUATION_CONFIG = {
    * Ajustes por planta CON ascensor
    */
   FLOOR_WITH_ELEVATOR: {
-    'bajo': { factor: 0.90, label: "Planta baja (con ascensor)" },         // -10%
+    'bajo': { factor: 0.95, label: "Planta baja (con ascensor)" },         // -5%
     'entresuelo': { factor: 0.95, label: "Entresuelo (con ascensor)" },    // -5%
     '1-2': { factor: 1.00, label: "Planta 1ª-2ª (con ascensor)" },         // 0%
     '3-5': { factor: 1.03, label: "Planta 3ª-5ª (con ascensor)" },         // +3%
@@ -56,12 +65,12 @@ export const VALUATION_CONFIG = {
    * Ajustes por planta SIN ascensor
    */
   FLOOR_WITHOUT_ELEVATOR: {
-    'bajo': { factor: 0.90, label: "Planta baja (sin ascensor)" },         // -10%
-    'entresuelo': { factor: 0.92, label: "Entresuelo (sin ascensor)" },    // -8%
+    'bajo': { factor: 0.95, label: "Planta baja (sin ascensor)" },         // -5%
+    'entresuelo': { factor: 0.93, label: "Entresuelo (sin ascensor)" },    // -7%
     '1-2': { factor: 0.95, label: "Planta 1ª-2ª (sin ascensor)" },         // -5%
-    '3-5': { factor: 0.75, label: "Planta 3ª-5ª (sin ascensor)" },         // -25%
-    '6+': { factor: 0.70, label: "Planta 6ª+ (sin ascensor)" },            // -30%
-    'atico': { factor: 0.80, label: "Ático (sin ascensor)" }               // -20%
+    '3-5': { factor: 0.88, label: "Planta 3ª-5ª (sin ascensor)" },         // -12%
+    '6+': { factor: 0.85, label: "Planta 6ª+ (sin ascensor)" },            // -15%
+    'atico': { factor: 0.90, label: "Ático (sin ascensor)" }               // -10%
   },
 
   /**
@@ -71,8 +80,8 @@ export const VALUATION_CONFIG = {
     'nueva': { factor: 1.10, label: "Edificio nuevo (<5 años)" },          // +10%
     'reciente': { factor: 1.05, label: "Edificio reciente (5-15 años)" },  // +5%
     'moderna': { factor: 1.00, label: "Edificio moderno (15-30 años)" },   // 0%
-    'antigua': { factor: 0.95, label: "Edificio antiguo (30-50 años)" },   // -5%
-    'muy-antigua': { factor: 0.90, label: "Edificio muy antiguo (>50 años)" } // -10%
+    'antigua': { factor: 0.97, label: "Edificio antiguo (30-50 años)" },   // -3%
+    'muy-antigua': { factor: 0.95, label: "Edificio muy antiguo (>50 años)" } // -5%
   },
 
   /**
