@@ -9,21 +9,43 @@ import { VALUATION_CONFIG } from './config';
 import type { PropertyData, MarketData, Adjustment, ValuationResult } from './types';
 
 /**
+ * Calcula el incremento variable según el precio base de la zona
+ * Zonas premium: +5%, Zonas altas: +10%, Zonas medias: +15%, Zonas bajas: +20%
+ */
+function calcularIncrementoVariable(precioBase: number): { factor: number; label: string } {
+  const tiers = VALUATION_CONFIG.REGISTRADORES_INCREMENT_TIERS;
+
+  if (precioBase >= tiers.PREMIUM.threshold) {
+    return { factor: tiers.PREMIUM.factor, label: tiers.PREMIUM.label };
+  } else if (precioBase >= tiers.ALTA.threshold) {
+    return { factor: tiers.ALTA.factor, label: tiers.ALTA.label };
+  } else if (precioBase >= tiers.MEDIA.threshold) {
+    return { factor: tiers.MEDIA.factor, label: tiers.MEDIA.label };
+  } else {
+    return { factor: tiers.BAJA.factor, label: tiers.BAJA.label };
+  }
+}
+
+/**
  * Parsea el precio de Registradores del formato "1.866 €/m²" a número
- * y aplica el incremento configurado
+ * y aplica el incremento variable configurado según la zona
  */
 export function parsePrecioRegistradores(precioTexto: string): number | null {
   try {
-    // "1.866 €/m²" → quitar todo excepto números y coma → "1866" → aplicar incremento
+    // "1.866 €/m²" → quitar todo excepto números y coma → "1866"
     const numero = precioTexto
       .replace(/[€\/m²\s]/g, '')  // quitar €, /, m², espacios
       .replace(/\./g, '')          // quitar puntos (separadores de miles)
       .replace(',', '.');          // cambiar coma decimal por punto
 
     const precioBase = parseFloat(numero);
-    const precioAjustado = Math.round(precioBase * VALUATION_CONFIG.REGISTRADORES_INCREMENT);
 
-    console.log(`💰 Precio Registradores: ${precioBase}€/m² → ${precioAjustado}€/m² (+${((VALUATION_CONFIG.REGISTRADORES_INCREMENT - 1) * 100).toFixed(0)}%)`);
+    // Calcular incremento variable según el precio de la zona
+    const { factor, label } = calcularIncrementoVariable(precioBase);
+    const precioAjustado = Math.round(precioBase * factor);
+    const porcentaje = ((factor - 1) * 100).toFixed(0);
+
+    console.log(`💰 Precio Registradores: ${precioBase}€/m² → ${precioAjustado}€/m² (+${porcentaje}%) [${label}]`);
 
     return precioAjustado;
   } catch (error) {
@@ -132,6 +154,20 @@ function calculateAdjustments(property: PropertyData): { adjustments: Adjustment
   }
 
   return { adjustments, totalFactor };
+}
+
+/**
+ * Aplica incremento variable a un precio de Registradores numérico
+ * Útil cuando ya tienes el precio como número (no texto)
+ */
+export function aplicarIncrementoVariable(precioRegistradores: number): number {
+  const { factor, label } = calcularIncrementoVariable(precioRegistradores);
+  const precioAjustado = Math.round(precioRegistradores * factor);
+  const porcentaje = ((factor - 1) * 100).toFixed(0);
+
+  console.log(`💰 Precio Registradores: ${precioRegistradores}€/m² → ${precioAjustado}€/m² (+${porcentaje}%) [${label}]`);
+
+  return precioAjustado;
 }
 
 /**

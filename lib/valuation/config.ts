@@ -19,8 +19,23 @@ export const VALUATION_CONFIG = {
   UNCERTAINTY: 0.02,
 
   /**
-   * Factor de incremento sobre precios de Registradores
-   * 1.15 = +15% sobre el precio del Excel
+   * INCREMENTO VARIABLE sobre precios de Registradores
+   * El % de incremento depende del precio base de la zona:
+   * - Zonas PREMIUM (>6.000€/m²): +5% (ya están caras, no inflar)
+   * - Zonas ALTAS (3.000-6.000€/m²): +10%
+   * - Zonas MEDIAS (2.000-3.000€/m²): +15%
+   * - Zonas BAJAS (<2.000€/m²): +20% (más potencial de revalorización)
+   */
+  REGISTRADORES_INCREMENT_TIERS: {
+    PREMIUM: { threshold: 6000, factor: 1.05, label: "Zona premium" },
+    ALTA: { threshold: 3000, factor: 1.10, label: "Zona alta" },
+    MEDIA: { threshold: 2000, factor: 1.15, label: "Zona media" },
+    BAJA: { threshold: 0, factor: 1.20, label: "Zona baja" },
+  },
+
+  /**
+   * @deprecated - Usar REGISTRADORES_INCREMENT_TIERS en su lugar
+   * Factor de incremento fijo (solo para retrocompatibilidad)
    */
   REGISTRADORES_INCREMENT: 1.15,
 
