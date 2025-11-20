@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { GoogleTagManager, GoogleTagManagerNoScript } from "@/components/GoogleTagManager";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -97,8 +98,14 @@ export default function RootLayout({
         {/* Preconnect to external domains for better performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
+        {/* Google Tag Manager - Gestiona todos los tags (GA4, Google Ads, etc.) */}
+        <GoogleTagManager />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
+        {/* Google Tag Manager (noscript) - Fallback para usuarios sin JavaScript */}
+        <GoogleTagManagerNoScript />
+
         {children}
         <Toaster />
         <Sonner />
