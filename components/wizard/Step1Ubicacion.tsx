@@ -29,14 +29,14 @@ export const Step1Ubicacion = () => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // PRECARGA DE DATOS PARA TESTING
-  useEffect(() => {
-    if (!postalCode) setPostalCode("28941");
-    if (!squareMeters) setSquareMeters(75);
-    if (!street) setStreet("Calle Gran Vía 28");
-    if (!bedrooms) setBedrooms(3);
-    if (!propertyType) setPropertyType("piso");
-  }, []);
+  // PRECARGA DE DATOS PARA TESTING - DESACTIVADA
+  // useEffect(() => {
+  //   if (!postalCode) setPostalCode("28941");
+  //   if (!squareMeters) setSquareMeters(75);
+  //   if (!street) setStreet("Calle Gran Vía 28");
+  //   if (!bedrooms) setBedrooms(3);
+  //   if (!propertyType) setPropertyType("piso");
+  // }, []);
 
   // Buscar municipio automáticamente cuando cambia el CP
   useEffect(() => {

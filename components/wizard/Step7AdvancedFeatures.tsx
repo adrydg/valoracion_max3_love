@@ -64,16 +64,16 @@ export const Step7AdvancedFeatures = () => {
   );
   const [selectedTerraceTypes, setSelectedTerraceTypes] = useState<string[]>([]);
 
-  // PRECARGA DE DATOS PARA TESTING
-  useEffect(() => {
-    if (!orientation) setOrientation("sur");
-    if (!propertyCondition) setPropertyCondition("buen-estado");
-    if (hasTerrace === null) setHasTerrace(true);
-    if (!terraceSize) setTerraceSize(15);
-    if (hasGarage === null) setHasGarage(true);
-    if (hasStorage === null) setHasStorage(false);
-    if (!quality) setQuality("media");
-  }, []);
+  // PRECARGA DE DATOS PARA TESTING - DESACTIVADA
+  // useEffect(() => {
+  //   if (!orientation) setOrientation("sur");
+  //   if (!propertyCondition) setPropertyCondition("buen-estado");
+  //   if (hasTerrace === null) setHasTerrace(true);
+  //   if (!terraceSize) setTerraceSize(15);
+  //   if (hasGarage === null) setHasGarage(true);
+  //   if (hasStorage === null) setHasStorage(false);
+  //   if (!quality) setQuality("media");
+  // }, []);
 
   const handleContinue = () => {
     // Guardar el primero seleccionado en el store (para compatibilidad)

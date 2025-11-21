@@ -45,13 +45,13 @@ export const Step2Caracteristicas = () => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // PRECARGA DE DATOS PARA TESTING
-  useEffect(() => {
-    if (!bathrooms) setBathrooms(2);
-    if (!floor) setFloor("3-5");
-    if (hasElevator === null) setHasElevator(true);
-    if (!buildingAge) setBuildingAge("moderna");
-  }, []);
+  // PRECARGA DE DATOS PARA TESTING - DESACTIVADA
+  // useEffect(() => {
+  //   if (!bathrooms) setBathrooms(2);
+  //   if (!floor) setFloor("3-5");
+  //   if (hasElevator === null) setHasElevator(true);
+  //   if (!buildingAge) setBuildingAge("moderna");
+  // }, []);
 
   const handleContinue = () => {
     const newErrors: Record<string, string> = {};
