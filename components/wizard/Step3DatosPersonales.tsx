@@ -7,7 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, ArrowLeft, User, Loader2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ArrowRight, ArrowLeft, User, Loader2, Info } from "lucide-react";
 import { nanoid } from "nanoid";
 
 export const Step3DatosPersonales = () => {
@@ -254,7 +262,7 @@ export const Step3DatosPersonales = () => {
           />
         </div>
 
-        {/* Consentimientos */}
+        {/* Política de privacidad */}
         <div className="space-y-3 pt-2">
           <div className="flex items-start space-x-2">
             <Checkbox
@@ -268,29 +276,102 @@ export const Step3DatosPersonales = () => {
               className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               Acepto la{" "}
-              <a href="/politica-privacidad" target="_blank" className="text-primary underline">
-                política de privacidad
-              </a>{" "}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button type="button" className="text-primary underline hover:text-primary/80 transition-colors inline-flex items-center gap-1">
+                    política de privacidad
+                    <Info className="w-3 h-3" />
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl">Política de Privacidad</DialogTitle>
+                    <DialogDescription className="text-base">
+                      Información sobre el uso de tus datos personales
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 text-sm">
+                    <section>
+                      <h3 className="font-semibold text-base mb-2">1. Responsable del tratamiento</h3>
+                      <p className="text-muted-foreground">
+                        <strong>ValoracionMax</strong> es el responsable del tratamiento de los datos personales que nos proporciones a través de este formulario.
+                      </p>
+                    </section>
+
+                    <section>
+                      <h3 className="font-semibold text-base mb-2">2. Finalidad del tratamiento</h3>
+                      <p className="text-muted-foreground mb-2">
+                        Los datos que nos facilites serán utilizados para:
+                      </p>
+                      <ul className="list-disc list-inside space-y-1 text-muted-foreground ml-4">
+                        <li>Ponernos en contacto contigo en relación con la valoración de tu propiedad</li>
+                        <li>Proporcionarte información sobre el valor estimado de tu inmueble</li>
+                        <li>Ofrecerte nuestros servicios de tasación y asesoramiento inmobiliario</li>
+                        <li>Gestionar tu solicitud y responder a tus consultas</li>
+                      </ul>
+                    </section>
+
+                    <section>
+                      <h3 className="font-semibold text-base mb-2">3. Cesión de datos a terceros</h3>
+                      <p className="text-muted-foreground mb-2">
+                        Tus datos podrán ser cedidos a <strong>empresas colaboradoras</strong> que nos ayudan a realizar valoraciones más precisas y a ofrecerte servicios de compraventa de inmuebles, siempre con el mismo objetivo de:
+                      </p>
+                      <ul className="list-disc list-inside space-y-1 text-muted-foreground ml-4">
+                        <li>Proporcionar una valoración precisa de tu propiedad</li>
+                        <li>Ofrecerte opciones de compra o venta</li>
+                        <li>Ponerte en contacto con profesionales inmobiliarios cualificados</li>
+                      </ul>
+                      <p className="text-muted-foreground mt-2">
+                        En ningún caso cederemos tus datos a terceros sin tu consentimiento, salvo obligación legal.
+                      </p>
+                    </section>
+
+                    <section>
+                      <h3 className="font-semibold text-base mb-2">4. Derechos del usuario</h3>
+                      <p className="text-muted-foreground mb-2">
+                        Puedes ejercer tus derechos de:
+                      </p>
+                      <ul className="list-disc list-inside space-y-1 text-muted-foreground ml-4">
+                        <li><strong>Acceso:</strong> Conocer qué datos tenemos sobre ti</li>
+                        <li><strong>Rectificación:</strong> Corregir datos inexactos</li>
+                        <li><strong>Supresión:</strong> Solicitar la eliminación de tus datos</li>
+                        <li><strong>Oposición:</strong> Oponerte al tratamiento de tus datos</li>
+                        <li><strong>Limitación:</strong> Limitar el tratamiento de tus datos</li>
+                        <li><strong>Portabilidad:</strong> Recibir tus datos en formato estructurado</li>
+                      </ul>
+                      <p className="text-muted-foreground mt-2">
+                        Para ejercer estos derechos, puedes contactarnos a través de nuestros canales de atención al cliente.
+                      </p>
+                    </section>
+
+                    <section>
+                      <h3 className="font-semibold text-base mb-2">5. Seguridad</h3>
+                      <p className="text-muted-foreground">
+                        Implementamos medidas de seguridad técnicas y organizativas para proteger tus datos personales frente a accesos no autorizados, pérdida o alteración.
+                      </p>
+                    </section>
+
+                    <section>
+                      <h3 className="font-semibold text-base mb-2">6. Conservación de datos</h3>
+                      <p className="text-muted-foreground">
+                        Conservaremos tus datos personales durante el tiempo necesario para cumplir con las finalidades descritas, o hasta que solicites su supresión.
+                      </p>
+                    </section>
+
+                    <div className="pt-4 border-t">
+                      <p className="text-xs text-muted-foreground italic">
+                        Al aceptar esta política, confirmas que has leído y comprendes cómo trataremos tus datos personales.
+                      </p>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>{" "}
               <span className="text-destructive">*</span>
             </label>
           </div>
           {errors.consentDataProcessing && (
             <p className="text-sm text-destructive">{errors.consentDataProcessing}</p>
           )}
-
-          <div className="flex items-start space-x-2">
-            <Checkbox
-              id="consentMarketing"
-              checked={consentMarketing}
-              onCheckedChange={(checked) => setConsentMarketing(checked as boolean)}
-            />
-            <label
-              htmlFor="consentMarketing"
-              className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Estoy dispuesto a recibir ofertas de compra por mi propiedad
-            </label>
-          </div>
         </div>
 
         {errors.submit && (
