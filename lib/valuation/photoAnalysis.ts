@@ -156,7 +156,7 @@ IMPORTANTE:
 
   try {
     const response = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-latest", // Cambiado para compatibilidad
+      model: "claude-3-sonnet-20240229", // Modelo con visión más compatible
       max_tokens: 2000,
       messages: [
         {
