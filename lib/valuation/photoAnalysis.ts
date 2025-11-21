@@ -95,29 +95,64 @@ export async function analyzePhotosWithClaude(
     },
   }));
 
-  const prompt = `Analiza estas ${photos.length} fotos de una propiedad inmobiliaria y proporciona un análisis detallado.${contextText}
+  const prompt = `Analiza estas ${photos.length} fotos de una propiedad inmobiliaria como si fueras un tasador profesional.${contextText}
 
-Por favor, evalúa:
+Por favor, evalúa minuciosamente:
 
 1. **Calidad de las fotos**: ¿Son claras, bien iluminadas y representativas?
-2. **Características detectadas**: Identifica elementos visibles (luminosidad, acabados, distribución, mobiliario, estado de conservación, etc.)
-3. **Estado de conservación**: ¿La propiedad está en buen estado, necesita reformas?
-4. **Luminosidad**: ¿Qué tan luminosa es la propiedad?
-5. **Puntuación general**: Del 0 al 100, ¿qué puntuación le darías a esta propiedad?
-6. **Mejoras sugeridas**: ¿Qué recomendarías mejorar?
+
+2. **Características detectadas**: Identifica TODOS los elementos visibles:
+   - Luminosidad natural (ventanas, orientación aparente)
+   - Acabados (suelos, paredes, techos, carpintería)
+   - Distribución de espacios
+   - Mobiliario y decoración
+   - Electrodomésticos y equipamiento
+   - Estado de pintura, puertas, ventanas
+   - Instalaciones visibles (electricidad, fontanería, climatización)
+
+3. **Estado de conservación**:
+   - ¿La propiedad está en buen estado o necesita reformas?
+   - ¿Hay signos de desgaste, humedad, grietas, desperfectos?
+   - ¿Los acabados son modernos o anticuados?
+
+4. **Luminosidad**: ¿Qué tan luminosa es la propiedad? (excelente/buena/regular/baja)
+
+5. **Puntuación general**: Del 0 al 100, valora:
+   - Estado general (0-40 puntos)
+   - Acabados y calidad (0-30 puntos)
+   - Luminosidad y distribución (0-30 puntos)
+
+6. **MEJORAS Y REFORMAS SUGERIDAS** (MUY IMPORTANTE):
+   Sé ESPECÍFICO y PRÁCTICO. Indica:
+   - ¿Qué reformas o mejoras son NECESARIAS? (problemas que hay que solucionar)
+   - ¿Qué mejoras son RECOMENDABLES? (para aumentar el valor)
+   - ¿Qué cambios ESTÉTICOS mejorarían la propiedad? (pintura, actualización)
+
+   Ejemplos de mejoras específicas:
+   - "Renovar cocina: cambiar encimera y electrodomésticos (estimado 8.000-12.000€)"
+   - "Actualizar baño: cambiar sanitarios y alicatado (estimado 4.000-6.000€)"
+   - "Pintura completa de la vivienda (estimado 2.000-3.000€)"
+   - "Cambiar suelo de toda la vivienda a tarima (estimado 5.000-8.000€)"
+   - "Renovar instalación eléctrica (señales de antigüedad)"
+   - "Reparar humedades visibles en pared del salón"
+   - "Actualizar puertas interiores (modelo antiguo)"
+   - "Mejorar iluminación: añadir puntos de luz adicionales"
 
 Devuelve tu análisis en formato JSON con esta estructura:
 {
   "photoQuality": "excelente|buena|regular|deficiente",
-  "detectedFeatures": ["característica 1", "característica 2", ...],
-  "propertyConditionEstimate": "descripción del estado general",
+  "detectedFeatures": ["característica 1", "característica 2", ...] (mínimo 5 características),
+  "propertyConditionEstimate": "descripción detallada del estado general en 2-3 frases",
   "luminosityLevel": "excelente|buena|regular|baja",
   "conservationState": "excelente|bueno|regular|necesita-reforma",
-  "suggestedImprovements": ["mejora 1", "mejora 2", ...],
+  "suggestedImprovements": ["mejora específica 1 con coste estimado", "mejora 2", ...] (mínimo 3 mejoras concretas),
   "overallScore": número entre 0-100
 }
 
-IMPORTANTE: Responde SOLO con el JSON, sin texto adicional.`;
+IMPORTANTE:
+- Responde SOLO con el JSON válido, sin texto adicional antes ni después
+- Sé específico en las mejoras: indica QUÉ reformar/cambiar y COSTE aproximado si es relevante
+- Si no detectas necesidad de reformas importantes, indica mejoras estéticas o de actualización`;
 
   try {
     const response = await anthropic.messages.create({
