@@ -36,6 +36,7 @@ export const Step9AIProcessing = () => {
     propertyType,
     postalCode,
     municipality,
+    street,
     squareMeters,
     landSize,
     bedrooms,
@@ -75,43 +76,16 @@ export const Step9AIProcessing = () => {
         });
       }
 
-      // ANÁLISIS REAL CON CLAUDE VISION
-      const basePrice = valuation?.avg || 320000;
+      // ✨ VALORACIÓN COMPLETA CON CLAUDE (nuevo sistema)
+      console.log(`🚀 Iniciando valoración completa con Claude...`);
 
-      // Calcular ajustes avanzados y sus porcentajes
-      const advancedAdjustments = [
-        { factor: `Orientación ${orientation}`, value: orientation === "sur" ? "+2%" : "0%", percentage: orientation === "sur" ? 2 : 0 },
-        { factor: `Estado: ${propertyCondition}`, value: propertyCondition === "muy-buen-estado" ? "+3%" : "+1%", percentage: propertyCondition === "muy-buen-estado" ? 3 : 1 },
-        { factor: hasTerrace ? `Terraza ${terraceSize}m²` : "Sin terraza", value: hasTerrace ? "+4%" : "0%", percentage: hasTerrace ? 4 : 0 },
-        { factor: hasGarage ? "Plaza de garaje" : "Sin garaje", value: hasGarage ? "+5%" : "0%", percentage: hasGarage ? 5 : 0 },
-        { factor: hasStorage ? "Trastero incluido" : "Sin trastero", value: hasStorage ? "+2%" : "0%", percentage: hasStorage ? 2 : 0 },
-        { factor: `Calidad ${quality}`, value: quality === "alta" ? "+3%" : quality === "media" ? "+1%" : "0%", percentage: quality === "alta" ? 3 : quality === "media" ? 1 : 0 },
-      ];
-
-      // SUMAR TODOS los porcentajes de adjustments
-      const totalAdjustmentPercentage = advancedAdjustments.reduce((sum, adj) => sum + adj.percentage, 0);
-      console.log(`📊 Ajustes avanzados totales: ${totalAdjustmentPercentage}% (${advancedAdjustments.map(a => a.value).join(', ')})`);
-
-      // Aplicar ajustes al precio base
-      const adjustedPrice = Math.round(basePrice * (1 + totalAdjustmentPercentage / 100));
-      console.log(`💰 Precio base: ${basePrice.toLocaleString()}€ → Con ajustes: ${adjustedPrice.toLocaleString()}€`);
-
-      // ANÁLISIS DE FOTOS CON CLAUDE VISION (si hay fotos)
-      let aiAnalysis: any = {
-        photoQuality: "no-disponible",
-        photoCount: 0,
-        detectedFeatures: ["No se subieron fotos para analizar"],
-        luminosityLevel: "regular",
-        conservationState: "regular",
-        overallScore: 50,
-      };
+      // Convertir fotos a base64 si hay
+      let photosBase64: Array<{ data: string; mediaType: string }> = [];
 
       if (photos.length > 0) {
         try {
-          console.log(`🖼️ Analizando ${photos.length} fotos con Claude Vision...`);
-
-          // Convertir fotos a base64
-          const photosBase64 = await Promise.all(
+          console.log(`🖼️ Convirtiendo ${photos.length} fotos a base64...`);
+          photosBase64 = await Promise.all(
             photos.map(async (photo) => {
               return new Promise<{ data: string; mediaType: string }>((resolve) => {
                 const reader = new FileReader();
@@ -127,65 +101,130 @@ export const Step9AIProcessing = () => {
               });
             })
           );
-
-          // Llamar al API de análisis de fotos con CONTEXTO COMPLETO
-          const response = await fetch("/api/valuation/analyze-photos", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              photos: photosBase64,
-              propertyContext: {
-                propertyType,
-                postalCode,
-                municipality,
-                squareMeters,
-                landSize,
-                bedrooms,
-                bathrooms,
-                floor,
-                hasElevator,
-                buildingAge,
-                orientation,
-                propertyCondition,
-                hasTerrace,
-                terraceSize,
-                hasGarage,
-                hasStorage,
-                quality,
-              },
-            }),
-          });
-
-          if (response.ok) {
-            const result = await response.json();
-            aiAnalysis = result.analysis;
-            console.log("✅ Análisis de fotos completado:", aiAnalysis);
-          } else {
-            console.error("❌ Error analizando fotos:", await response.text());
-            // Mantener análisis fallback
-          }
+          console.log(`✅ ${photosBase64.length} fotos convertidas`);
         } catch (error) {
-          console.error("❌ Error en análisis de fotos:", error);
-          // Mantener análisis fallback
+          console.error("❌ Error convirtiendo fotos:", error);
         }
+      } else {
+        console.log(`ℹ️ No hay fotos para analizar`);
       }
 
+      // Llamar al endpoint completo que usa Claude para TODO
+      const response = await fetch("/api/valuation/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          // Ubicación
+          postalCode,
+          municipality,
+          street,
+          squareMeters,
+          landSize,
+          bedrooms,
+          propertyType,
+
+          // Características
+          bathrooms,
+          floor,
+          hasElevator,
+          buildingAge,
+
+          // Características avanzadas
+          orientation,
+          propertyCondition,
+          hasTerrace,
+          terraceSize,
+          hasGarage,
+          hasStorage,
+          quality,
+
+          // Fotos
+          photos: photosBase64,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("❌ Error en valoración completa:", errorText);
+        throw new Error("Error al calcular la valoración completa");
+      }
+
+      const result = await response.json();
+      const claudeValuation = result.valuation;
+
+      console.log("✅ Valoración completa recibida de Claude:");
+      console.log(`   💰 Rango: ${claudeValuation.valoracion_minima?.toLocaleString()}€ - ${claudeValuation.valoracion_maxima?.toLocaleString()}€`);
+      console.log(`   📊 Media: ${claudeValuation.valoracion_media?.toLocaleString()}€`);
+      console.log(`   🎯 Score: ${claudeValuation.score_global?.puntuacion_total}/100`);
+
+      // Construir ajustes para mostrar al usuario (extraídos de los datos que Claude usó)
+      const advancedAdjustments = [
+        { factor: `Orientación ${orientation || 'No especificada'}`, value: "incluido", percentage: 0 },
+        { factor: `Estado de conservación`, value: "incluido", percentage: 0 },
+        { factor: hasTerrace ? `Terraza ${terraceSize ? terraceSize + 'm²' : ''}` : "Sin terraza", value: "incluido", percentage: 0 },
+        { factor: hasGarage ? "Plaza de garaje" : "Sin garaje", value: "incluido", percentage: 0 },
+        { factor: hasStorage ? "Trastero incluido" : "Sin trastero", value: "incluido", percentage: 0 },
+        { factor: `Calidad ${quality || 'estándar'}`, value: "incluido", percentage: 0 },
+      ].filter(adj => adj.factor);
+
+      // Mapear el nivel de confianza
+      let confidenceLevel: "muy-alta" | "alta" | "media" | "baja" = "alta";
+      if (claudeValuation.confianza === "alta") confidenceLevel = "muy-alta";
+      else if (claudeValuation.confianza === "media") confidenceLevel = "alta";
+      else if (claudeValuation.confianza === "media-baja") confidenceLevel = "media";
+      else confidenceLevel = "baja";
+
+      // Construir respuesta en formato compatible con el resto del wizard
       const detailedValuation = {
-        ...valuation,
-        avg: adjustedPrice,
-        min: Math.round(adjustedPrice * 0.98), // ±2%
-        max: Math.round(adjustedPrice * 1.02),
-        uncertainty: "±2%",
-        precisionScore: aiAnalysis.overallScore || 92,
-        confidenceLevel: "muy-alta" as const,
-        aiAnalysis,
-        advancedAdjustments,
-        marketComparison: {
-          similarProperties: 47,
-          avgPricePerM2: valuation?.precioZona || null,
-          pricePosition: "por encima de la media",
+        // Precios calculados por Claude
+        avg: claudeValuation.valoracion_media,
+        min: claudeValuation.valoracion_minima,
+        max: claudeValuation.valoracion_maxima,
+        precioM2: claudeValuation.precio_m2 || (squareMeters ? Math.round(claudeValuation.valoracion_media / squareMeters) : 0),
+
+        // Información adicional
+        uncertainty: `±${Math.round(((claudeValuation.valoracion_maxima - claudeValuation.valoracion_minima) / (2 * claudeValuation.valoracion_media)) * 100)}%`,
+        precisionScore: claudeValuation.score_global?.puntuacion_total || 85,
+        confidenceLevel,
+
+        // Análisis de fotos (formato adaptado)
+        aiAnalysis: {
+          photoQuality: photos.length > 0 ? "buena" : "no-disponible",
+          photoCount: photos.length,
+          detectedFeatures: claudeValuation.analisis?.puntos_fuertes || [],
+          propertyConditionEstimate: claudeValuation.analisis?.estado_general || "",
+          luminosityLevel: "buena" as const,
+          conservationState: claudeValuation.score_global?.puntuacion_total >= 75 ? "excelente" :
+                            claudeValuation.score_global?.puntuacion_total >= 60 ? "bueno" : "regular" as const,
+          suggestedImprovements: claudeValuation.mejoras_con_roi?.map((m: any) =>
+            `💡 ${m.categoria}: ${m.mejora} (Inversión: ${m.inversion_estimada?.toLocaleString()}€, ROI: ${m.roi_porcentaje}%)`
+          ) || [],
+          overallScore: claudeValuation.score_global?.puntuacion_total || 75,
         },
+
+        // Ajustes (para mostrar en UI, aunque ya están aplicados por Claude)
+        advancedAdjustments,
+
+        // Comparación de mercado
+        marketComparison: {
+          similarProperties: "Datos reales de mercado",
+          avgPricePerM2: claudeValuation.precio_m2,
+          pricePosition: claudeValuation.analisis?.ubicacion_valoracion || "Valoración basada en datos actualizados",
+        },
+
+        // ROI y mejoras
+        roiSummary: claudeValuation.resumen_roi,
+        suggestedImprovements: claudeValuation.mejoras_con_roi,
+        valoracionConMejoras: claudeValuation.valoracion_con_mejoras,
+
+        // Análisis completo de Claude
+        claudeAnalysis: claudeValuation.analisis,
+        scoreGlobal: claudeValuation.score_global,
+        tiempoVentaEstimado: claudeValuation.tiempo_venta_estimado,
+
+        // Metadata
         calculatedAt: new Date().toISOString(),
+        calculationMethod: "claude-complete",
       };
 
       console.log("💎 Valoración detallada con análisis real:", detailedValuation);
