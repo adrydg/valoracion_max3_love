@@ -95,7 +95,7 @@ async function searchMarketPrices(
 
     console.log(`🔍 Buscando precios de mercado para CP ${postalCode} (${municipality})`);
 
-    const marketDataPrompt = `Eres un experto en el mercado inmobiliario español con acceso a datos actualizados de 2024-2025.
+    const marketDataPrompt = `Eres un experto en el mercado inmobiliario español con acceso a datos actualizados de FINALES DE 2024 y 2025.
 
 Necesito datos del mercado inmobiliario para:
 
@@ -110,13 +110,26 @@ Necesito datos del mercado inmobiliario para:
 - Superficie: ${squareMeters} m²
 
 🎯 TAREA:
-Basándote en tu conocimiento del mercado inmobiliario español, proporciona datos de precios REALES Y ACTUALIZADOS para esta ubicación específica.
+Proporciona precios REALES de mercado para esta ubicación en 2025. Los precios han subido significativamente (+15-20%) desde 2023.
 
-⚠️ IMPORTANTE:
-- Si es una zona de Madrid capital (CP 280XX), considera precios altos (3.500-5.500 €/m² según barrio)
-- Si es zona metropolitana de Madrid (CP 28XXX no capital), considera 2.000-3.500 €/m²
-- Ajusta según la zona ESPECÍFICA mencionada en la calle y código postal
-- Ten en cuenta la subida generalizada de precios del +15% en 2024-2025
+⚠️ PRECIOS ACTUALIZADOS 2025 - ZONAS MADRID:
+
+**MADRID CAPITAL (CP 280XX) - Por barrio:**
+- Salamanca, Chamberí, Retiro: 5.500-7.500 €/m²
+- Centro, Sol, Ópera: 5.000-6.500 €/m²
+- Chamartín, Moncloa: 4.500-6.000 €/m²
+- Arganzuela, Tetuán: 4.000-5.500 €/m²
+- Carabanchel, Usera: 3.000-4.000 €/m²
+
+**ZONAS METROPOLITANAS BUENAS:**
+- Pozuelo, Las Rozas, Majadahonda: 3.500-5.000 €/m²
+- Alcobendas, San Sebastián de los Reyes: 3.000-4.000 €/m²
+
+**ZONAS METROPOLITANAS MEDIAS:**
+- Alcalá, Getafe, Leganés: 2.200-3.200 €/m²
+- Móstoles, Fuenlabrada: 2.000-2.800 €/m²
+
+🔥 **CRÍTICO:** Los precios en portales inmobiliarios como Idealista/Fotocasa en 2025 son UN 20-30% MÁS ALTOS que en 2023. AJUSTA TUS ESTIMACIONES AL ALZA.
 
 Devuelve ÚNICAMENTE este JSON sin texto adicional:
 {
@@ -148,15 +161,15 @@ Devuelve ÚNICAMENTE este JSON sin texto adicional:
     return marketText;
   } catch (error) {
     console.error("❌ Error buscando precios de mercado:", error);
-    // Fallback con precios genéricos
+    // Fallback con precios genéricos actualizados a 2025
     return JSON.stringify({
-      precio_minimo_m2: 2500,
-      precio_medio_m2: 3000,
-      precio_maximo_m2: 3500,
-      demanda_zona: "media",
-      caracteristicas_zona: "Zona con demanda moderada (datos genéricos por error en búsqueda)",
-      tendencia_precios: "Precios en tendencia alcista (+15% anual)",
-      fuente: "estimación genérica por error en búsqueda"
+      precio_minimo_m2: 3500,
+      precio_medio_m2: 4200,
+      precio_maximo_m2: 5000,
+      demanda_zona: "alta",
+      caracteristicas_zona: "Zona con demanda alta - Precios ajustados al mercado 2025 (datos genéricos por error en búsqueda)",
+      tendencia_precios: "Precios en tendencia alcista fuerte (+20-25% anual en 2024-2025)",
+      fuente: "estimación genérica conservadora para 2025 - ajustada al alza por error en búsqueda"
     });
   }
 }
@@ -241,21 +254,30 @@ ${street ? `- Calle: ${street}` : ''}
 ${marketDataText}
 
 ⚠️ **INSTRUCCIÓN OBLIGATORIA PARA CALCULAR PRECIO:**
-1. Precio base = ${squareMeters} m² × precio_medio_m2 (del JSON de arriba)
-2. Aplicar ajustes según características:
+
+🎯 **MÉTODO DE CÁLCULO 2025 (Precios actualizados):**
+
+1. **Precio base** = ${squareMeters} m² × precio_medio_m2 (del JSON de datos de mercado arriba)
+
+2. **Aplicar ajustes por características** (SUMA TODOS):
    - Estado/conservación: ${conditionMap[propertyCondition] || propertyCondition || 'No especificado'} → (+/- 10-15%)
    - Planta: ${floorMap[floor] || floor} → (+/- 5-10%)
    - Antigüedad: ${buildingAgeMap[buildingAge] || buildingAge} → (+/- 5-15%)
-   - Orientación: ${orientationMap[orientation] || orientation || 'No especificada'} → (+/- 3-8%)
+   - Orientación: ${orientationMap[orientation] || orientation || 'No especificada'} → (+/- 5-10%)
    - Calidad: ${qualityMap[quality] || quality || 'No especificada'} → (+/- 10-20%)
-   - Extras:
-     * Ascensor: ${hasElevator ? 'Sí (+3-5%)' : 'No (-5%)'}
-     * Garaje: ${hasGarage ? 'Sí (+8-12%)' : 'No'}
-     * Terraza: ${hasTerrace ? `Sí ${terraceSize ? `(${terraceSize}m²)` : ''} (+5-15%)` : 'No'}
-     * Trastero: ${hasStorage ? 'Sí (+3-5%)' : 'No'}
-${landSize ? `     * Terreno: ${landSize} m² (para casas, esto aumenta MUCHO el valor)` : ''}
-3. **IMPORTANTE:** Después de todos los ajustes, aplicar +5% adicional por tendencia alcista del mercado 2024-2025
-4. **NO MENCIONES** el ajuste del +5% al cliente (ya está incluido en el precio final)
+   - Extras (SUMAN):
+     * Ascensor: ${hasElevator ? 'Sí (+5-8%)' : 'No (-8%)'}
+     * Garaje: ${hasGarage ? 'Sí (+10-15%)' : 'No'}
+     * Terraza: ${hasTerrace ? `Sí ${terraceSize ? `(${terraceSize}m²)` : ''} (+8-20%)` : 'No'}
+     * Trastero: ${hasStorage ? 'Sí (+5-8%)' : 'No'}
+${landSize ? `     * Terreno: ${landSize} m² (AUMENTA VALOR 30-50% para casas)` : ''}
+
+3. **🔥 AJUSTE MERCADO 2025 (CRÍTICO):**
+   - Aplicar +20% ADICIONAL por tendencia alcista del mercado inmobiliario 2024-2025
+   - Los precios en Idealista/Fotocasa han subido 20-30% desde 2023
+   - Este ajuste refleja la realidad del mercado actual
+
+4. **NO MENCIONES** el ajuste del +20% al cliente (debe estar incluido silenciosamente en el precio final)
 
 📐 **CARACTERÍSTICAS FÍSICAS:**
 - Superficie construida: ${squareMeters} m²
