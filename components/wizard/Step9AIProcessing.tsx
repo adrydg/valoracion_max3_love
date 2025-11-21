@@ -77,10 +77,11 @@ export const Step9AIProcessing = () => {
       }
 
       // ✨ VALORACIÓN COMPLETA CON CLAUDE (nuevo sistema)
-      console.log(`🚀 Iniciando valoración completa con Claude...`);
+      try {
+        console.log(`🚀 Iniciando valoración completa con Claude...`);
 
-      // Convertir fotos a base64 si hay
-      let photosBase64: Array<{ data: string; mediaType: string }> = [];
+        // Convertir fotos a base64 si hay
+        let photosBase64: Array<{ data: string; mediaType: string }> = [];
 
       if (photos.length > 0) {
         try {
@@ -227,13 +228,54 @@ export const Step9AIProcessing = () => {
         calculationMethod: "claude-complete",
       };
 
-      console.log("💎 Valoración detallada con análisis real:", detailedValuation);
-      setDetailedValuation(detailedValuation);
+        console.log("💎 Valoración detallada con análisis real:", detailedValuation);
+        setDetailedValuation(detailedValuation);
 
-      // Ir al resultado final
-      setTimeout(() => {
-        nextStep();
-      }, 500);
+        // Ir al resultado final
+        setTimeout(() => {
+          nextStep();
+        }, 500);
+      } catch (error) {
+        console.error("❌ Error en valoración completa:", error);
+
+        // Crear valoración de fallback para no dejar la UI colgada
+        const fallbackValuation = {
+          avg: 250000,
+          min: 230000,
+          max: 270000,
+          precioM2: squareMeters ? Math.round(250000 / squareMeters) : 3000,
+          uncertainty: "±8%",
+          precisionScore: 65,
+          confidenceLevel: "media" as const,
+          aiAnalysis: {
+            photoQuality: "no-disponible" as const,
+            photoCount: photos.length,
+            detectedFeatures: ["Error al analizar. Por favor, contacta con nosotros para una valoración personalizada."],
+            propertyConditionEstimate: "No se pudo completar el análisis automático. Te contactaremos pronto.",
+            luminosityLevel: "regular" as const,
+            conservationState: "regular" as const,
+            suggestedImprovements: ["💡 Recibirás recomendaciones personalizadas por email"],
+            overallScore: 65,
+          },
+          advancedAdjustments: [],
+          marketComparison: {
+            similarProperties: "Error en análisis",
+            avgPricePerM2: null,
+            pricePosition: "Valoración estimada genérica",
+          },
+          calculatedAt: new Date().toISOString(),
+          calculationMethod: "fallback",
+          error: true,
+          errorMessage: error instanceof Error ? error.message : "Error desconocido",
+        };
+
+        setDetailedValuation(fallbackValuation);
+
+        // Continuar al siguiente paso aunque haya error
+        setTimeout(() => {
+          nextStep();
+        }, 1000);
+      }
     };
 
     processSteps();

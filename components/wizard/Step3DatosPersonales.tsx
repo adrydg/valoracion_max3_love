@@ -53,13 +53,10 @@ export const Step3DatosPersonales = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // PRECARGA DE DATOS PARA TESTING - DESACTIVADA
-  // useEffect(() => {
-  //   if (!name) setName("Juan Pérez");
-  //   if (!email) setEmail("juan@ejemplo.com");
-  //   if (!phone) setPhone("612345678");
-  //   if (!consentDataProcessing) setConsentDataProcessing(true);
-  // }, []);
+  // Pre-marcar política de privacidad por defecto
+  useEffect(() => {
+    if (!consentDataProcessing) setConsentDataProcessing(true);
+  }, []);
 
   const handleContinue = async () => {
     const newErrors: Record<string, string> = {};
