@@ -61,9 +61,22 @@ export async function analyzePhotosWithClaude(
   photos: Base64Photo[],
   propertyContext?: {
     propertyType?: string;
+    postalCode?: string;
+    municipality?: string;
     squareMeters?: number;
+    landSize?: number;
     bedrooms?: number;
     bathrooms?: number;
+    floor?: string;
+    hasElevator?: boolean;
+    buildingAge?: string;
+    orientation?: string;
+    propertyCondition?: string;
+    hasTerrace?: boolean;
+    terraceSize?: number;
+    hasGarage?: boolean;
+    hasStorage?: boolean;
+    quality?: string;
   }
 ): Promise<PhotoAnalysisResult> {
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -76,13 +89,31 @@ export async function analyzePhotosWithClaude(
 
   console.log(`🖼️  Analizando ${photos.length} fotos con Claude Vision...`);
 
-  // Preparar el contexto
+  // Preparar el contexto completo de la propiedad
   const contextText = propertyContext
-    ? `\nContexto de la propiedad:
+    ? `\n📋 INFORMACIÓN COMPLETA DE LA PROPIEDAD:
+
+UBICACIÓN:
+- Código Postal: ${propertyContext.postalCode || 'No especificado'}
+- Municipio: ${propertyContext.municipality || 'No especificado'}
+
+CARACTERÍSTICAS:
 - Tipo: ${propertyContext.propertyType || 'No especificado'}
-- Superficie: ${propertyContext.squareMeters || 'No especificado'} m²
+- Superficie: ${propertyContext.squareMeters || 'No especificado'} m²${propertyContext.landSize ? `\n- Terreno: ${propertyContext.landSize} m²` : ''}
 - Habitaciones: ${propertyContext.bedrooms || 'No especificado'}
-- Baños: ${propertyContext.bathrooms || 'No especificado'}`
+- Baños: ${propertyContext.bathrooms || 'No especificado'}
+- Planta: ${propertyContext.floor || 'No especificado'}${propertyContext.hasElevator !== undefined ? `\n- Ascensor: ${propertyContext.hasElevator ? 'Sí' : 'No'}` : ''}
+- Antigüedad: ${propertyContext.buildingAge || 'No especificado'}
+
+ESTADO Y CALIDAD:
+- Orientación: ${propertyContext.orientation || 'No especificado'}
+- Estado: ${propertyContext.propertyCondition || 'No especificado'}
+- Calidad: ${propertyContext.quality || 'No especificado'}
+
+EXTRAS:
+- Terraza: ${propertyContext.hasTerrace ? `Sí (${propertyContext.terraceSize || '?'} m²)` : 'No'}
+- Garaje: ${propertyContext.hasGarage ? 'Sí' : 'No'}
+- Trastero: ${propertyContext.hasStorage ? 'Sí' : 'No'}`
     : '';
 
   // Construir el mensaje con las imágenes
@@ -95,64 +126,78 @@ export async function analyzePhotosWithClaude(
     },
   }));
 
-  const prompt = `Analiza estas ${photos.length} fotos de una propiedad inmobiliaria como si fueras un tasador profesional.${contextText}
+  const prompt = `Eres un asesor inmobiliario experto en MAXIMIZAR EL VALOR DE VENTA de propiedades.
 
-Por favor, evalúa minuciosamente:
+Tu cliente quiere vender su propiedad y necesita tu asesoramiento profesional sobre QUÉ MEJORAS realizar para AUMENTAR el precio de venta y vender más rápido.${contextText}
 
-1. **Calidad de las fotos**: ¿Son claras, bien iluminadas y representativas?
+🎯 TU MISIÓN:
+Analiza las ${photos.length} fotos proporcionadas junto con toda la información del formulario y proporciona RECOMENDACIONES ESTRATÉGICAS para incrementar el valor de mercado.
 
-2. **Características detectadas**: Identifica TODOS los elementos visibles:
-   - Luminosidad natural (ventanas, orientación aparente)
-   - Acabados (suelos, paredes, techos, carpintería)
-   - Distribución de espacios
-   - Mobiliario y decoración
-   - Electrodomésticos y equipamiento
-   - Estado de pintura, puertas, ventanas
-   - Instalaciones visibles (electricidad, fontanería, climatización)
+⚠️ IMPORTANTE - NO DESCRIBAS lo que ya se ve (el cliente ya conoce su propiedad):
+- ❌ NO digas "tiene suelos de parquet" o "la cocina está equipada"
+- ❌ NO describas colores, muebles o distribución básica
+- ✅ SÍ ENFÓCATE en qué CAMBIAR, MEJORAR o RENOVAR para AUMENTAR EL VALOR
 
-3. **Estado de conservación**:
-   - ¿La propiedad está en buen estado o necesita reformas?
-   - ¿Hay signos de desgaste, humedad, grietas, desperfectos?
-   - ¿Los acabados son modernos o anticuados?
+📊 ANÁLISIS REQUERIDO:
 
-4. **Luminosidad**: ¿Qué tan luminosa es la propiedad? (excelente/buena/regular/baja)
+1. **EVALUACIÓN RÁPIDA DEL ESTADO** (solo para contexto):
+   - Calidad de las fotos: excelente/buena/regular/deficiente
+   - Luminosidad: excelente/buena/regular/baja
+   - Estado general: excelente/bueno/regular/necesita-reforma
+   - Puntuación 0-100 (considerando potencial de venta)
 
-5. **Puntuación general**: Del 0 al 100, valora:
-   - Estado general (0-40 puntos)
-   - Acabados y calidad (0-30 puntos)
-   - Luminosidad y distribución (0-30 puntos)
+2. **PUNTOS CLAVE DETECTADOS** (breve, máximo 5 observaciones relevantes):
+   - Solo menciona aspectos que AFECTAN AL VALOR o que deberían MEJORARSE
+   - Ejemplo: "Cocina con acabados antiguos que penalizan el valor"
+   - Ejemplo: "Baño principal necesita actualización"
 
-6. **MEJORAS Y REFORMAS SUGERIDAS** (MUY IMPORTANTE):
-   Sé ESPECÍFICO y PRÁCTICO. Indica:
-   - ¿Qué reformas o mejoras son NECESARIAS? (problemas que hay que solucionar)
-   - ¿Qué mejoras son RECOMENDABLES? (para aumentar el valor)
-   - ¿Qué cambios ESTÉTICOS mejorarían la propiedad? (pintura, actualización)
+3. **RECOMENDACIONES ESTRATÉGICAS PARA AUMENTAR VALOR** (LO MÁS IMPORTANTE):
 
-   Ejemplos de mejoras específicas:
-   - "Renovar cocina: cambiar encimera y electrodomésticos (estimado 8.000-12.000€)"
-   - "Actualizar baño: cambiar sanitarios y alicatado (estimado 4.000-6.000€)"
-   - "Pintura completa de la vivienda (estimado 2.000-3.000€)"
-   - "Cambiar suelo de toda la vivienda a tarima (estimado 5.000-8.000€)"
-   - "Renovar instalación eléctrica (señales de antigüedad)"
-   - "Reparar humedades visibles en pared del salón"
-   - "Actualizar puertas interiores (modelo antiguo)"
-   - "Mejorar iluminación: añadir puntos de luz adicionales"
+   Proporciona AL MENOS 3-5 MEJORAS CONCRETAS priorizadas por impacto en precio:
 
-Devuelve tu análisis en formato JSON con esta estructura:
+   🔴 CRÍTICAS (urgentes para vender bien):
+   - Mejoras que SÍ o SÍ deben hacerse antes de vender
+   - Defectos que ahuyentan compradores o bajan el precio
+   - Estimación de coste si es posible
+
+   🟡 RECOMENDADAS (alto ROI):
+   - Mejoras que aumentarán significativamente el valor
+   - Renovaciones que justifican subir el precio
+   - Actualizaciones que diferencian la propiedad
+   - Coste vs incremento de valor esperado
+
+   🟢 OPCIONALES (mejora percepción):
+   - Cambios estéticos que facilitan la venta
+   - Detalles que mejoran la presentación
+   - Home staging y pequeños arreglos
+
+EJEMPLOS DE RECOMENDACIONES CONCRETAS:
+- "Renovar cocina completa: encimera, muebles y electrodomésticos modernos (inversión 10.000-15.000€, incremento valor +20.000€)"
+- "Actualizar baño principal: alicatado moderno, sanitarios suspendidos y mampara (6.000-8.000€, aumenta atractivo)"
+- "Pintura neutra completa + reparar desperfectos en paredes (2.500-3.500€, esencial para buena primera impresión)"
+- "Cambiar suelo a tarima/porcelánico imitación madera en toda la vivienda (8.000-12.000€, moderniza mucho)"
+- "Renovar instalación eléctrica y enchufes (anticuados, riesgo para comprador) (3.000-5.000€)"
+- "Eliminar gotelé y aplicar pintura lisa moderna (1.500-2.500€, actualiza mucho)"
+- "Cambiar carpintería exterior por PVC con doble acristalamiento (8.000-12.000€, ahorro energético)"
+
+Devuelve SOLO este JSON (sin texto adicional):
 {
   "photoQuality": "excelente|buena|regular|deficiente",
-  "detectedFeatures": ["característica 1", "característica 2", ...] (mínimo 5 características),
-  "propertyConditionEstimate": "descripción detallada del estado general en 2-3 frases",
+  "detectedFeatures": ["observación crítica 1", "observación 2", ...] (máximo 5, solo lo relevante),
+  "propertyConditionEstimate": "Breve evaluación del estado actual y potencial de venta en 2 frases",
   "luminosityLevel": "excelente|buena|regular|baja",
   "conservationState": "excelente|bueno|regular|necesita-reforma",
-  "suggestedImprovements": ["mejora específica 1 con coste estimado", "mejora 2", ...] (mínimo 3 mejoras concretas),
-  "overallScore": número entre 0-100
+  "suggestedImprovements": [
+    "🔴 CRÍTICO: Mejora urgente con coste",
+    "🟡 RECOMENDADO: Mejora importante con ROI",
+    "🟡 RECOMENDADO: Otra mejora con impacto",
+    "🟢 OPCIONAL: Mejora estética",
+    ...
+  ] (mínimo 3-5 recomendaciones CONCRETAS con costes estimados),
+  "overallScore": número 0-100 (basado en potencial de venta actual)
 }
 
-IMPORTANTE:
-- Responde SOLO con el JSON válido, sin texto adicional antes ni después
-- Sé específico en las mejoras: indica QUÉ reformar/cambiar y COSTE aproximado si es relevante
-- Si no detectas necesidad de reformas importantes, indica mejoras estéticas o de actualización`;
+🎯 PRIORIZA recomendaciones por impacto en PRECIO DE VENTA, no por orden de las fotos.`;
 
   try {
     const response = await anthropic.messages.create({

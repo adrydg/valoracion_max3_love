@@ -32,11 +32,17 @@ export const Step9AIProcessing = () => {
     valuation,
     setDetailedValuation,
     nextStep,
-    // Contexto adicional para el análisis de fotos
+    // Contexto completo para el análisis de fotos
     propertyType,
+    postalCode,
+    municipality,
     squareMeters,
+    landSize,
     bedrooms,
     bathrooms,
+    floor,
+    hasElevator,
+    buildingAge,
   } = useWizardStore();
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -122,7 +128,7 @@ export const Step9AIProcessing = () => {
             })
           );
 
-          // Llamar al API de análisis de fotos
+          // Llamar al API de análisis de fotos con CONTEXTO COMPLETO
           const response = await fetch("/api/valuation/analyze-photos", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -130,9 +136,22 @@ export const Step9AIProcessing = () => {
               photos: photosBase64,
               propertyContext: {
                 propertyType,
+                postalCode,
+                municipality,
                 squareMeters,
+                landSize,
                 bedrooms,
                 bathrooms,
+                floor,
+                hasElevator,
+                buildingAge,
+                orientation,
+                propertyCondition,
+                hasTerrace,
+                terraceSize,
+                hasGarage,
+                hasStorage,
+                quality,
               },
             }),
           });
