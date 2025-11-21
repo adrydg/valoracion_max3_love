@@ -32,6 +32,11 @@ export const Step9AIProcessing = () => {
     valuation,
     setDetailedValuation,
     nextStep,
+    // Contexto adicional para el análisis de fotos
+    propertyType,
+    squareMeters,
+    bedrooms,
+    bathrooms,
   } = useWizardStore();
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -64,9 +69,7 @@ export const Step9AIProcessing = () => {
         });
       }
 
-      // MODO TESTING: Generar valoración detallada fake
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
+      // ANÁLISIS REAL CON CLAUDE VISION
       const basePrice = valuation?.avg || 320000;
 
       // Calcular ajustes avanzados y sus porcentajes
@@ -87,39 +90,86 @@ export const Step9AIProcessing = () => {
       const adjustedPrice = Math.round(basePrice * (1 + totalAdjustmentPercentage / 100));
       console.log(`💰 Precio base: ${basePrice.toLocaleString()}€ → Con ajustes: ${adjustedPrice.toLocaleString()}€`);
 
+      // ANÁLISIS DE FOTOS CON CLAUDE VISION (si hay fotos)
+      let aiAnalysis: any = {
+        photoQuality: "no-disponible",
+        photoCount: 0,
+        detectedFeatures: ["No se subieron fotos para analizar"],
+        luminosityLevel: "regular",
+        conservationState: "regular",
+        overallScore: 50,
+      };
+
+      if (photos.length > 0) {
+        try {
+          console.log(`🖼️ Analizando ${photos.length} fotos con Claude Vision...`);
+
+          // Convertir fotos a base64
+          const photosBase64 = await Promise.all(
+            photos.map(async (photo) => {
+              return new Promise<{ data: string; mediaType: string }>((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  const base64String = reader.result as string;
+                  const base64Data = base64String.split(',')[1];
+                  let mediaType = "image/jpeg";
+                  if (photo.type === "image/png") mediaType = "image/png";
+                  if (photo.type === "image/webp") mediaType = "image/webp";
+                  resolve({ data: base64Data, mediaType });
+                };
+                reader.readAsDataURL(photo);
+              });
+            })
+          );
+
+          // Llamar al API de análisis de fotos
+          const response = await fetch("/api/valuation/analyze-photos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              photos: photosBase64,
+              propertyContext: {
+                propertyType,
+                squareMeters,
+                bedrooms,
+                bathrooms,
+              },
+            }),
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            aiAnalysis = result.analysis;
+            console.log("✅ Análisis de fotos completado:", aiAnalysis);
+          } else {
+            console.error("❌ Error analizando fotos:", await response.text());
+            // Mantener análisis fallback
+          }
+        } catch (error) {
+          console.error("❌ Error en análisis de fotos:", error);
+          // Mantener análisis fallback
+        }
+      }
+
       const detailedValuation = {
         ...valuation,
         avg: adjustedPrice,
         min: Math.round(adjustedPrice * 0.98), // ±2%
         max: Math.round(adjustedPrice * 1.02),
         uncertainty: "±2%",
-        precisionScore: 92,
+        precisionScore: aiAnalysis.overallScore || 92,
         confidenceLevel: "muy-alta" as const,
-        aiAnalysis: photos.length > 0 ? {
-          photoQuality: "buena",
-          photoCount: photos.length,
-          detectedFeatures: [
-            "Luminosidad natural excelente",
-            "Estado de conservación bueno",
-            "Distribución optimizada",
-          ],
-        } : {
-          photoQuality: "no-disponible",
-          photoCount: 0,
-          detectedFeatures: [
-            "No se ha podido determinar valoración de fotos",
-          ],
-        },
+        aiAnalysis,
         advancedAdjustments,
         marketComparison: {
           similarProperties: 47,
-          avgPricePerM2: valuation?.precioZona || null, // Precio EXACTO del Excel, o null si no existe
+          avgPricePerM2: valuation?.precioZona || null,
           pricePosition: "por encima de la media",
         },
         calculatedAt: new Date().toISOString(),
       };
 
-      console.log("💎 Valoración detallada (testing):", detailedValuation);
+      console.log("💎 Valoración detallada con análisis real:", detailedValuation);
       setDetailedValuation(detailedValuation);
 
       // Ir al resultado final
