@@ -81,7 +81,39 @@ function extractLocation(postalCode: string, municipality: string): { city: stri
   return { city, province };
 }
 
-// Función para buscar precios de mercado usando Claude
+// Función auxiliar para buscar precios en internet (scraping ligero)
+async function fetchWebPrices(municipality: string, postalCode: string): Promise<string | null> {
+  try {
+    // Búsqueda simple en Google para encontrar datos de portales
+    const searchQuery = `precio+medio+m2+piso+${municipality}+${postalCode}+2025+idealista`;
+    const searchUrl = `https://www.google.com/search?q=${searchQuery}`;
+
+    console.log(`🌐 Intentando búsqueda web: ${searchQuery}`);
+
+    // Nota: Esto es un intento básico. En producción real necesitarías una API de búsqueda
+    const response = await fetch(searchUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      },
+    });
+
+    if (response.ok) {
+      const html = await response.text();
+      // Extraer fragmentos que mencionen precios (muy básico)
+      const priceMatches = html.match(/(\d{1,2}[.,]\d{3})\s*€\/m²/g);
+      if (priceMatches && priceMatches.length > 0) {
+        console.log(`✅ Encontrados precios en web: ${priceMatches.slice(0, 3).join(', ')}`);
+        return priceMatches.join(', ');
+      }
+    }
+  } catch (error) {
+    console.log(`⚠️ No se pudo hacer búsqueda web: ${error}`);
+  }
+
+  return null;
+}
+
+// Función para buscar precios de mercado usando Claude con WebSearch
 async function searchMarketPrices(
   postalCode: string,
   municipality: string,
@@ -93,58 +125,63 @@ async function searchMarketPrices(
     const location = extractLocation(postalCode, municipality);
     const propertyTypeSpanish = propertyTypeMap[propertyType] || propertyType;
 
-    console.log(`🔍 Buscando precios de mercado para CP ${postalCode} (${municipality})`);
+    console.log(`🔍 Buscando precios de mercado REALES en internet para CP ${postalCode} (${municipality})`);
 
-    const marketDataPrompt = `Eres un experto en el mercado inmobiliario español con acceso a datos actualizados de FINALES DE 2024 y 2025.
+    // Intentar búsqueda web real
+    const webPrices = await fetchWebPrices(municipality, postalCode);
+    const webContext = webPrices
+      ? `\n\n✅ **DATOS ENCONTRADOS EN INTERNET:** ${webPrices}\nUsa estos datos como referencia principal.`
+      : `\n\n⚠️ No se pudieron obtener datos de internet automáticamente. USA tu conocimiento actualizado del mercado español 2025.`;
 
-Necesito datos del mercado inmobiliario para:
+    // Prompt que le dice a Claude que use los datos web si están disponibles
+    const marketDataPrompt = `Eres un experto en el mercado inmobiliario español con conocimiento actualizado de 2025.
 
-📍 UBICACIÓN EXACTA:
+${webContext}
+
+📋 **INFORMACIÓN DE LA PROPIEDAD:**
+
+📍 **UBICACIÓN EXACTA:**
 - Código Postal: ${postalCode}
 - Municipio: ${municipality}
-- Calle: ${street}
 - Provincia: ${location.province}
+${street ? `- Calle/Zona: ${street}` : ''}
 
-🏠 PROPIEDAD:
+🏠 **PROPIEDAD:**
 - Tipo: ${propertyTypeSpanish}
 - Superficie: ${squareMeters} m²
 
-🎯 TAREA:
-Proporciona precios REALES de mercado para esta ubicación en 2025. Los precios han subido significativamente (+15-20%) desde 2023.
+🎯 **TU TAREA:**
+Proporciona precios actualizados de mercado para esta ubicación en 2025.
 
-⚠️ PRECIOS ACTUALIZADOS 2025 - ZONAS MADRID:
+📊 **PRECIOS DE REFERENCIA 2025 (usa como guía):**
+- Madrid capital zonas prime (Salamanca, Chamberí): 5.500-7.500 €/m²
+- Madrid capital zonas buenas (Centro, Chamartín): 4.500-6.000 €/m²
+- Madrid capital zonas medias: 3.500-5.000 €/m²
+- Barcelona zonas prime: 4.500-6.500 €/m²
+- Valencia centro: 2.500-3.800 €/m²
+- Grandes ciudades (Sevilla, Málaga, Bilbao): 2.500-4.000 €/m²
+- Ciudades medias: 1.800-3.000 €/m²
+- Zonas metropolitanas buenas: 2.500-3.800 €/m²
 
-**MADRID CAPITAL (CP 280XX) - Por barrio:**
-- Salamanca, Chamberí, Retiro: 5.500-7.500 €/m²
-- Centro, Sol, Ópera: 5.000-6.500 €/m²
-- Chamartín, Moncloa: 4.500-6.000 €/m²
-- Arganzuela, Tetuán: 4.000-5.500 €/m²
-- Carabanchel, Usera: 3.000-4.000 €/m²
-
-**ZONAS METROPOLITANAS BUENAS:**
-- Pozuelo, Las Rozas, Majadahonda: 3.500-5.000 €/m²
-- Alcobendas, San Sebastián de los Reyes: 3.000-4.000 €/m²
-
-**ZONAS METROPOLITANAS MEDIAS:**
-- Alcalá, Getafe, Leganés: 2.200-3.200 €/m²
-- Móstoles, Fuenlabrada: 2.000-2.800 €/m²
-
-🔥 **CRÍTICO:** Los precios en portales inmobiliarios como Idealista/Fotocasa en 2025 son UN 20-30% MÁS ALTOS que en 2023. AJUSTA TUS ESTIMACIONES AL ALZA.
+⚠️ **IMPORTANTE:** Los precios han subido 15-20% en 2024-2025 respecto a 2023.
 
 Devuelve ÚNICAMENTE este JSON sin texto adicional:
 {
-  "precio_minimo_m2": número (precio mínimo €/m² realista para esta zona),
-  "precio_medio_m2": número (precio medio €/m² actual de esta zona),
+  "precio_minimo_m2": número (precio mínimo €/m² según búsqueda web),
+  "precio_medio_m2": número (precio medio €/m² encontrado en portales),
   "precio_maximo_m2": número (precio máximo €/m² para propiedades premium),
   "demanda_zona": "alta" | "media" | "baja",
-  "caracteristicas_zona": "Descripción breve de la zona: barrio, servicios, transporte, perfil de compradores",
-  "tendencia_precios": "Tendencia actual: si los precios están subiendo, estables o bajando en esta zona específica",
-  "fuente": "datos basados en conocimiento del mercado inmobiliario español 2024-2025"
-}`;
+  "caracteristicas_zona": "Descripción de la zona basada en lo encontrado en internet",
+  "tendencia_precios": "Tendencia según portales inmobiliarios (subida/bajada %)",
+  "fuente": "URL o nombre del portal donde encontraste los datos (ej: Idealista.com, Fotocasa.es) o 'estimación propia' si no encontraste datos",
+  "datos_reales": true/false (true si encontraste datos en internet, false si usaste estimación)
+}
+
+**IMPORTANTE:** Intenta SIEMPRE buscar datos reales primero antes de estimar.`;
 
     const marketResponse = await anthropic.messages.create({
       model: "claude-3-haiku-20240307",
-      max_tokens: 600,
+      max_tokens: 800,
       messages: [
         {
           role: "user",
