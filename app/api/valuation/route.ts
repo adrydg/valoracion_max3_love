@@ -134,7 +134,7 @@ Proporciona ÚNICAMENTE los siguientes datos en formato JSON:
       ],
     });
 
-    const marketText = marketResponse.content[0].type === "text"
+    const marketText = marketResponse.content[0]?.type === "text"
       ? marketResponse.content[0].text
       : "";
 
