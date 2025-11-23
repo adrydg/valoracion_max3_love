@@ -235,7 +235,7 @@ export function validateAuditReport(report: AuditReport): {
 
   // Verificar que el precio final coincide con el último paso
   const lastStep = report.steps[report.steps.length - 1];
-  if (lastStep.output.precio_medio !== report.finalResult.avg) {
+  if (lastStep && lastStep.output.precio_medio !== report.finalResult.avg) {
     errors.push(`Precio final no coincide: ${lastStep.output.precio_medio} vs ${report.finalResult.avg}`);
   }
 

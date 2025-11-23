@@ -33,7 +33,7 @@ export async function convertPhotosToBase64(photos: File[]): Promise<Base64Photo
       reader.onload = () => {
         const base64String = reader.result as string;
         // Extraer solo el base64 (sin el prefijo data:image/jpeg;base64,)
-        const base64Data = base64String.split(',')[1];
+        const base64Data = base64String.split(',')[1] || "";
 
         // Determinar media type
         let mediaType: "image/jpeg" | "image/png" | "image/webp" = "image/jpeg";
@@ -126,75 +126,78 @@ EXTRAS:
     },
   }));
 
-  const prompt = `Eres un asesor inmobiliario amigable y experto que ayuda a propietarios a maximizar el valor de sus propiedades.
+  const prompt = `Eres un asesor inmobiliario experto en MAXIMIZAR EL VALOR DE VENTA de propiedades.
 
-Tu cliente está considerando vender y quiere tu opinión profesional sobre IDEAS y OPORTUNIDADES para destacar aún más su propiedad en el mercado.${contextText}
+Tu cliente quiere vender su propiedad y necesita tu asesoramiento profesional sobre QUÉ MEJORAS realizar para AUMENTAR el precio de venta y vender más rápido.${contextText}
 
 🎯 TU MISIÓN:
-Analiza las ${photos.length} fotos con una actitud POSITIVA y CONSTRUCTIVA. Identifica oportunidades para realzar la propiedad, siempre desde el respeto y sin juzgar.
+Analiza las ${photos.length} fotos proporcionadas junto con toda la información del formulario y proporciona RECOMENDACIONES ESTRATÉGICAS para incrementar el valor de mercado.
 
-⚠️ REGLAS DE ORO - TONO POSITIVO Y COMERCIAL:
-- ✅ SIEMPRE reconoce primero aspectos positivos que ves en las fotos
-- ✅ Presenta mejoras como "OPORTUNIDADES para aumentar valor", NO como problemas o defectos
-- ✅ Usa lenguaje motivador: "potencial", "oportunidad", "realzar", "destacar", "maximizar"
-- ❌ NUNCA uses: "mal estado", "necesita urgente", "deficiente", "antiguo/anticuado"
-- ❌ NUNCA critiques o juzgues el estado actual de la propiedad
-- ✅ Sé específico sobre lo que VES en las fotos (demuestra que las analizaste)
+⚠️ IMPORTANTE - NO DESCRIBAS lo que ya se ve (el cliente ya conoce su propiedad):
+- ❌ NO digas "tiene suelos de parquet" o "la cocina está equipada"
+- ❌ NO describas colores, muebles o distribución básica
+- ✅ SÍ ENFÓCATE en qué CAMBIAR, MEJORAR o RENOVAR para AUMENTAR EL VALOR
 
 📊 ANÁLISIS REQUERIDO:
 
-1. **PRIMERAS IMPRESIONES POSITIVAS** (reconoce lo bueno):
-   - Menciona 2-3 aspectos positivos que observas en las fotos
-   - Ejemplos: "Buena luminosidad natural", "Espacios amplios", "Distribución funcional"
-   - Base tu respuesta en lo que REALMENTE ves en las fotos
+1. **EVALUACIÓN RÁPIDA DEL ESTADO** (solo para contexto):
+   - Calidad de las fotos: excelente/buena/regular/deficiente
+   - Luminosidad: excelente/buena/regular/baja
+   - Estado general: excelente/bueno/regular/necesita-reforma
+   - Puntuación 0-100 (considerando potencial de venta)
 
-2. **OPORTUNIDADES DE MEJORA** (3-5 ideas constructivas):
+2. **PUNTOS CLAVE DETECTADOS** (breve, máximo 5 observaciones relevantes):
+   - Solo menciona aspectos que AFECTAN AL VALOR o que deberían MEJORARSE
+   - Ejemplo: "Cocina con acabados antiguos que penalizan el valor"
+   - Ejemplo: "Baño principal necesita actualización"
 
-   Presenta cada idea de forma POSITIVA y COMERCIAL:
+3. **RECOMENDACIONES ESTRATÉGICAS PARA AUMENTAR VALOR** (LO MÁS IMPORTANTE):
 
-   ✨ Ejemplos de BUEN TONO:
-   - ✅ "Una renovación de la cocina podría convertirla en el punto fuerte de la propiedad (inversión 10.000-15.000€, potencial incremento +20.000€)"
-   - ✅ "Actualizar el baño con acabados modernos realzaría mucho la percepción de calidad (6.000-8.000€)"
-   - ✅ "Una pintura fresca en tonos neutros haría destacar la luminosidad natural que ya tiene (2.500-3.500€)"
-   - ✅ "Modernizar el suelo añadiría un toque contemporáneo muy apreciado por compradores (8.000-12.000€)"
+   Proporciona AL MENOS 3-5 MEJORAS CONCRETAS priorizadas por impacto en precio:
 
-   ❌ Ejemplos de MAL TONO (evitar):
-   - ❌ "La cocina está anticuada y necesita reforma urgente"
-   - ❌ "Baño en mal estado que ahuyenta compradores"
-   - ❌ "Pintura descuidada con desperfectos visibles"
+   🔴 CRÍTICAS (urgentes para vender bien):
+   - Mejoras que SÍ o SÍ deben hacerse antes de vender
+   - Defectos que ahuyentan compradores o bajan el precio
+   - Estimación de coste si es posible
 
-   ESTRUCTURA de cada sugerencia:
-   - Reconoce algo positivo relacionado
-   - Presenta la mejora como oportunidad
-   - Incluye beneficio esperado y coste aproximado
+   🟡 RECOMENDADAS (alto ROI):
+   - Mejoras que aumentarán significativamente el valor
+   - Renovaciones que justifican subir el precio
+   - Actualizaciones que diferencian la propiedad
+   - Coste vs incremento de valor esperado
 
-3. **PUNTUACIÓN OPTIMISTA**:
-   - Valora el POTENCIAL de la propiedad (no solo el estado actual)
-   - Considera que con las mejoras sugeridas puede alcanzar un valor mayor
-   - Puntuación 60-90 (siempre optimista, nunca por debajo de 60)
+   🟢 OPCIONALES (mejora percepción):
+   - Cambios estéticos que facilitan la venta
+   - Detalles que mejoran la presentación
+   - Home staging y pequeños arreglos
+
+EJEMPLOS DE RECOMENDACIONES CONCRETAS:
+- "Renovar cocina completa: encimera, muebles y electrodomésticos modernos (inversión 10.000-15.000€, incremento valor +20.000€)"
+- "Actualizar baño principal: alicatado moderno, sanitarios suspendidos y mampara (6.000-8.000€, aumenta atractivo)"
+- "Pintura neutra completa + reparar desperfectos en paredes (2.500-3.500€, esencial para buena primera impresión)"
+- "Cambiar suelo a tarima/porcelánico imitación madera en toda la vivienda (8.000-12.000€, moderniza mucho)"
+- "Renovar instalación eléctrica y enchufes (anticuados, riesgo para comprador) (3.000-5.000€)"
+- "Eliminar gotelé y aplicar pintura lisa moderna (1.500-2.500€, actualiza mucho)"
+- "Cambiar carpintería exterior por PVC con doble acristalamiento (8.000-12.000€, ahorro energético)"
 
 Devuelve SOLO este JSON (sin texto adicional):
 {
-  "photoQuality": "excelente|buena|regular" (NUNCA uses "deficiente"),
-  "detectedFeatures": [
-    "Aspecto positivo 1 que observo en las fotos",
-    "Aspecto positivo 2",
-    "Aspecto positivo 3",
-    ...
-  ] (3-5 observaciones POSITIVAS basadas en las fotos reales),
-  "propertyConditionEstimate": "Descripción POSITIVA del potencial: reconoce aspectos buenos + menciona oportunidades de mejora de forma constructiva (2-3 frases)",
-  "luminosityLevel": "excelente|buena|regular" (NUNCA "baja"),
-  "conservationState": "excelente|bueno|regular" (NUNCA "necesita-reforma"),
+  "photoQuality": "excelente|buena|regular|deficiente",
+  "detectedFeatures": ["observación crítica 1", "observación 2", ...] (máximo 5, solo lo relevante),
+  "propertyConditionEstimate": "Breve evaluación del estado actual y potencial de venta en 2 frases",
+  "luminosityLevel": "excelente|buena|regular|baja",
+  "conservationState": "excelente|bueno|regular|necesita-reforma",
   "suggestedImprovements": [
-    "💡 [Área]: Oportunidad de mejora con beneficio y coste. Siempre tono positivo y constructivo.",
-    "💡 [Área]: Otra oportunidad...",
-    "💡 [Área]: Otra oportunidad...",
+    "🔴 CRÍTICO: Mejora urgente con coste",
+    "🟡 RECOMENDADO: Mejora importante con ROI",
+    "🟡 RECOMENDADO: Otra mejora con impacto",
+    "🟢 OPCIONAL: Mejora estética",
     ...
-  ] (3-5 sugerencias POSITIVAS y ESPECÍFICAS a lo que ves en las fotos),
-  "overallScore": número 60-90 (optimista, considerando potencial con mejoras)
+  ] (mínimo 3-5 recomendaciones CONCRETAS con costes estimados),
+  "overallScore": número 0-100 (basado en potencial de venta actual)
 }
 
-🌟 RECUERDA: Tu objetivo es MOTIVAR al cliente y hacer que se sienta BIEN con su propiedad, mientras le muestras oportunidades claras para maximizar su valor. ¡Sé positivo, específico y comercial!`;
+🎯 PRIORIZA recomendaciones por impacto en PRECIO DE VENTA, no por orden de las fotos.`;
 
   try {
     const response = await anthropic.messages.create({
@@ -245,24 +248,19 @@ Devuelve SOLO este JSON (sin texto adicional):
   } catch (error) {
     console.error("❌ Error analizando fotos con Claude:", error);
 
-    // Fallback: devolver análisis positivo y genérico si falla
+    // Fallback: devolver análisis genérico si falla
     return {
       photoQuality: "buena",
       photoCount: photos.length,
       detectedFeatures: [
-        "Tu propiedad tiene características que la hacen atractiva para el mercado",
-        "Las fotos han sido recibidas correctamente",
-        "Un asesor revisará personalmente las imágenes para darte recomendaciones específicas",
+        "Análisis no disponible (error de conexión)",
+        "Por favor, revisa las fotos manualmente en el email",
       ],
-      propertyConditionEstimate: "Tu propiedad tiene buen potencial de venta. Recibirás un análisis detallado personalizado por email con ideas específicas para maximizar su valor.",
-      luminosityLevel: "buena",
-      conservationState: "bueno",
-      suggestedImprovements: [
-        "💡 Recibirás recomendaciones personalizadas por email",
-        "💡 Un asesor analizará tus fotos manualmente para darte ideas específicas",
-        "💡 Te contactaremos pronto con sugerencias adaptadas a tu propiedad",
-      ],
-      overallScore: 75,
+      propertyConditionEstimate: "No se pudo determinar",
+      luminosityLevel: "regular",
+      conservationState: "regular",
+      suggestedImprovements: ["Análisis manual requerido"],
+      overallScore: 50,
     };
   }
 }

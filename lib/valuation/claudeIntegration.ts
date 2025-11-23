@@ -114,7 +114,7 @@ export async function getMarketDataFromClaude(
       ],
     });
 
-    const responseText = response.content[0].type === "text"
+    const responseText = response.content[0]?.type === "text"
       ? response.content[0].text
       : "";
 
@@ -133,7 +133,7 @@ export async function getMarketDataFromClaude(
       fuente: precioRegistradores
         ? "Claude + Registradores 2024"
         : "Claude (análisis de mercado)",
-      fecha_actualizacion: new Date().toISOString().split("T")[0],
+      fecha_actualizacion: new Date().toISOString().split("T")[0] || new Date().toISOString().substring(0, 10),
     };
 
     console.log(`✅ Datos de mercado obtenidos: ${marketData.precio_medio_m2}€/m² en ${marketData.municipality}`);
@@ -170,7 +170,7 @@ export async function getMarketDataWithFallback(
         precio_min_m2: Math.round(fallbackPrice * 0.9),
         precio_max_m2: Math.round(fallbackPrice * 1.1),
         fuente: precioRegistradores ? "Registradores (fallback)" : "estimación genérica (fallback)",
-        fecha_actualizacion: new Date().toISOString().split("T")[0],
+        fecha_actualizacion: new Date().toISOString().split("T")[0] || new Date().toISOString().substring(0, 10),
       },
       prompt: undefined,
     };

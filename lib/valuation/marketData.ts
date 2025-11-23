@@ -33,7 +33,7 @@ export function buildMarketDataFromRegistradores(
     tendencia: 'estable', // Dato conservador sin Claude
     descripcion_zona: `Datos oficiales del Colegio de Registradores de España para el código postal ${property.postalCode}`,
     fuente: 'Registradores 2024',
-    fecha_actualizacion: new Date().toISOString().split('T')[0],
+    fecha_actualizacion: new Date().toISOString().split('T')[0] || new Date().toISOString().substring(0, 10),
   };
 }
 
@@ -85,7 +85,7 @@ export async function getMarketDataSmart(
         tendencia: 'estable',
         descripcion_zona: 'Estimación genérica (sin datos específicos disponibles)',
         fuente: 'Estimación genérica',
-        fecha_actualizacion: new Date().toISOString().split('T')[0],
+        fecha_actualizacion: new Date().toISOString().split('T')[0] || new Date().toISOString().substring(0, 10),
       },
       prompt: undefined,
     };
